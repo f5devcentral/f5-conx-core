@@ -24,6 +24,10 @@ Goals/features:
 * standard file cache location
 * standard logging functionality
 
+* NIM Support
+  * REST HTTP connectivity over SSL with basic auth
+  * funtions for inventory/scan usage
+
 ---
 
 ## Architecture
