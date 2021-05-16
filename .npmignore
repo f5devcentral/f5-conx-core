@@ -1,0 +1,18 @@
+# Source directory
+src/
+# Tests directory
+tests/
+# Coverage directory
+coverage/
+# Code Documentation directory
+code_docs/
+# Local Documentation directory
+docs/
+# NYC Output directory
+.nyc_output/
+# Git Allowed File
+.gitallowed
+# CI File
+.gitlab-ci.yml
+# local env file
+.env
