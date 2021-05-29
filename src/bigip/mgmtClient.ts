@@ -417,6 +417,12 @@ export class MgmtClient {
                 retryTimerArray.length = 0;
             }
 
+            // DO success response
+            // RUNNING -> OK
+            if (resp.data.result.status === 'OK') {
+                retryTimerArray.length = 0;
+            }
+
             // as3 results array
             if (resp.data?.results && resp.data.results[0].message !== 'in progress') {
                 retryTimerArray.length = 0;

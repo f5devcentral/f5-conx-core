@@ -8,18 +8,14 @@
 
 'use strict';
 
-
-import Logger from './logger'
-
 export * from './utils/httpModels'
 export * from './externalHttps';
-
-export * from './iHealthClient'
-
-export * from './constants'
-export * from './bigip/bigipModels'
-export * from './utils/misc'
-export * from './utils/testingUtils'
+export * from './iHealthClient';
+export * from './constants';
+export * from './bigip/bigipModels';
+export * from './bigip/doModels';
+export * from './utils/misc';
+export * from './utils/testingUtils';
 
 
 // main f5 client
@@ -27,10 +23,12 @@ export * from './bigip/f5Client';
 export * from './bigip/atcVersionsClient';
 
 // re-export all the individual modules
-export * from './bigip/mgmtClient'
-export * from './bigip/as3Client'
-export * from './bigip/ucsClient'
+export * from './bigip/mgmtClient';
+export * from './bigip/as3Client';
+export * from './bigip/ucsClient';
 
-export { Logger }
+
+export * from './logger'
+
 
 

@@ -20,7 +20,8 @@ describe('Logger Class Unit Tests', function () {
     let originalConsoleLog: Function;
 
     before(function () {
-        logger = Logger.getLogger();
+        // logger = Logger.getLogger();
+        logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 
         // re-set the defaults
         logger.console = true;
@@ -57,7 +58,8 @@ describe('Logger Class Unit Tests', function () {
 
 
     it('get logger instance', function () {
-        logger = Logger.getLogger();
+        // logger = Logger.getLogger();
+        logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
         assert.ok(logger);
     });
 
@@ -102,7 +104,7 @@ describe('Logger Class Unit Tests', function () {
         // disable console logging
         process.env.F5_CONX_CORE_LOG_CONSOLE = 'false';
 
-        logger.warning('a warning mesg');
+        logger.warn('a warning mesg');
 
         assert.ok(JSON.stringify(logger.journal).includes('[WARNING]'));
     });
@@ -180,7 +182,7 @@ describe('Logger Class Unit Tests', function () {
 
         logger.debug('log a message through to custom output')
         logger.info('log a message through to custom output')
-        logger.warning('log a message through to custom output')
+        logger.warn('log a message through to custom output')
         logger.error('log a message through to custom output')
 
         assert.ok(logger.journal.length = 1, 'should be a single error message');
@@ -199,7 +201,7 @@ describe('Logger Class Unit Tests', function () {
 
         logger.debug('log a message through to custom output')
         logger.info('log a message through to custom output')
-        logger.warning('log a message through to custom output')
+        logger.warn('log a message through to custom output')
         logger.error('log a message through to custom output')
 
         // default log level should not log debug message

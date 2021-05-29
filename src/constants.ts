@@ -65,6 +65,7 @@ export const atcMetaData = {
     do: {
         endPoints: {
             declare: '/mgmt/shared/declarative-onboarding',
+            task: '/mgmt/shared/declarative-onboarding/task',
             info: '/mgmt/shared/declarative-onboarding/info',
             inspect: '/mgmt/shared/declarative-onboarding/inspect'
         },

@@ -17,7 +17,7 @@ import {
 
 const LOG_LEVELS = {
     error: 3,
-    warning: 4,
+    warn: 4,
     info: 6,
     debug: 7
 };
@@ -26,13 +26,6 @@ const LOG_LEVELS = {
  * logLevel definitions
  */
 export type logLevels = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR'
-
-// export enum LogLevel {
-//     Debug,
-//     Info,
-//     Warn,
-//     Error,
-// }
 
 
 // levels have been updated to allign better with typical syslog
@@ -45,14 +38,20 @@ export type logLevels = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR'
  * ```ts
  * // set logging to debug
  * process.env.F5_CONX_CORE_LOG_LEVEL = 'DEBUG';
+ * 
+ * // instantiate and import logger
+ * import { logger } from './logger';
+ * 
+ * // turn off console logging
+ * logger.console = false;
+ * 
  * // create OUTPUT channel
- * const f5OutputChannel = window.createOutputChannel('nginx');
- * // make visible
- * f5OutputChannel.show();
+ * const f5OutputChannel = window.createOutputChannel('f5');
+ * 
  * // inject vscode output into logger
  * logger.output = function (log: string) {
  *     f5OutputChannel.appendLine(log);
- * };
+};
  * ```
  * 
  * ```bash
@@ -68,7 +67,7 @@ export default class Logger {
     /**
      * log level
      */
-    logLevel: logLevels;
+    logLevel: logLevels = "INFO";
 
     /**
      * buffer log messages in the journal
@@ -82,11 +81,47 @@ export default class Logger {
      */
     console = true;
 
-    private static instance: Logger;
 
-    constructor() {
+    /**
+     * logging environment variable
+     * 
+     * the "VSCODE_F5_LOG_LEVEL" of the following;
+     * 
+     * process.env.VSCODE_F5_LOG_LEVEL = 'DEBUG';
+     */
+    logEnv: string;
+
+    // private static instance: Logger = new Logger();
+
+    constructor(env: string) {
+        this.logEnv = env;
         // set the log level during instantiation
-        this.logLevel = process.env.F5_CONX_CORE_LOG_LEVEL as unknown as logLevels || 'INFO';
+        this.logLevel = process.env[this.logEnv] as unknown as logLevels || 'INFO';
+    }
+
+    // /**
+    //  * Get logger instance (singleton)
+    //  * 
+    //  * @returns logger instance
+    //  */
+    // static getLogger(): Logger {
+    //     return Logger.instance;
+    // }
+
+
+    /**
+     * clear/delete buffer/journal
+     */
+    clearLogs(): number {
+        return this.journal.length = 0;
+    }
+
+    private haveLogEnv() {
+        if (!this.logEnv) {
+            throw Error('NO LOGGER ENV SET')
+        }
+        // assign log level
+        this.logLevel = process.env[this.logEnv] as unknown as logLevels || 'INFO';
     }
 
 
@@ -98,10 +133,10 @@ export default class Logger {
      * 
      * @param config 
      */
-    async httpRequest(config: uuidAxiosRequestConfig) {
+    async httpRequest(config: uuidAxiosRequestConfig): Promise<void> {
         // use logging level env to log "info" or "debug" request information
 
-        if (process.env.F5_CONX_CORE_LOG_LEVEL === 'DEBUG') {
+        if (process.env[this.logEnv] === 'DEBUG') {
 
             this.debug('debug-http-request', config);
         } else {
@@ -118,9 +153,9 @@ export default class Logger {
      * 
      * @param resp 
      */
-    async httpResponse(resp: AxiosResponseWithTimings) {
+    async httpResponse(resp: AxiosResponseWithTimings): Promise<void> {
 
-        if (process.env.F5_CONX_CORE_LOG_LEVEL === 'DEBUG') {
+        if (process.env[this.logEnv] === 'DEBUG') {
 
             // *** delete method modified the original object causing other errors... ***
             // delete resp.config.httpAgent;
@@ -156,25 +191,7 @@ export default class Logger {
     }
 
 
-    /**
-     * Get logger instance (singleton)
-     * 
-     * @returns logger instance
-     */
-    static getLogger(): Logger {
-        if (!Logger.instance) {
-            Logger.instance = new Logger();
-        }
-        return Logger.instance;
-    }
 
-
-    /**
-     * clear/delete buffer/journal
-     */
-    clearLogs(): number {
-        return this.journal.length = 0;
-    }
 
     /**
      * overwritable function to allow additional output integrations
@@ -220,8 +237,8 @@ export default class Logger {
     /**
      * Log warning message
      */
-    warning(...msg: [unknown, ...unknown[]]): void {
-        if (LOG_LEVELS.warning <= LOG_LEVELS[this._checkLogLevel()]) {
+    warn(...msg: [unknown, ...unknown[]]): void {
+        if (LOG_LEVELS.warn <= LOG_LEVELS[this._checkLogLevel()]) {
             this.log('WARNING', ...msg);
         }
     }
@@ -270,11 +287,14 @@ export default class Logger {
 
 
     private _checkLogLevel(): string {
+
+        this.haveLogEnv()
+
         const logLevels = Object.keys(LOG_LEVELS);
         // const logLevelFromEnvVar = process.env.F5_CONX_CORE_LOG_LEVEL || 'info';
 
         // check/update log level with every log
-        this.logLevel = process.env.F5_CONX_CORE_LOG_LEVEL as unknown as logLevels || 'INFO';
+        this.logLevel = process.env[this.logEnv] as unknown as logLevels || 'INFO';
 
         if (process.env.F5_CONX_CORE_LOG_BUFFER) {
             this.buffer = (process.env.F5_CONX_CORE_LOG_BUFFER == 'true');
@@ -302,3 +322,6 @@ export default class Logger {
 
 
 }
+
+// const logThing = Logger.getLogger();
+// export default logThing;

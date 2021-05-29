@@ -12,6 +12,7 @@
 import { AtcInfo } from "./bigipModels";
 import { atcMetaData } from '../constants'
 import { MgmtClient } from "./mgmtClient";
+import { AxiosResponseWithTimings } from "../utils/httpModels";
 
 
 export class DoClient {
@@ -29,20 +30,68 @@ export class DoClient {
         this.mgmtClient = mgmtClient;
     }
 
+    /**
+     * get current DO declaration from f5 device
+     * @returns 
+     */
+     async get(): Promise<AxiosResponseWithTimings> {
+        
+        return this.mgmtClient.makeRequest(this.metaData.endPoints.declare, {
+            validateStatus: () => true
+        });
+        // return 'do-get';
+    }
 
-    // async get(): Promise<string> {
-    //     return 'do-get';
-    // }
+    /**
+     * post do declaration to f5 device
+     * @returns 
+     */
+    async post(data: unknown): Promise<AxiosResponseWithTimings> {
 
-    // async post(): Promise<string> {
-    //     return 'do-post';
-    // }
+        return await this.mgmtClient.makeRequest(this.metaData.endPoints.declare, {
+            method: 'POST',
+            data
+        })
+            .then(async resp => {
 
-    // async inpsect(): Promise<string> {
-    //     return 'do-inpsect';
-    // }
+                const asyncUrl = `${this.metaData.endPoints.declare}/task/${resp.data.id}`;
+                return this.mgmtClient.followAsync(asyncUrl)
+                .catch( () => {
+                    return this.task(resp.data.id);
+                });
 
-    // async remove () {
-    //     // if bigiq, target/tenant are needed
-    // }
+            });
+    }
+
+    /**
+     * inspect DO
+     * @returns 
+     */
+    async inpsect(): Promise<AxiosResponseWithTimings> {
+        return this.mgmtClient.makeRequest(this.metaData.endPoints.inspect, {
+            validateStatus: () => true
+        });
+    }
+
+    /**
+     * get DO task
+     * @returns 
+     */
+    async task(id?: string): Promise<AxiosResponseWithTimings> {
+
+        /**
+         * getting the direct task by ID from DO, only returns very high level information. not the expected details like other atc services, so we have to get all task details and filter what we need
+         */
+
+        return this.mgmtClient.makeRequest(`${this.metaData.endPoints.declare}/task`, {
+            validateStatus: () => true
+        })
+        .then( resp => {
+            if (id) {
+                return resp.data = resp.data.filter( (el: { id: string; }) => el.id === id);
+            } else {
+                 return resp;
+            }
+        });
+    }
 }
