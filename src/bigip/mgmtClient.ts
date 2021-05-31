@@ -417,9 +417,9 @@ export class MgmtClient {
                 retryTimerArray.length = 0;
             }
 
-            // DO success response
-            // RUNNING -> OK
-            if (resp.data.result.status === 'OK') {
+            // DO job done responses
+            // RUNNING -> OK/ERROR/FINSHED
+            if (resp.data?.result?.status === 'OK' || resp.data?.result?.status === 'ERROR' || resp.data?.result?.status === 'FINISHED') {
                 retryTimerArray.length = 0;
             }
 

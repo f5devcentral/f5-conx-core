@@ -13,6 +13,7 @@ import { AtcInfo } from "./bigipModels";
 import { atcMetaData } from '../constants'
 import { MgmtClient } from "./mgmtClient";
 import { AxiosResponseWithTimings } from "../utils/httpModels";
+import { DoDecDevice, DoDecParent } from "./doModels";
 
 
 export class DoClient {
@@ -34,8 +35,8 @@ export class DoClient {
      * get current DO declaration from f5 device
      * @returns 
      */
-     async get(): Promise<AxiosResponseWithTimings> {
-        
+    async get(): Promise<AxiosResponseWithTimings> {
+
         return this.mgmtClient.makeRequest(this.metaData.endPoints.declare, {
             validateStatus: () => true
         });
@@ -56,9 +57,9 @@ export class DoClient {
 
                 const asyncUrl = `${this.metaData.endPoints.declare}/task/${resp.data.id}`;
                 return this.mgmtClient.followAsync(asyncUrl)
-                .catch( () => {
-                    return this.task(resp.data.id);
-                });
+                    .catch(() => {
+                        return this.task(resp.data.id);
+                    });
 
             });
     }
@@ -86,12 +87,31 @@ export class DoClient {
         return this.mgmtClient.makeRequest(`${this.metaData.endPoints.declare}/task`, {
             validateStatus: () => true
         })
-        .then( resp => {
-            if (id) {
-                return resp.data = resp.data.filter( (el: { id: string; }) => el.id === id);
-            } else {
-                 return resp;
-            }
-        });
+            .then(resp => {
+                if (id) {
+                    return resp.data = resp.data.filter((el: { id: string; }) => el.id === id);
+                } else {
+                    return resp;
+                }
+            });
+    }
+
+    /**
+     * 
+     * check DO declaration for async post parameter
+     * 
+     * @param data do declaration
+     * @returns true/false
+     */
+    isAsync(data: DoDecParent | DoDecDevice): boolean {
+
+        // inspect json dec for async param
+        if (data.class === 'DO' && data.declaration.async === true) {
+            return true;
+        } else if (data.class === 'Device' && data.async === true) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
