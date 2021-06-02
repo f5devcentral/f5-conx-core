@@ -47,9 +47,13 @@ describe('ExtHttps class tests', function () {
         extHttp = new ExtHttp();
 
         // setup event capture
-        extHttp.events.on('log-debug', msg => events.push(msg));
-        extHttp.events.on('log-info', msg => events.push(msg));
-        extHttp.events.on('log-error', msg => events.push(msg));
+        extHttp.events
+        .on('log-http-request', msg => events.push(msg))
+        .on('log-http-response', msg => events.push(msg))
+        .on('log-debug', msg => events.push(msg))
+        .on('log-info', msg => events.push(msg))
+        .on('log-warn', msg => events.push(msg))
+        .on('log-error', msg => events.push(msg));
     });
 
     afterEach(function () {

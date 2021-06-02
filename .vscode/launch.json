@@ -9,6 +9,19 @@
     ],
     "configurations": [
         {
+            "name": "Launch test rest server",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "rest-server"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        },
+        {
             "name": "Mocha All",
             "type": "node",
             "request": "launch",

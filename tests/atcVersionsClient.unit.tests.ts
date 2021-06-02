@@ -51,9 +51,12 @@ describe('atc versions unit tests', function () {
             extHttp,
         });
 
-        atcV.events.on('log-debug', msg => events.push(msg));
-        atcV.events.on('log-info', msg => events.push(msg));
-        atcV.events.on('log-error', msg => events.push(msg));
+        atcV.events
+        .on('log-http-request', msg => events.push(msg))
+        .on('log-http-response', msg => events.push(msg))
+        .on('log-debug', msg => events.push(msg))
+        .on('log-info', msg => events.push(msg))
+        .on('log-error', msg => events.push(msg));
 
         await atcV.getAtcReleasesInfo()
             .then(atcVersions => {

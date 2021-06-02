@@ -476,6 +476,9 @@ export class MgmtClient {
      */
     async download(fileName: string, localDestPath: string, downloadType: F5DownLoad): Promise<HttpResponse> {
 
+        // also look at possibly moving to this at somepoint?
+        // https://www.npmjs.com/package/multipart-download
+
         // swap out download url as needed (ternary method)
         const url =
             downloadType === 'UCS' ? `${F5DownloadPaths.ucs.uri}/${fileName}`

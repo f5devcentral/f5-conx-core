@@ -16,3 +16,11 @@ docs/
 .gitlab-ci.yml
 # local env file
 .env
+# f5 cache directory
+f5_cache/
+# any other npm pack files
+f5-conx-core-*.tgz
+# nodemon config file
+nodemon.json
+# vscode config
+.vscode/

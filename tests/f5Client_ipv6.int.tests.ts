@@ -48,9 +48,9 @@ const nockInst = nock(`https://${ipv6Host}`)
 
 let f5Client: F5Client;
 // const events = [];
-const log = Logger.getLogger();
+const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 
-log.console = false;
+logger.console = false;
 
 describe('f5Client basic tests - ipv6', async function () {
 
@@ -62,7 +62,7 @@ describe('f5Client basic tests - ipv6', async function () {
     });
  
     beforeEach( async () => {
-        // log.clearLogs();
+        // logger.clearLogs();
         
         // setup mgmt client
         f5Client = getF5Client({ ipv6: true });
@@ -73,12 +73,12 @@ describe('f5Client basic tests - ipv6', async function () {
         // f5Client.events.on('log-error', msg => events.push(msg));
 
         // setup events collection
-        f5Client.events.on('failedAuth', msg => log.error(msg));
-        f5Client.events.on('log-debug', msg => log.debug(msg));
+        f5Client.events.on('failedAuth', msg => logger.error(msg));
+        f5Client.events.on('log-debug', msg => logger.debug(msg));
         f5Client.events.on('log-info', async msg => {
-            log.info(msg)
+            logger.info(msg)
         });
-        f5Client.events.on('log-error', msg => log.error(msg));
+        f5Client.events.on('log-error', msg => logger.error(msg));
 
         nockInst
         .post('/mgmt/shared/authn/login')
@@ -111,11 +111,11 @@ describe('f5Client basic tests - ipv6', async function () {
     });
 
     // it('clear login', async function () {
-    //     // log.clearLogs();
+    //     // logger.clearLogs();
 
     //     const num = await f5Client.clearLogin()
 
-    //     const x = log.journal[log.journal.length - 1]
+    //     const x = logger.journal[logger.journal.length - 1]
     //     assert.ok(JSON.stringify(x).includes('clearing token/timer'), 'did not get any test events');
 
     //     nock.cleanAll();    // clean all the nocks since we didn't use any

@@ -39,7 +39,7 @@ const tmpDir = path.join(__dirname, 'tmp')
 const tmp = path.join(tmpDir, rpm)
 
 const nockInst = nock(`https://${defaultHost}`)
-const log = Logger.getLogger();
+const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 
 describe('mgmtClient unit tests - successes', function () {
 
@@ -57,13 +57,24 @@ describe('mgmtClient unit tests - successes', function () {
         // mgmtClient = new MgmtClient('10.200.244.101', 'admin', 'benrocks')
 
         // setup events collection
-        mgmtClient.events.on('failedAuth', msg => log.error(msg));
-        mgmtClient.events.on('log-debug', msg => log.debug(msg));
-        mgmtClient.events.on('log-info', msg => log.info(msg));
-        mgmtClient.events.on('log-error', msg => log.error(msg));
+        // mgmtClient.events.on('failedAuth', msg => logger.error(msg));
+        // mgmtClient.events.on('log-debug', msg => logger.debug(msg));
+        // mgmtClient.events.on('log-info', msg => logger.info(msg));
+        // mgmtClient.events.on('log-error', msg => logger.error(msg));
+
+        mgmtClient.events
+        .on('log-http-request', msg => logger.httpRequest(msg))
+        .on('log-http-response', msg => logger.httpResponse(msg))
+        .on('log-debug', msg => logger.debug(msg))
+        .on('log-info', msg => logger.info(msg))
+        .on('log-warn', msg => logger.warn(msg))
+        .on('log-error', msg => logger.error(msg))
+        .on('failedAuth', msg => {
+            logger.error('Failed Authentication Event!');
+        });
 
         // enable/disable console logging
-        log.console = false;
+        logger.console = false;
 
     });
 
@@ -87,7 +98,7 @@ describe('mgmtClient unit tests - successes', function () {
         // mgmtClient = getMgmtClient();
 
         // clear logs
-        log.clearLogs
+        logger.clearLogs
 
         // setup auth nock
         nockInst
@@ -132,7 +143,7 @@ describe('mgmtClient unit tests - successes', function () {
 
         await mgmtClient.clearToken()
 
-        assert.ok(JSON.stringify(log.journal).includes('clearing token/timer'), 'did not get any test events');
+        assert.ok(JSON.stringify(logger.journal).includes('clearing token/timer'), 'did not get any test events');
 
         // clean all the nocks since we didn't use any
         nock.cleanAll();

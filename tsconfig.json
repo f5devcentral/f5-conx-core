@@ -10,7 +10,7 @@
         "sourceMap": true,
         "declaration": true,
         // "strict": true,
-        "rootDir": "./src/",
+        "rootDir": "src",
         "outDir": "dist",
     },
     "compileOnSave": true,

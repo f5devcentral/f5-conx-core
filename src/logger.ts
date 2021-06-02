@@ -269,8 +269,8 @@ export default class Logger {
         const log = `[${dateTime}] [${level}]: ${message}`;
 
         // pass log to external output function option
-        this.output(log);
-
+        this.output(`${this.journal.length + 1} ${log}`);
+        // /\/\/\ added journal lenght to output so I can see if singleton is actually being used in the differen implementations
 
         if (this.buffer) {
             // todo: put some sort of limit on the buffer size (max 500?)

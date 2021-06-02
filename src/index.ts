@@ -13,6 +13,8 @@ export * from './externalHttps';
 export * from './iHealthClient';
 export * from './constants';
 export * from './bigip/bigipModels';
+export * from './bigip/as3Models';
+export * from './bigip/as3Tools';
 export * from './bigip/doModels';
 export * from './utils/misc';
 export * from './utils/testingUtils';
@@ -25,6 +27,7 @@ export * from './bigip/atcVersionsClient';
 // re-export all the individual modules
 export * from './bigip/mgmtClient';
 export * from './bigip/as3Client';
+export * from './bigip/doClient';
 export * from './bigip/ucsClient';
 
 

@@ -72,6 +72,18 @@ export function isArray(a: unknown): boolean {
     return (!!a) && (a.constructor === Array);
 }
 
+// /**
+//  * checks if input is object
+//  * 
+//  * ***an array is an object!!! ***
+//  * - use Array.isArray(x) => boolean
+//  * @param x 
+//  * @returns boolean
+//  */
+//  export function isObject(x: unknown): boolean {
+// 	return (x !== null && typeof x === 'object' ? true : false);
+// }
+
 
 /**
  * Verify file against provided hash
