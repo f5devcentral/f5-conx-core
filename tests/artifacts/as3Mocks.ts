@@ -1,7 +1,27 @@
+/**
+ * Copyright 2021 F5 Networks, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+ 'use strict';
 
+import { AdcDeclaration, As3Declaration } from "../../src/bigip/as3Models"
 
-export const as3ExampleDec = {
+/**
+ * full AS3 parent class as3 declaration
+ */
+export const as3ExampleDec: As3Declaration = {
     "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/latest/as3-schema.json",
     "class": "AS3",
     "action": "deploy",
@@ -43,6 +63,48 @@ export const as3ExampleDec = {
         }
     }
 }
+
+/**
+ * declaration only part of the as3
+ * 
+ * Does not include the parent as3 class
+ */
+export const AdcExampleDec: AdcDeclaration = {
+    "class": "ADC",
+    "schemaVersion": "3.0.0",
+    "id": "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d",
+    "label": "Sample 1",
+    "remark": "Simple HTTP application with RR pool",
+    "Sample_01": {
+      "class": "Tenant",
+      "A1": {
+        "class": "Application",
+        "template": "http",
+        "serviceMain": {
+          "class": "Service_HTTP",
+          "virtualAddresses": [
+            "10.40.1.10"
+          ],
+          "pool": "web_pool"
+        },
+        "web_pool": {
+          "class": "Pool",
+          "monitors": [
+            "http"
+          ],
+          "members": [
+            {
+              "servicePort": 80,
+              "serverAddresses": [
+                "192.40.1.10",
+                "192.40.1.11"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
 
 /**
  * example as3 declare response with multiple tenants

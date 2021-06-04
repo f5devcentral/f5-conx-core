@@ -16,6 +16,7 @@ import { isObject } from "../utils/misc";
 import { As3Dec, AtcInfo } from "./bigipModels";
 import { MgmtClient } from "./mgmtClient";
 import { atcMetaData } from '../constants';
+import { AdcDeclaration, As3Declaration } from "./as3Models";
 
 
 /**
@@ -113,9 +114,11 @@ export class As3Client {
      * ** async by default **
      * @param data delaration to post
      */
-    async postDec(data: unknown): Promise<HttpResponse> {
+    async postDec(data: As3Declaration | AdcDeclaration): Promise<HttpResponse> {
 
+        // append async param to url
         const uri = [atcMetaData.as3.endPoints.declare, '?async=true']
+
         return await this.mgmtClient.makeRequest(uri.join(''), {
             method: 'POST',
             data

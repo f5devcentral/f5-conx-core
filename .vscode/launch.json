@@ -133,6 +133,22 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "atc agent inject unit tests",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "-r",
+                "ts-node/register",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/tests/atcDecAgent.unit.tests.ts",
+            ],
+            "internalConsoleOptions": "neverOpen",
+            "protocol": "inspector",
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "runtimeExecutable": "node",
             "name": "Mocha F5Device UCS integration tests",
             "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",

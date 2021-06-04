@@ -1,5 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/**
+ * Copyright 2021 F5 Networks, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+ 'use strict';
 
 /**
  * target/tenant/app index type
@@ -91,29 +107,35 @@ export interface As3AppMapTenants {
 
 
 
-export interface As3App {
+export type As3App =  {
     class: 'Application',
     [key: string]: Record<string, unknown> | string,
 }
 
-export interface As3Declaration {
+export type As3Declaration = {
     class: 'AS3',
     $schema?: string,
     persist?: boolean;
     action?: string;
-    declaration: AdcDeclaration | boolean | string
+    declaration: AdcDeclaration
 }
 
 export interface As3Controls {
-    archiveTimestamp: string;
+    class?: 'Controls';
+    userAgent?: string;
+    archiveId?: number;
+    archiveTimestamp?: string;
+    logLevel?: string;
+    trace?: string;
+    traceResponse?: string;
 }
 
 
-export interface AdcDeclaration {
-    id: string;
+export type AdcDeclaration = {
+    id?: string;
     class: 'ADC';
     target?: Target;
-    updateMode: string;
+    updateMode?: string;
     controls?: As3Controls;
     schemaVersion: string;
     [key: string]: As3Tenant | As3Controls | Target | string | boolean | undefined
