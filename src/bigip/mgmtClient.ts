@@ -28,6 +28,7 @@ import { Token, F5DownLoad, F5Upload, F5InfoApi } from './bigipModels';
 import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "../utils/httpModels";
 import { F5DownloadPaths, F5UploadPaths } from '../constants';
 import { getRandomUUID } from '../utils/misc';
+import { injectAtcAgent } from './atcAgent';
 
 
 
@@ -127,6 +128,20 @@ export class MgmtClient {
     rejectUnauthorized: true;
 
     /**
+     * TEEM environment variable definition
+     * 
+     * ex. process.env.F5_VSCODE_TEEM=true
+     */
+    teemEnv: string | undefined;
+
+    /**
+     * TEEM agent string software/version
+     * 
+     * ex. vscode-f5/3.2.0
+     */
+    teemAgent: string | undefined;
+
+    /**
      * @param options function options
      */
     constructor(
@@ -137,7 +152,9 @@ export class MgmtClient {
             port?: number,
             provider?: string,
         },
-        eventEmitter?: EventEmitter
+        eventEmitter?: EventEmitter,
+        teemEnv?: string,
+        teemAgent?: string
     ) {
         this.host = host;
         this._user = user;
@@ -145,6 +162,8 @@ export class MgmtClient {
         this.port = options?.port || 443;
         this._provider = options?.provider || 'tmos';
         this.events = eventEmitter ? eventEmitter : new EventEmitter;
+        this.teemEnv = teemEnv;
+        this.teemAgent = teemAgent;
         this.axios = this.createAxiosInstance();
     }
 
@@ -199,6 +218,8 @@ export class MgmtClient {
         const clearToken = function () {
             this.clearToken()
         }
+        const teemEnv = this.teemEnv;
+        const teemAgent = this.teemAgent;
 
         // ---- https://github.com/axios/axios#interceptors
         // Add a request interceptor
@@ -208,6 +229,11 @@ export class MgmtClient {
             config.timeout = Number(process.env.F5_CONX_CORE_TCP_TIMEOUT);
 
             config.uuid = config?.uuid ? config.uuid : getRandomUUID(4, { simple: true })
+
+            // if teem enabled, inject agent
+            if(process.env[teemEnv] == 'true') {
+                injectAtcAgent(config, teemAgent)
+            }
 
             // events.emit('log-info', `HTTPS-REQU [${config.uuid}]: ${config.method} -> ${config.baseURL}${config.url}`)
             events.emit('log-http-request', config);

@@ -130,14 +130,18 @@ export class F5Client {
             provider?: string,
         },
         eventEmmiter?: EventEmitter,
-        extHttp?: ExtHttp
+        extHttp?: ExtHttp,
+        teemEnv?: string,
+        teemAgent?: string
     ) {
         this.mgmtClient = new MgmtClient(
             host,
             user,
             password,
             hostOptions,
-            eventEmmiter
+            eventEmmiter,
+            teemEnv,
+            teemAgent
         )
 
         this.cacheDir = process.env.F5_CONX_CORE_CACHE || path.join(process.cwd(), TMP_DIR);

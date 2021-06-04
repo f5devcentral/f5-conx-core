@@ -24,13 +24,14 @@ export async function injectAtcAgent(req: uuidAxiosRequestConfig, userAgent: str
     const atcDeclareEndPoints = [
         atcMetaData.fast.endPoints.declare,
         atcMetaData.as3.endPoints.declare,
+        `${atcMetaData.as3.endPoints.declare}?async=true`,
         atcMetaData.do.endPoints.declare,
         atcMetaData.ts.endPoints.declare,
         atcMetaData.cf.endPoints.declare
     ];
 
     // if posting atc declaration
-    if (req.method === 'POST' && atcDeclareEndPoints.includes(req.url)) {
+    if ((req.method === 'POST' || req.method === 'post') && atcDeclareEndPoints.includes(req.url)) {
 
         const controls = {
             class: "Controls",

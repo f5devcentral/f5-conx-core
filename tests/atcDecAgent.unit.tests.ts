@@ -28,6 +28,7 @@ import { uuidAxiosRequestConfig } from '../src/utils/httpModels';
 // const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 
 const userAgent = 'test-agent/1.1.1';
+const teemEnv = 'F5_CONX_TEEM'
 
 describe('Inject ATC Declaration Agent Tests', function () {
 
@@ -74,7 +75,7 @@ describe('Inject ATC Declaration Agent Tests', function () {
     it('findAtcDecType AdcDeclaration - good', async function () {
 
         const axConfig: uuidAxiosRequestConfig = {
-            method: 'POST',
+            method: 'post',
             url: atcMetaData.as3.endPoints.declare,
             data: AdcExampleDec
         }
