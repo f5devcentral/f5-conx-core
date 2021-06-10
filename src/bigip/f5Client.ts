@@ -11,7 +11,7 @@
 
 import { EventEmitter } from 'events';
 
-import { AtcInfo, F5InfoApi, F5DownLoad, F5Upload } from "./bigipModels";
+import { AtcInfo, F5InfoApi, F5DownLoad, F5Upload, DiscoverInfo } from "./bigipModels";
 import { HttpResponse, F5HttpRequest, AxiosResponseWithTimings } from "../utils/httpModels";
 // import { MetadataClient } from "./metadata";
 
@@ -196,20 +196,9 @@ export class F5Client {
      *  - installed atc services and versions
      *  
      */
-    async discover(): Promise<void> {
+    async discover(): Promise<DiscoverInfo> {
 
-        // // refresh atc meta data
-        // this.refreshMetaData()
-        // .then( resp => {
-        //     this.events.emit('log-info', 'Refreshing atc metadata from cloud')
-        //     this.atcMetaData = resp.data;
-        // })
-        // .catch( err => {
-        //     this.events.emit('log-info', {
-        //         msg: 'was NOT able to access internet to get latest atc metadata',
-        //         err
-        //     })
-        // })
+        const returnInfo: DiscoverInfo = {};
 
         // get device info
         await this.mgmtClient.makeRequest('/mgmt/shared/identified-devices/config/device-info')
@@ -218,13 +207,20 @@ export class F5Client {
                 // assign details to this and mgmtClient class
                 this.host = resp.data
                 this.mgmtClient.hostInfo = resp.data
-            })
 
+                returnInfo.hostname = this.host.hostname;
+                returnInfo.version = this.host.version;
+                returnInfo.product = this.host.product;
+
+
+            })
 
         // check FAST installed by getting verion info
         await this.mgmtClient.makeRequest(this.atcMetaData.fast.endPoints.info)
             .then(resp => {
                 this.fast = new FastClient(resp.data as AtcInfo, this.atcMetaData.fast, this.mgmtClient);
+                returnInfo.atc = {}
+                returnInfo.atc.fast = this.fast.version.version
             })
             .catch(() => {
                 // do nothing... but catch the error from bubbling up and causing other issues
@@ -237,6 +233,10 @@ export class F5Client {
                 // if http 2xx, create as3 client
                 // notice the recast of resp.data type of "unknown" to "AtcInfo"
                 this.as3 = new As3Client(resp.data as AtcInfo, this.atcMetaData.as3, this.mgmtClient);
+                if (!returnInfo.atc) {
+                    returnInfo.atc = {}
+                }
+                returnInfo.atc.as3 = this.as3.version.version;
             })
             .catch(() => {
                 // do nothing... but catch the error from bubbling up and causing other issues
@@ -248,6 +248,10 @@ export class F5Client {
         await this.mgmtClient.makeRequest(this.atcMetaData.do.endPoints.info)
             .then(resp => {
                 this.do = new DoClient(resp.data[0] as AtcInfo, this.atcMetaData.do, this.mgmtClient);
+                if (!returnInfo.atc) {
+                    returnInfo.atc = {}
+                }
+                returnInfo.atc.do = this.do.version.version;
             })
             .catch(() => {
                 // do nothing... but catch the error from bubbling up and causing other issues
@@ -259,6 +263,10 @@ export class F5Client {
         await this.mgmtClient.makeRequest(this.atcMetaData.ts.endPoints.info)
             .then(resp => {
                 this.ts = new TsClient(resp.data as AtcInfo, this.atcMetaData.ts, this.mgmtClient);
+                if (!returnInfo.atc) {
+                    returnInfo.atc = {}
+                }
+                returnInfo.atc.ts = this.ts.version.version;
             })
             .catch(() => {
                 // do nothing... but catch the error from bubbling up and causing other issues
@@ -270,6 +278,10 @@ export class F5Client {
         await this.mgmtClient.makeRequest(this.atcMetaData.cf.endPoints.info)
             .then(resp => {
                 this.cf = new CfClient(resp.data as AtcInfo, this.atcMetaData.cf, this.mgmtClient);
+                if (!returnInfo.atc) {
+                    returnInfo.atc = {}
+                }
+                returnInfo.atc.cf = this.cf.version.version;
             })
             .catch(() => {
                 // do nothing... but catch the error from bubbling up and causing other issues
@@ -277,7 +289,7 @@ export class F5Client {
             })
 
 
-        return;
+        return returnInfo;
         // return object of discovered services
     }
 
@@ -322,21 +334,4 @@ export class F5Client {
         return this.mgmtClient.download(fileName, localDestPath, downloadType)
     }
 
-
-
-
-
-
-
-
-
-    // /**
-    //  * refresh/get latest ATC metadata from cloud
-    //  * 
-    //  * https://cdn.f5.com/product/cloudsolutions/f5-extension-metadata/latest/metadata.json
-    //  * todo: refresh this file with every packages release via git actions or package.json script
-    //  */
-    // async refreshMetaData(): Promise<AxiosResponseWithTimings> {
-    //     return await this.extHttp.makeRequest({ url: atcMetaDataCloudUrl })
-    // }
 }

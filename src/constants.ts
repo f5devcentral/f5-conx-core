@@ -60,7 +60,9 @@ export const atcMetaData = {
             info: '/mgmt/shared/appsvcs/info'
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-appsvcs-extension/releases',
-        repo: 'https://github.com/F5Networks/f5-appsvcs-extension'
+        repo: 'https://github.com/F5Networks/f5-appsvcs-extension',
+        schema: 'https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/latest/as3-schema.json',
+        examples: 'https://github.com/F5Networks/f5-appsvcs-extension/issues/280'
     },
     do: {
         endPoints: {
@@ -70,7 +72,9 @@ export const atcMetaData = {
             inspect: '/mgmt/shared/declarative-onboarding/inspect'
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-declarative-onboarding/releases',
-        repo: 'https://github.com/F5Networks/f5-declarative-onboarding'
+        repo: 'https://github.com/F5Networks/f5-declarative-onboarding',
+        schema: 'https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/base.schema.json',
+        examples: 'https://github.com/F5Networks/f5-declarative-onboarding/tree/master/examples'
     },
     ts: {
         endPoints: {
@@ -78,7 +82,9 @@ export const atcMetaData = {
             info: '/mgmt/shared/telemetry/info',
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-telemetry-streaming/releases',
-        repo: 'https://github.com/F5Networks/f5-telemetry-streaming/'
+        repo: 'https://github.com/F5Networks/f5-telemetry-streaming/',
+        schema: 'https://raw.githubusercontent.com/F5Networks/f5-telemetry-streaming/master/src/schema/latest/base_schema.json',
+        examples: 'https://github.com/F5Networks/f5-telemetry-streaming/tree/master/examples/declarations'
     },
     cf: {
         endPoints: {
@@ -89,7 +95,9 @@ export const atcMetaData = {
             reset: '/mgmt/shared/cloud-failover/reset'
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-cloud-failover-extension/releases',
-        repo: 'https://github.com/F5Networks/f5-cloud-failover-extension/'
+        repo: 'https://github.com/F5Networks/f5-cloud-failover-extension/',
+        schema: 'https://raw.githubusercontent.com/F5Networks/f5-cloud-failover-extension/master/src/nodejs/schema/base_schema.json',
+        examples: 'https://github.com/F5Networks/f5-cloud-failover-extension/tree/master/examples/declarations'
     }
 }
 

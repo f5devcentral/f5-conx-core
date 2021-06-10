@@ -21,6 +21,11 @@
 
 /**
  * parent class DO declaration (typically for deploying through bigiq)
+ * 
+ * https://clouddocs.f5.com/products/big-iq/mgmt-api/v7.1.0/ApiReferences/bigiq_public_api_ref/r_do_onboarding.html#post-mgmt-shared-declarative-onboarding
+ * 
+ * base "device" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/base.schema.json
+ * parent "DO" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest.remote.schema.json
  */
  export type DoDecParent = {
     class: 'DO',
@@ -33,11 +38,15 @@
     },
     bigIqSettings: {
         failImportOnConflict: boolean,
-        conflictPolicy: string,
-        deviceConflictPolicy: string,
+        conflictPolicy: DoBigIqConflictOptions,
+        deviceConflictPolicy: DoBigIqConflictOptions,
+        verionedConflictPolicy: DoBigIqConflictOptions,
         versionedConflictPolicy: string
     }
 };
+
+
+type DoBigIqConflictOptions = 'NONE' | 'USE_BIGIP' | 'USE_BIGIQ' | 'KEEP_VERSION';
 
 /**
  * 

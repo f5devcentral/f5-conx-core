@@ -1,4 +1,26 @@
 
+
+
+
+/**
+ * f5Client.discover() output
+ * 
+ * Provides details about the F5 connected to including installed ATC services
+ */
+export type DiscoverInfo = {
+    hostname?: string;
+    version?: string;
+    product?: string;
+    atc?: {
+        as3?: string;
+        do?: string;
+        fast?: string;
+        ts?: string;
+        cf?: string;
+    }
+}
+
+
 /**
  * F5 TMOS token framework 
  */
