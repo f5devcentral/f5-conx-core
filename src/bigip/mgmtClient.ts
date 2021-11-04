@@ -123,9 +123,11 @@ export class MgmtClient {
     protected _tokenIntervalId: NodeJS.Timeout | undefined;
 
     /**
-     * reject self signed certs (default=true)
+     * reject self signed certs
+     * 
+     * looks for process.env.F5_CONX_CORE_REJECT_UNAUTORIZED = false/true
      */
-    rejectUnauthorized: true;
+    rejectUnauthorized = true;
 
     /**
      * TEEM environment variable definition
@@ -173,6 +175,11 @@ export class MgmtClient {
         this.events = eventEmitter ? eventEmitter : new EventEmitter;
         this.teemEnv = teemEnv;
         this.teemAgent = teemAgent;
+        
+        if(process.env.F5_CONX_CORE_REJECT_UNAUTORIZED && (process.env.F5_CONX_CORE_REJECT_UNAUTORIZED === 'false')) {
+            this.rejectUnauthorized = false;
+        }
+        
         this.axios = this.createAxiosInstance();
     }
 
@@ -209,14 +216,18 @@ export class MgmtClient {
             transport
         }
 
-        // if rejectUnauthorized => false, allow self signed certs
-        if (!this.rejectUnauthorized) {
+        // disable self signed certs
+        if (this.rejectUnauthorized === false) {
             baseInstanceParams.httpsAgent = new https.Agent({
                 rejectUnauthorized: false,
             })
 
-            // disable node rejection of unsigned certs
+            // disable node rejection of self-signed certs
             process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        } else {
+            baseInstanceParams.httpsAgent = new https.Agent({
+                rejectUnauthorized: true,
+            })
         }
 
         // create axsios instance

@@ -15,9 +15,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - <https://github.com/f5devcentral/f5-conx-core/issues/1>
 - fixed atc versions update test
   - <https://github.com/f5devcentral/f5-conx-core/issues/13>
-
-***PENDING***
-
 - option to enable/disable cert verification
   - <https://github.com/f5devcentral/f5-conx-core/issues/2>
 
