@@ -34,7 +34,7 @@
         "rest-server": "nodemon ./tests/testServer/restServer.ts --inspect",
         "test": "nyc mocha -r ts-node/register \"tests/all.tests.ts\"",
         "build-code-docs": "typedoc --out code_docs src",
-        "build-package": "npm pack"
+        "build-package": "npm run compaile && npm pack"
     },
     "dependencies": {
         "@szmarczak/http-timer": "^4.0.5",
