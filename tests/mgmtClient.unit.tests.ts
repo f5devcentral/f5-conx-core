@@ -49,6 +49,9 @@ const tmp = path.join(tmpDir, rpm)
 const nockInst = nock(`https://${defaultHost}`)
 const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 
+// set env to inject default cookies
+process.env.F5_CONX_CORE_COOKIES = "peanut=/butter/salt; cookie=monster";
+
 describe('mgmtClient unit tests - successes', function () {
 
     // runs once before the first test in this block
@@ -58,17 +61,11 @@ describe('mgmtClient unit tests - successes', function () {
             fs.mkdirSync(tmpDir);
         }
 
+        // log test file name - makes it easer for troubleshooting
+        console.log('Test file:', this.test.file)
+
         // setup mgmt client
         mgmtClient = getMgmtClient();
-
-        // mgmtClient = new MgmtClient('192.168.200.131', 'admin', 'benrocks')
-        // mgmtClient = new MgmtClient('10.200.244.101', 'admin', 'benrocks')
-
-        // setup events collection
-        // mgmtClient.events.on('failedAuth', msg => logger.error(msg));
-        // mgmtClient.events.on('log-debug', msg => logger.debug(msg));
-        // mgmtClient.events.on('log-info', msg => logger.info(msg));
-        // mgmtClient.events.on('log-error', msg => logger.error(msg));
 
         mgmtClient.events
         .on('log-http-request', msg => logger.httpRequest(msg))
@@ -261,9 +258,12 @@ describe('mgmtClient unit tests - successes', function () {
                 assert.ok(resp.request.method)
                 assert.ok(resp.request.headers)
                 assert.ok(resp.request.protocol)
-                // assert.ok(resp.request.timings)
+                assert.ok(resp.request.timings)
                 assert.ok(resp.request.uuid)
                 assert.ok(resp.request.url)
+
+                // make sure test cookie is inserted
+                assert.ok(resp.request.headers['cookie'] = process.env.F5_CONX_CORE_COOKIES)
             })
             .catch(err => {
                 debugger;

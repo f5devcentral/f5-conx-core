@@ -200,7 +200,11 @@ describe('as3Client integration tests', function () {
                 ]
             })
 
+        // the following comments allow bad ts comments and disables ts compilation errors for the structure of the declaration we are posting
+        //  this is intentenional since this is testing the input of bad as3 declarations
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         const resp = f5Client.as3.postDec({ 
             declaration: {
                 class: 'Tenant',

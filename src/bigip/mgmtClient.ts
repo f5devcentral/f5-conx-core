@@ -142,6 +142,15 @@ export class MgmtClient {
     teemAgent: string | undefined;
 
     /**
+     * ENV name for cookies to be added to outbound http requests, used for connecting to lab environments like UDF
+     * 
+     * ex. process.env.F5_CONX_CORE_COOKIES = "udf.sid=s:9Wkdfer8CFsoo1VFnOTSKAenbpHJwDMt.lsI+Du9vw2BOBS+afDlSzz5CkC2fAFuL1w31QeEz94w; Domain=.udf.f5.com; Path=/"
+     * 
+     * pretty sure just the udf.sig cookie is needed for udf, but the example shows how to do multiple cookies if needed
+     */
+    cookies = 'F5_CONX_CORE_COOKIES';
+
+    /**
      * @param options function options
      */
     constructor(
@@ -213,11 +222,17 @@ export class MgmtClient {
         // create axsios instance
         const axInstance = axios.create(baseInstanceParams);
 
+        // add default cookies
+        if(process.env[this.cookies]){
+            axInstance.defaults.headers.common.cookie = process.env[this.cookies]
+        }
+
         // re-assign parent this objects needed within the parent instance objects...
         const events = this.events;
         const clearToken = function () {
             this.clearToken()
         }
+        
         const teemEnv = this.teemEnv;
         const teemAgent = this.teemAgent;
 
