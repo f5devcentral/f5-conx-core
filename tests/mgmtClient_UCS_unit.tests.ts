@@ -34,7 +34,7 @@ const tmp = path.join(tmpDir, rpm)
 
 const nockInst = nock(`https://${defaultHost}`)
 
-const log = Logger.getLogger();
+const log = new Logger('F5_CONX_CORE_LOG_LEVEL');
 
 describe('mgmtClient unit tests - successes', function () {
 

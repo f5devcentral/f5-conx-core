@@ -222,14 +222,14 @@ export class MgmtClient {
                 rejectUnauthorized: false,
             })
 
-            // // disable node rejection of self-signed certs
-            // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+            // disable node rejection of self-signed certs
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         } else {
             baseInstanceParams.httpsAgent = new https.Agent({
                 rejectUnauthorized: true,
             })
-            // // disable node rejection of self-signed certs
-            // delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+            // disable node rejection of self-signed certs
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
         }
 
         // create axsios instance
