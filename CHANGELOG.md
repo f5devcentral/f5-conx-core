@@ -9,6 +9,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [0.11.0] - (11-14-2021)
+
+- added cookie insert to BIGIP mgmt client.  This is for injecting auth cookie for UDF
+  - <https://github.com/f5devcentral/f5-conx-core/issues/1>
+- fixed atc versions update test
+  - <https://github.com/f5devcentral/f5-conx-core/issues/13>
+- option to enable/disable cert verification
+  - <https://github.com/f5devcentral/f5-conx-core/issues/2>
+
+---
+
 ## [0.10.0] - (06-10-2021)
 
 - added journal length to logging output

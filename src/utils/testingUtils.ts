@@ -22,6 +22,9 @@ export const defaultPassword = '@utomateTheW0rld!';
 
 export const ipv6Host = '[2607:f0d0:1002:51::5]'
 
+// turn off cert verification
+process.env.F5_CONX_CORE_REJECT_UNAUTORIZED = 'false'
+
 
 export function getMgmtClient(): MgmtClient {
 

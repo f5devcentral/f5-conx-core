@@ -1,7 +1,7 @@
 {
     "name": "f5-conx-core",
     "author": "F5 Networks",
-    "version": "0.10.0",
+    "version": "0.11.0",
     "description": "F5 SDK for JavaScript with Typescript type definitions",
     "license": "SEE LICENSE IN LICENSE.txt",
     "main": "dist/index.js",
@@ -34,10 +34,10 @@
         "rest-server": "nodemon ./tests/testServer/restServer.ts --inspect",
         "test": "nyc mocha -r ts-node/register \"tests/all.tests.ts\"",
         "build-code-docs": "typedoc --out code_docs src",
-        "build-package": "npm pack"
+        "build-package": "npm run compile && npm pack"
     },
     "dependencies": {
-        "@szmarczak/http-timer": "^4.0.5",
+        "@szmarczak/http-timer": "^4.0.6",
         "axios": "^0.21.1"
     },
     "devDependencies": {
@@ -56,7 +56,7 @@
         "sinon": "^10.0.0",
         "ts-node": "^9.0.0",
         "typedoc": "^0.20.34",
-        "typescript": "^4.2.3",
+        "typescript": "^4.2.4",
         "vscode-test-adapter-remoting-util": "^0.12.0"
     },
     "nyc": {

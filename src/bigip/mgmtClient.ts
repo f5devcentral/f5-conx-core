@@ -123,9 +123,11 @@ export class MgmtClient {
     protected _tokenIntervalId: NodeJS.Timeout | undefined;
 
     /**
-     * reject self signed certs (default=true)
+     * reject self signed certs
+     * 
+     * looks for process.env.F5_CONX_CORE_REJECT_UNAUTORIZED = false/true
      */
-    rejectUnauthorized: true;
+    rejectUnauthorized = true;
 
     /**
      * TEEM environment variable definition
@@ -140,6 +142,15 @@ export class MgmtClient {
      * ex. vscode-f5/3.2.0
      */
     teemAgent: string | undefined;
+
+    /**
+     * ENV name for cookies to be added to outbound http requests, used for connecting to lab environments like UDF
+     * 
+     * ex. process.env.F5_CONX_CORE_COOKIES = "udf.sid=s:9Wkdfer8CFsoo1VFnOTSKAenbpHJwDMt.lsI+Du9vw2BOBS+afDlSzz5CkC2fAFuL1w31QeEz94w; Domain=.udf.f5.com; Path=/"
+     * 
+     * pretty sure just the udf.sig cookie is needed for udf, but the example shows how to do multiple cookies if needed
+     */
+    cookies = 'F5_CONX_CORE_COOKIES';
 
     /**
      * @param options function options
@@ -164,6 +175,11 @@ export class MgmtClient {
         this.events = eventEmitter ? eventEmitter : new EventEmitter;
         this.teemEnv = teemEnv;
         this.teemAgent = teemAgent;
+        
+        if(process.env.F5_CONX_CORE_REJECT_UNAUTORIZED && (process.env.F5_CONX_CORE_REJECT_UNAUTORIZED === 'false')) {
+            this.rejectUnauthorized = false;
+        }
+        
         this.axios = this.createAxiosInstance();
     }
 
@@ -200,24 +216,36 @@ export class MgmtClient {
             transport
         }
 
-        // if rejectUnauthorized => false, allow self signed certs
-        if (!this.rejectUnauthorized) {
+        // disable self signed certs
+        if (this.rejectUnauthorized === false) {
             baseInstanceParams.httpsAgent = new https.Agent({
                 rejectUnauthorized: false,
             })
 
-            // disable node rejection of unsigned certs
+            // disable node rejection of self-signed certs
             process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        } else {
+            baseInstanceParams.httpsAgent = new https.Agent({
+                rejectUnauthorized: true,
+            })
+            // disable node rejection of self-signed certs
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
         }
 
         // create axsios instance
         const axInstance = axios.create(baseInstanceParams);
+
+        // add default cookies
+        if(process.env[this.cookies]){
+            axInstance.defaults.headers.common.cookie = process.env[this.cookies]
+        }
 
         // re-assign parent this objects needed within the parent instance objects...
         const events = this.events;
         const clearToken = function () {
             this.clearToken()
         }
+        
         const teemEnv = this.teemEnv;
         const teemAgent = this.teemAgent;
 
