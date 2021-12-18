@@ -11,6 +11,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [0.11.0] - (11-14-2021)
 
+- updated as3 class extension to parse/hold as3 declarations for easy access/listing (PENDING - ADD TEST)
+- added file/folder input support so it will support a file or path to load and declare (PENDING)
+- configured atc schema inject/remove function from vscode-f5 (PENDING)
+
+---
+
+## [0.11.0] - (11-14-2021)
+
 - added cookie insert to BIGIP mgmt client.  This is for injecting auth cookie for UDF
   - <https://github.com/f5devcentral/f5-conx-core/issues/1>
 - fixed atc versions update test

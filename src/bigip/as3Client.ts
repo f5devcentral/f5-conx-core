@@ -36,7 +36,7 @@ export class As3Client {
     /**
      * declarations of targets (typically from bigiq)
      */
-    public readonly targets: {
+    targets!: {
         label: string,
         declaration: unknown,
         target: string,
@@ -47,7 +47,7 @@ export class As3Client {
     /**
      * list of tenants/declarations
      */
-    public readonly tenants: {
+    tenants!: {
         class: string,
         schemaVersion: string,
         updateMode: string,
@@ -106,6 +106,11 @@ export class As3Client {
                 : str;
 
         return await this.mgmtClient.makeRequest(`${atcMetaData.as3.endPoints.declare}${str}`)
+        .then( async resp => {
+            // parse and store the decs in the local class for easy access
+            this.tenants = await this.parseDecs(resp.data);
+            return resp
+        })
     }
 
 

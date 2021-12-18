@@ -23,6 +23,20 @@ export function wait<T>(ms: number, value?: T): Promise<T> {
     return new Promise<T>((resolve) => setTimeout(resolve, ms, value));
 }
 
+/**
+ * validates json blob
+ * @param json
+ * @returns parsed json object
+ */
+ export async function isValidJson(json: string): Promise<unknown> {
+    try {
+        return JSON.parse(json);
+        // return true;
+    } catch (e) {
+        throw e;
+    }
+}
+
 
 /**
  * builds a short randon uuid - just for some randomness during testing

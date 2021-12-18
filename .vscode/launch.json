@@ -53,7 +53,7 @@
             "protocol": "inspector",
         },
         {
-            "name": "newMgmtClient unit tests",
+            "name": "Debug current test",
             "type": "node",
             "request": "launch",
             "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
@@ -62,7 +62,7 @@
                 "ts-node/register",
                 "--no-timeout",
                 "--colors",
-                "${workspaceFolder}/tests/newMgmtClient.unit.tests.ts",
+                "${file}",
             ],
             "internalConsoleOptions": "neverOpen",
             "protocol": "inspector",
