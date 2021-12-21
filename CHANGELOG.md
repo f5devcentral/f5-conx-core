@@ -9,11 +9,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
-## [0.11.0] - (11-14-2021)
+## [0.12.0] - (12-21-2021)
 
-- updated as3 class extension to parse/hold as3 declarations for easy access/listing (PENDING - ADD TEST)
+- updated as3 class extension to parse/hold as3 declarations for easy access/listing
+- configured atc schema inject/remove function from vscode-f5
 - added file/folder input support so it will support a file or path to load and declare (PENDING)
-- configured atc schema inject/remove function from vscode-f5 (PENDING)
+- cf class support
+  - full info/inspect/declare/trigger/reset endpoint support
 
 ---
 

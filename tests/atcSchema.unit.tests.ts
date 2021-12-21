@@ -13,27 +13,26 @@ import Logger from '../src/logger';
 import { injectSchema } from '../src/utils/atcSchema'
 import assert from 'assert';
 import { as3ExampleDec } from './artifacts/as3Mocks';
-import { doExampleDec } from './artifacts/doMocks';
+import { doExampleDec, doExampleDecDevice } from './artifacts/doMocks';
 import { tsExampleDec } from './artifacts/tsMocks';
+import { atcMetaData } from '../src';
+import { cfExampleDec } from './artifacts/cfMocks';
 
 const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 logger.console = false;
 
-
 let workingDec;
-// delete the schema if there, just to standardize this test array
 
-import { atcMetaData } from '../src';
 
 describe('atcSchema Class Unit Tests', function () {
     
     beforeEach(function() {
         // runs before each test in this block\
-        
+        logger.clearLogs();
       });
 
 
-    it('add as3 schema, no logger', async function () {
+    it('add as3 schema, NO logger', async function () {
 
         // clone example declaration
         workingDec = Object.assign({}, as3ExampleDec)
@@ -41,8 +40,6 @@ describe('atcSchema Class Unit Tests', function () {
         // remove the schema reference
         delete workingDec.$schema;
 
-        logger.clearLogs();
-        
         const addedSchemaDec = await injectSchema(workingDec)
         
         assert.ok(addedSchemaDec.$schema === atcMetaData.as3.schema);
@@ -62,8 +59,21 @@ describe('atcSchema Class Unit Tests', function () {
     });
 
 
+    it('add/remove as3 schema, NO logger', async function () {
+
+        workingDec = Object.assign({}, as3ExampleDec)
+        delete workingDec?.$schema
+
+        workingDec = await injectSchema(workingDec)
+        assert.ok(workingDec.$schema === atcMetaData.as3.schema);
+
+        workingDec = await injectSchema(workingDec)
+        assert.ok(!workingDec.$schema);
+        assert.ok(logger.journal.length === 0)
+    });
+    
+    
     it('add/remove as3 schema with logger', async function () {
-        // tests that atc type was detected and as3 schema injected
 
         workingDec = Object.assign({}, as3ExampleDec)
         delete workingDec?.$schema
@@ -77,10 +87,51 @@ describe('atcSchema Class Unit Tests', function () {
     });
 
 
-    it('add/remove do schema with logger', async function () {
-        // tests that atc type was detected and as3 schema injected
+    it('add/remove do schema, NO logger', async function () {
 
         workingDec = Object.assign({}, doExampleDec)
+        delete workingDec?.$schema
+
+        workingDec =  await injectSchema(workingDec)
+        assert.ok(workingDec.$schema === atcMetaData.do.parentSchema);
+        
+        workingDec =  await injectSchema(workingDec)
+        assert.ok(!workingDec.$schema);
+        assert.ok(logger.journal.length === 0)
+    });
+
+
+    it('add/remove do schema with logger', async function () {
+
+        workingDec = Object.assign({}, doExampleDec)
+        delete workingDec?.$schema
+
+        workingDec =  await injectSchema(workingDec, logger)
+        assert.ok(workingDec.$schema === atcMetaData.do.parentSchema);
+        
+        workingDec =  await injectSchema(workingDec, logger)
+        assert.ok(!workingDec.$schema);
+        assert.ok(logger.journal.length > 0)
+    });
+
+
+    it('add/remove do/device schema, MO logger', async function () {
+
+        workingDec = Object.assign({}, doExampleDecDevice)
+        delete workingDec?.$schema
+
+        workingDec =  await injectSchema(workingDec)
+        assert.ok(workingDec.$schema === atcMetaData.do.schema);
+        
+        workingDec =  await injectSchema(workingDec)
+        assert.ok(!workingDec.$schema);
+        assert.ok(logger.journal.length === 0)
+    });
+
+
+    it('add/remove do/device schema with logger', async function () {
+
+        workingDec = Object.assign({}, doExampleDecDevice)
         delete workingDec?.$schema
 
         workingDec =  await injectSchema(workingDec, logger)
@@ -92,8 +143,21 @@ describe('atcSchema Class Unit Tests', function () {
     });
 
 
+    it('add/remove ts schema, NO logger', async function () {
+
+        workingDec = Object.assign({}, tsExampleDec)
+        delete workingDec?.$schema
+
+        workingDec =  await injectSchema(workingDec)
+        assert.ok(workingDec.$schema === atcMetaData.ts.schema);
+        
+        workingDec =  await injectSchema(workingDec)
+        assert.ok(!workingDec.$schema);
+        assert.ok(logger.journal.length === 0)
+    });
+
+
     it('add/remove ts schema with logger', async function () {
-        // tests that atc type was detected and as3 schema injected
 
         workingDec = Object.assign({}, tsExampleDec)
         delete workingDec?.$schema
@@ -105,8 +169,34 @@ describe('atcSchema Class Unit Tests', function () {
         assert.ok(!workingDec.$schema);
         assert.ok(logger.journal.length > 0)
     });
+
+
+    it('add/remove cf schema, NO logger', async function () {
+
+        workingDec = Object.assign({}, cfExampleDec)
+        delete workingDec?.$schema
+
+        workingDec =  await injectSchema(workingDec)
+        assert.ok(workingDec.$schema === atcMetaData.cf.schema);
+        
+        workingDec =  await injectSchema(workingDec)
+        assert.ok(!workingDec.$schema);
+        assert.ok(logger.journal.length === 0)
+    });
+
+
+    it('add/remove cf schema with logger', async function () {
+
+        workingDec = Object.assign({}, cfExampleDec)
+        delete workingDec?.$schema
+
+        workingDec =  await injectSchema(workingDec, logger)
+        assert.ok(workingDec.$schema === atcMetaData.cf.schema);
+        
+        workingDec =  await injectSchema(workingDec, logger)
+        assert.ok(!workingDec.$schema);
+        assert.ok(logger.journal.length > 0)
+    });
     
-
-
 
 });

@@ -294,7 +294,10 @@ describe('as3Client integration tests', function () {
         // this tenant will be used to get a single tenant in the next test
         tenant = Object.keys(tenList[0])[0];
 
+        // tenant response check
         assert.ok(tenant);
+        // tenants should also be in the main class
+        assert.ok(f5Client.as3.tenants.length === 2)
 
         // this flow allows the tests to work with mocks and against a real F5
     });

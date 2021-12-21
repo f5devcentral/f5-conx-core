@@ -1,10 +1,50 @@
 
 
 
-
-
-
+/**
+ * parent DO declaration example, includes "device" declaration
+ * 
+ * https://clouddocs.f5.com/products/big-iq/mgmt-api/v7.1.0/ApiReferences/bigiq_public_api_ref/r_do_onboarding.html#post-mgmt-shared-declarative-onboarding
+ */
 export const doExampleDec = {
+    "class": "DO",
+    "declaration": {
+        "schemaVersion": "1.5.0",
+        "class": "Device",
+        "async": true,
+        "Common": {
+            "class": "Tenant",
+            "myProvision": {
+                "ltm": "nominal",
+                "class": "Provision"
+            },
+            "admin": {
+                "class": "User",
+                "userType": "regular",
+                "password": "privatepassword",
+                "partitionAccess": {
+                    "all-partitions": {
+                        "role": "admin"
+                    }
+                }
+            },
+            "hostname": "aws.ve.do.demo"
+        }
+    },
+    "targetUsername": "admin",
+    "targetHost": "54.10.10.10",
+    "targetSshKey": {
+        "path": "/var/ssh/restnoded/private.pem"
+    },
+    "bigIqSettings": {
+        "failImportOnConflict": false,
+        "conflictPolicy": "USE_BIGIQ",
+        "deviceConflictPolicy": "USE_BIGIP",
+        "versionedConflictPolicy": "KEEP_VERSION"
+    }
+}
+
+export const doExampleDecDevice = {
     "$schema": "https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/base.schema.json",
     "schemaVersion": "1.0.0",
     "class": "Device",

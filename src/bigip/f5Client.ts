@@ -277,7 +277,7 @@ export class F5Client {
         // check CF installed by getting verion info
         await this.mgmtClient.makeRequest(this.atcMetaData.cf.endPoints.info)
             .then(resp => {
-                this.cf = new CfClient(resp.data as AtcInfo, this.atcMetaData.cf, this.mgmtClient);
+                this.cf = new CfClient(resp.data as AtcInfo, this.mgmtClient);
                 if (!returnInfo.atc) {
                     returnInfo.atc = {}
                 }

@@ -161,17 +161,17 @@ export class As3Client {
      */
     // async deleteTenant(x: string): Promise<HttpResponse>;
     // async deleteTenant(x: as3Dec): Promise<HttpResponse>;
-    async deleteTenant(x: As3Dec | string): Promise<HttpResponse> {
+    async deleteTenant(data: As3Dec | string): Promise<HttpResponse> {
 
         // if (typeof x === 'string' || x instanceof String) {
-        if (typeof x === 'string') {
+        if (typeof data === 'string') {
 
-            x = {
+            data = {
                 class: 'AS3',
                 declaration: {
                     class: 'ADC',
                     schemaVersion: '3.0.0',
-                    [x]: {
+                    [data]: {
                         class: 'Tenant'
                     }
                 }
@@ -182,7 +182,7 @@ export class As3Client {
         // while the "DELETE" http method is waaay easier, this method works for all situations, including bigiq multi-target/tenant
         return await this.mgmtClient.makeRequest(atcMetaData.as3.endPoints.declare, {
             method: 'POST',
-            data: x
+            data
         })
 
 
