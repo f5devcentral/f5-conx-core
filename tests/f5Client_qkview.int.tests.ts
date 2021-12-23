@@ -19,7 +19,7 @@ import { F5Client } from '../src/bigip/f5Client';
 import { getF5Client, ipv6Host } from '../src/utils/testingUtils';
 import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
-import { F5DownloadPaths, iControlEndpoints } from '../src/constants';
+import { iControlEndpoints } from '../src/constants';
 
 
 import { deviceInfoIPv6 } from './artifacts/f5_device_atc_infos';
@@ -29,13 +29,13 @@ let f5Client: F5Client;
 let nockScope: nock.Scope;
 
 // test file name
-const tmpUcs = 'bigip1_10.200.244.101_20201130T220239571Z.ucs';
+// const tmpUcs = 'bigip1_10.200.244.101_20201130T220239571Z.ucs';
 // source file with path
-const filePath = path.join(__dirname, 'artifacts', tmpUcs)
+// const filePath = path.join(__dirname, 'artifacts', tmpUcs)
 // tmp directory
 const tmpDir = path.join(__dirname, 'tmp')
 // destination test path with file name
-const tmp = path.join(tmpDir, tmpUcs)
+// const tmp = path.join(tmpDir, tmpUcs)
 
 const events = []
 let fileName;
@@ -44,6 +44,9 @@ describe('f5Client qkview integration tests - ipv6', function () {
 
     // runs once before the first test in this block
     before(async function () {
+        // log test file name - makes it easer for troubleshooting
+        console.log('       Test file:', __filename)
+        
         if (!fs.existsSync(tmpDir)) {
             // console.log('creating temp directory for file upload/download tests')
             fs.mkdirSync(tmpDir);
@@ -101,8 +104,10 @@ describe('f5Client qkview integration tests - ipv6', function () {
 
         nockScope
             .post(iControlEndpoints.qkview)
-            .reply((uri, requestBody: { name: string }) => {
-                fileName = requestBody.name;
+            .reply((uri, requestBody) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const req = requestBody as Record<string, any>
+                fileName = req.name;
                 return [
                     202,
                     {
@@ -186,124 +191,124 @@ describe('f5Client qkview integration tests - ipv6', function () {
 
     });
 
-    it('download qkview from f5', async function () {
+    // it('download qkview from f5', async function () {
 
-        nockScope
-            .get(`${F5DownloadPaths.qkview.uri}/${fileName}`)
-            .replyWithFile(200, filePath);
+    //     nockScope
+    //         .get(`${F5DownloadPaths.qkview.uri}/${fileName}`)
+    //         .replyWithFile(200, filePath);
 
-        const resp = await f5Client.qkview.download(
-            fileName,
-            tmpDir
-        )
-            .then(resp => resp)
-            .catch(err => {
-                debugger;
-                return Promise.reject(err);
-            })
+    //     const resp = await f5Client.qkview.download(
+    //         fileName,
+    //         tmpDir
+    //     )
+    //         .then(resp => resp)
+    //         .catch(err => {
+    //             debugger;
+    //             return Promise.reject(err);
+    //         })
 
-        // assert that the file exists
-        assert.ok(fs.existsSync(resp.data.file));
+    //     // assert that the file exists
+    //     assert.ok(fs.existsSync(resp.data.file));
 
-        // now delete the file
-        fs.unlinkSync(resp.data.file);
-    });
-
-
-    it('get qkview (generate and download)', async function () {
-
-        this.slow(12000);
-        let fileName;
-
-        nockScope
-            .post(iControlEndpoints.qkview, body => {
-                fileName = body.name;
-                return body
-            })
-            .reply((uri, requestBody: { name: string }) => {
-                fileName = requestBody.name;
-                return [
-                    202,
-                    {
-                        "name": fileName,
-                        "id": "8f35",
-                        "status": "IN_PROGRESS"
-                    }
-                ]
-            })
-            .get(`${iControlEndpoints.qkview}/8f35`)
-            .reply(() => {
-                return [
-                    200,
-                    {
-                        "name": fileName,
-                        "id": "8f35",
-                        "status": "IN_PROGRESS"
-                    }
-                ]
-            })
-            .get(`${iControlEndpoints.qkview}/8f35`)
-            .reply(() => {
-                return [
-                    200,
-                    {
-                        "name": fileName,
-                        "id": "8f35",
-                        "status": "SUCCEEDED"
-                    }
-                ]
-            })
-            // the following uri is supposed to have the filename, but we don't know the filename till execution time.  In other tests for replys, we are able to feed it a function to get the filename async during processing, but have not figured that out for initial operations yet
-            .get(uri => uri.startsWith(F5DownloadPaths.qkview.uri))
-            .replyWithFile(200, filePath);
-
-        const resp = await f5Client.qkview.get(tmpDir)
-            .then(resp => resp)
-            .catch(err => {
-                debugger;
-                return Promise.reject(err);
-            })
-
-        // assert that the response included an expected file name format
-        assert.ok(/\w+.qkview/.test(resp.data.file));
-
-        // assert that the file exists
-        assert.ok(fs.existsSync(resp.data.file));
-
-        // now delete the file
-        fs.unlinkSync(resp.data.file);
-    });
+    //     // now delete the file
+    //     fs.unlinkSync(resp.data.file);
+    // });
 
 
-    it('delete qkview on f5', async function () {
+    // it('get qkview (generate and download)', async function () {
 
-        // list qkviews, then delete first one (should be at least one from previous tests)
+    //     this.slow(12000);
+    //     let fileName;
 
-        nockScope
-            .get(iControlEndpoints.qkview)
-            .reply(200, {
-                items: [
-                    {
-                        id: '8f35',
-                        name: fileName,
-                        status: 'SUCCEEDED'
-                    }
-                ]
-            })
-            .delete(uri => uri.startsWith(iControlEndpoints.qkview))
-            .reply(200)
+    //     nockScope
+    //         .post(iControlEndpoints.qkview, body => {
+    //             fileName = body.name;
+    //             return body
+    //         })
+    //         .reply((uri, requestBody: { name: string }) => {
+    //             fileName = requestBody.name;
+    //             return [
+    //                 202,
+    //                 {
+    //                     "name": fileName,
+    //                     "id": "8f35",
+    //                     "status": "IN_PROGRESS"
+    //                 }
+    //             ]
+    //         })
+    //         .get(`${iControlEndpoints.qkview}/8f35`)
+    //         .reply(() => {
+    //             return [
+    //                 200,
+    //                 {
+    //                     "name": fileName,
+    //                     "id": "8f35",
+    //                     "status": "IN_PROGRESS"
+    //                 }
+    //             ]
+    //         })
+    //         .get(`${iControlEndpoints.qkview}/8f35`)
+    //         .reply(() => {
+    //             return [
+    //                 200,
+    //                 {
+    //                     "name": fileName,
+    //                     "id": "8f35",
+    //                     "status": "SUCCEEDED"
+    //                 }
+    //             ]
+    //         })
+    //         // the following uri is supposed to have the filename, but we don't know the filename till execution time.  In other tests for replys, we are able to feed it a function to get the filename async during processing, but have not figured that out for initial operations yet
+    //         .get(uri => uri.startsWith(F5DownloadPaths.qkview.uri))
+    //         .replyWithFile(200, filePath);
 
-        const resp = await f5Client.qkview.list()
-            .then(async resp => {
-                return await f5Client.qkview.delete(resp.data.items[0].id)
-            })
-            .catch(err => {
-                debugger;
-                return Promise.reject(err);
-            })
+    //     const resp = await f5Client.qkview.get(tmpDir)
+    //         .then(resp => resp)
+    //         .catch(err => {
+    //             debugger;
+    //             return Promise.reject(err);
+    //         })
 
-        // assert that the file exists
-        assert.deepStrictEqual(resp.status, 200);
+    //     // assert that the response included an expected file name format
+    //     assert.ok(/\w+.qkview/.test(resp.data.file));
 
-    });
+    //     // assert that the file exists
+    //     assert.ok(fs.existsSync(resp.data.file));
+
+    //     // now delete the file
+    //     fs.unlinkSync(resp.data.file);
+    // });
+
+
+    // it('delete qkview on f5', async function () {
+
+    //     // list qkviews, then delete first one (should be at least one from previous tests)
+
+    //     nockScope
+    //         .get(iControlEndpoints.qkview)
+    //         .reply(200, {
+    //             items: [
+    //                 {
+    //                     id: '8f35',
+    //                     name: fileName,
+    //                     status: 'SUCCEEDED'
+    //                 }
+    //             ]
+    //         })
+    //         .delete(uri => uri.startsWith(iControlEndpoints.qkview))
+    //         .reply(200)
+
+    //     const resp = await f5Client.qkview.list()
+    //         .then(async resp => {
+    //             return await f5Client.qkview.delete(resp.data.items[0].id)
+    //         })
+    //         .catch(err => {
+    //             debugger;
+    //             return Promise.reject(err);
+    //         })
+
+    //     // assert that the file exists
+    //     assert.deepStrictEqual(resp.status, 200);
+
+    // });
 });

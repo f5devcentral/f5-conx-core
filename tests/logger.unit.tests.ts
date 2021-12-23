@@ -20,6 +20,9 @@ describe('Logger Class Unit Tests', function () {
     let originalConsoleLog: Function;
 
     before(function () {
+        // log test file name - makes it easer for troubleshooting
+        console.log('       Test file:', __filename)
+
         // logger = Logger.getLogger();
         logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 
@@ -29,25 +32,25 @@ describe('Logger Class Unit Tests', function () {
 
         // capture current log envs
         envs.push(...Object.entries(process.env)
-        .filter( el => el[0].startsWith('F5_CONX_CORE_LOG_') ));
+            .filter(el => el[0].startsWith('F5_CONX_CORE_LOG_')));
 
         // delete current log envs
-        envs.forEach(el => delete process.env[el[0]] )
+        envs.forEach(el => delete process.env[el[0]])
 
         // capture original console.log function
         originalConsoleLog = console.log;
 
         // redirect console output
-        console.log = function(...data: any[]) {
+        console.log = function (...data: any[]) {
             consoleLogShadow.push(...data)
         }
 
     });
 
-    after( () => {
+    after(() => {
 
         // put all the loggin envs back 
-        envs.forEach(el => process.env[el[0]] = el[1] )
+        envs.forEach(el => process.env[el[0]] = el[1])
 
         // put back the console.log redirect
         console.log = function (...data: any[]) {

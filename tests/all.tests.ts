@@ -91,7 +91,7 @@ require('./as3Client.int.tests')
 // require('./tsClient.unit.tests')
 
 // // cf class tests
-// require('./cfClient.unit.tests')
+require('./cfClient.int.tests')
 
 
 before(async function () {

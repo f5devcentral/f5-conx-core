@@ -21,6 +21,9 @@ import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 describe('mgmtClient tests - failures', async function () {
 
     before( async function () {
+        // log test file name - makes it easer for troubleshooting
+        console.log('       Test file:', __filename)
+        
         // set timeout for testing
         process.env.F5_CONX_CORE_TCP_TIMEOUT = "10000"
     })

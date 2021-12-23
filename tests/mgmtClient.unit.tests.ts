@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
- 'use strict';
+'use strict';
 
 import assert from 'assert';
 import nock from 'nock';
@@ -38,7 +38,7 @@ let mgmtClient: MgmtClient;
 //  *** todo: move all build/mocks to fixtureUtils
 
 // test file name
-const rpm = 'f5-appsvcs-templates-1.4.0-1.noarch.rpm';
+const rpm = 'f5-declarative-onboarding-1.19.0-2.noarch.rpm';
 // source file with path
 const filePath = path.join(__dirname, 'artifacts', rpm)
 // tmp directory
@@ -62,21 +62,21 @@ describe('mgmtClient unit tests - successes', function () {
         }
 
         // log test file name - makes it easer for troubleshooting
-        console.log('Test file:', this.test.file)
+        console.log('       Test file:', __filename)
 
         // setup mgmt client
         mgmtClient = getMgmtClient();
 
         mgmtClient.events
-        .on('log-http-request', msg => logger.httpRequest(msg))
-        .on('log-http-response', msg => logger.httpResponse(msg))
-        .on('log-debug', msg => logger.debug(msg))
-        .on('log-info', msg => logger.info(msg))
-        .on('log-warn', msg => logger.warn(msg))
-        .on('log-error', msg => logger.error(msg))
-        .on('failedAuth', msg => {
-            logger.error('Failed Authentication Event!');
-        });
+            .on('log-http-request', msg => logger.httpRequest(msg))
+            .on('log-http-response', msg => logger.httpResponse(msg))
+            .on('log-debug', msg => logger.debug(msg))
+            .on('log-info', msg => logger.info(msg))
+            .on('log-warn', msg => logger.warn(msg))
+            .on('log-error', msg => logger.error(msg))
+            .on('failedAuth', msg => {
+                logger.error('Failed Authentication Event!');
+            });
 
         // enable/disable console logging
         logger.console = false;
@@ -313,7 +313,7 @@ describe('mgmtClient unit tests - successes', function () {
         await mgmtClient.upload(filePath, 'FILE')
             .then(resp => {
                 assert.deepStrictEqual(resp.data.bytes, fileStat.size, 'local source file and uploaded file sizes do not match')
-                assert.deepStrictEqual(resp.data.fileName, 'f5-appsvcs-templates-1.4.0-1.noarch.rpm', 'filename returned should match source file name')
+                assert.deepStrictEqual(resp.data.fileName, rpm, 'filename returned should match source file name')
                 // assert.ok(resp.data.bytes);  // just asserting that we got a value here, should be a number
             })
             .catch(err => {
@@ -333,7 +333,7 @@ describe('mgmtClient unit tests - successes', function () {
         await mgmtClient.upload(filePath, 'ISO')
             .then(resp => {
                 assert.deepStrictEqual(resp.data.bytes, fileStat.size, 'local source file and uploaded file sizes do not match')
-                assert.deepStrictEqual(resp.data.fileName, 'f5-appsvcs-templates-1.4.0-1.noarch.rpm')
+                assert.deepStrictEqual(resp.data.fileName, rpm)
                 // assert.ok(resp.data.bytes);  // just asserting that we got a value here, should be a number
             })
             .catch(err => {
@@ -354,7 +354,7 @@ describe('mgmtClient unit tests - successes', function () {
         await mgmtClient.upload(filePath, 'UCS')
             .then(resp => {
                 assert.deepStrictEqual(resp.data.bytes, fileStat.size, 'local source file and uploaded file sizes do not match')
-                assert.deepStrictEqual(resp.data.fileName, 'f5-appsvcs-templates-1.4.0-1.noarch.rpm')
+                assert.deepStrictEqual(resp.data.fileName, rpm)
                 // assert.ok(resp.data.bytes);  // just asserting that we got a value here, should be a number
             })
             .catch(err => {
@@ -365,28 +365,42 @@ describe('mgmtClient unit tests - successes', function () {
 
     it('download file from F5 - ISO path', async function () {
         this.slow(200);
-        nockInst
-            .persist()
-            .get(`${F5DownloadPaths.iso.uri}/${rpm}`)
-            .replyWithFile(200, filePath);
+        // nockInst
+        //     .persist()
+        //     .get(`${F5DownloadPaths.iso.uri}/${rpm}`)
+        //     .replyWithFile(200, filePath);
 
         const fileStat = fs.statSync(filePath);
 
-        // todo: need to refactor this test to accomodate multi-part download
-        
-        // await mgmtClient.download(rpm, tmp, 'ISO')
-        //     .then(resp => {
+        // load and update nock tape for the local 'defaultHost' and download path
+        const nockDef = nock.loadDefs('tests/artifacts/nocks/downloadNock.json').map(item => {
+            item.scope = `https://${defaultHost}:443`
 
-        //         assert.deepStrictEqual(
-        //             resp.data.bytes,
-        //             fileStat.size,
-        //             'local source file and uploaded file sizes do not match')
-        //         assert.ok(fs.existsSync(resp.data.file))           // confirm/assert file is there
-        //         fs.unlinkSync(resp.data.file);                     // remove tmp file
-        //     })
-        //     .catch(err => {
-        //         debugger;
-        //     })
+            if(item.path !== "/mgmt/shared/authn/login") {
+                item.path = `${F5DownloadPaths.iso.uri}/f5-declarative-onboarding-1.19.0-2.noarch.rpm`
+            }
+
+            return item;
+        })
+
+        //////  used to replay the nock
+        nock.define(nockDef);
+
+        // todo: need to refactor this test to accomodate multi-part download
+
+        await mgmtClient.download(rpm, tmp, 'ISO')
+            .then(resp => {
+
+                assert.deepStrictEqual(
+                    resp.data.bytes,
+                    fileStat.size,
+                    'local source file and uploaded file sizes do not match')
+                assert.ok(fs.existsSync(resp.data.file))           // confirm/assert file is there
+                fs.unlinkSync(resp.data.file);                     // remove tmp file
+            })
+            .catch(err => {
+                debugger;
+            })
     });
 
 

@@ -55,6 +55,9 @@ logger.console = false;
 describe('f5Client basic tests - ipv6', async function () {
 
     before(function () {
+        // log test file name - makes it easer for troubleshooting
+        console.log('       Test file:', __filename)
+        
         if (!fs.existsSync(tmpDir)) {
             // console.log('creating temp directory for file upload/download tests')
             fs.mkdirSync(tmpDir);
@@ -198,21 +201,21 @@ describe('f5Client basic tests - ipv6', async function () {
         assert.ok(f5Client.cf)
     });
 
-    /**
-     * the following tests just confirm that the f5Client is able to upload/download files through the mgmtClient
-     */
-    it('download file from F5 - UCS path', async function () {
-        this.slow(200);
-        nockInst
-            .persist()
-            .get(`${F5DownloadPaths.ucs.uri}/${rpm}`)
-            .replyWithFile(200, filePath);
+    // /**
+    //  * the following tests just confirm that the f5Client is able to upload/download files through the mgmtClient
+    //  */
+    // it('download file from F5 - UCS path', async function () {
+    //     this.slow(200);
+    //     nockInst
+    //         .persist()
+    //         .get(`${F5DownloadPaths.ucs.uri}/${rpm}`)
+    //         .replyWithFile(200, filePath);
 
-        const resp = await f5Client.download(rpm, tmp, 'UCS');    // download file
+    //     const resp = await f5Client.download(rpm, tmp, 'UCS');    // download file
 
-        assert.ok(fs.existsSync(resp.data.file))           // confirm/assert file is there
-        fs.unlinkSync(resp.data.file);                     // remove tmp file
-    });
+    //     assert.ok(fs.existsSync(resp.data.file))           // confirm/assert file is there
+    //     fs.unlinkSync(resp.data.file);                     // remove tmp file
+    // });
 
     it('upload file to F5 - FILE', async function () {
         this.slow(600);

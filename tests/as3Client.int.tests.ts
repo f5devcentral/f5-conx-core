@@ -44,6 +44,11 @@ let tenant: string;
 
 describe('as3Client integration tests', function () {
 
+    before( function() {
+        // log test file name - makes it easer for troubleshooting
+        console.log('       Test file:', __filename)
+    })
+
     beforeEach(async function () {
 
         // clear events

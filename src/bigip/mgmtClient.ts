@@ -586,8 +586,10 @@ export class MgmtClient {
                 // update content-ranage as needed
                 if (totalSize) {
                     if ((totalDown + chunkSize) >= totalSize) {
+                        // last chunk, so just get whats needed
                         reqObject.headers["content-range"] = `${totalDown + 1}-${totalSize - 1}/${totalSize}`
                     } else {
+                        // not to the end yet, get next chunk
                         reqObject.headers["content-range"] = `${totalDown + 1}-${totalDown + chunkSize}/${totalSize}`
                     }
                 }
@@ -599,7 +601,7 @@ export class MgmtClient {
 
                         totalDown += chunkSize  // update chuck size tracking
 
-                        file.write(respIn.data, 'binary')   // write the file
+                        file.write(respIn.data, 'binary')   // write the chunk to file
 
                         // set total download size if not set yet
                         const contentRange = respIn.headers['content-range'];

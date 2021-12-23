@@ -40,7 +40,9 @@ describe('f5Client rpm mgmt integration tests', function () {
 
     // runs once before the first test in this block
     before(async function () {
-
+        // log test file name - makes it easer for troubleshooting
+        console.log('       Test file:', __filename)
+        
         nockScope = nock(`https://${ipv6Host}`)
             .post(iControlEndpoints.login)
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
@@ -128,8 +130,8 @@ describe('f5Client rpm mgmt integration tests', function () {
 
         // this test plays off the previous test that should have downloaded a file, now this test should try to download the same file, see that it is already in the local cache and return it, instead of downloading a fresh copy
 
-        const url = 'https://test.io/someDir/download/test/package1.rpm'
-        // const url = 'https://github.com/F5Networks/f5-appsvcs-templates/releases/download/v1.4.0/f5-appsvcs-templates-1.4.0-1.noarch.rpm'
+        // const url = 'https://test.io/someDir/download/test/package1.rpm'
+        const url = 'https://github.com/F5Networks/f5-appsvcs-templates/releases/download/v1.4.0/f5-appsvcs-templates-1.4.0-1.noarch.rpm'
 
         const urlPath = new URL(url).pathname       // extract path from URL
         const fileName = path.basename(urlPath);    // get file name from url
