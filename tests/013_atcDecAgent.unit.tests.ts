@@ -32,6 +32,14 @@ const teemEnv = 'F5_CONX_TEEM'
 
 describe('Inject ATC Declaration Agent Tests', function () {
 
+    /**
+     * the atc declaration agent tells the AS3 engine what tool deployed the declaration
+     * 
+     *  this information is included in telemetry data sent back to F5 from the @f5devcentral/TEEM package
+     * 
+     *  this shows F5 how much the extension is being used and adopted in the wild
+     */
+
 
     it('findAtcDecType As3Declaration - good', async function () {
 

@@ -16,7 +16,7 @@ import { as3ExampleDec } from './artifacts/as3Mocks';
 import { doExampleDec, doExampleDecDevice } from './artifacts/doMocks';
 import { tsExampleDec } from './artifacts/tsMocks';
 import { atcMetaData } from '../src';
-import { cfExampleDec } from './artifacts/cfMocks';
+import { cfExampleDec } from '../src/bigip/cfModels';
 
 const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 logger.console = false;

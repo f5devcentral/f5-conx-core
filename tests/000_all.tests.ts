@@ -35,23 +35,41 @@ process.env.F5_CONX_CORE_LOG_CONSOLE = "false"
 delete process.env.F5_CONX_CORE_EXT_HTTP_AGENT;
 
 // unit test example logger class
-require('./logger.unit.tests')
+require('./010_logger.unit.tests')
 
 // unit test external http functions
-require('./extHttp.unit.tests')
+require('./011_extHttp.unit.tests')
 
 // unit test get atc versions information
-require('./atcVersionsClient.unit.tests')
+require('./012_atcVersionsClient.unit.tests')
+
+// unit test get atc versions information
+require('./013_atcDecAgent.unit.tests')
+
+// unit test get atc versions information
+require('./014_atcSchema.unit.tests')
 
 // // // // // unit test iHealth client class (extends external https class)
 // // // // require('./iHealth.unit.tests')
 
-// unit test core mgmtClient failures
-require('./mgmtClient.failures.unit.test')
 
+
+
+
+
+// unit test core mgmtClient failures
+require('./040_mgmtClient.failures.unit.test')
 
 // unit test core mgmtClient
-require('./mgmtClient.unit.tests')
+require('./044_mgmtClient.unit.tests')
+
+// unit test core mgmtClient
+require('./046_mgmtClient_UCS.unit.tests')
+
+
+
+
+
 
 
 // f5Client testing
@@ -60,38 +78,37 @@ require('./mgmtClient.unit.tests')
 //  - events
 
 // some basic testing of IPv6 usage
-require('./f5Client_ipv6.int.tests')
-
+require('./060_f5Client_ipv6.int.tests')
 
 // ucs sub-class tests 
-require('./f5Client_ucs.int.tests')
+require('./062_f5Client_ucs.int.tests')
 
 // qkview sub-class tests 
-require('./f5Client_qkview.int.tests')
+require('./064_f5Client_qkview.int.tests')
 
 
 
 // ###############################
 // unit test atc ilx rpm mgmt (versions/download/upload/install/unInstall)
-require('./f5Client_atcMgmt.int.tests')
+require('./066_f5Client_atcMgmt.int.tests')
 // ###############################
 
 
 
 // AS3 class tests
-require('./as3Client.int.tests')
+require('./070_as3Client.int.tests')
 
 // // fast class tests
-// require('./fastClient.unit.tests')
+// require('./072_fastClient.unit.tests')
 
 // // do class tests
-// require('./doClient.unit.tests')
+// require('./074_doClient.unit.tests')
 
 // // ts class tests
-// require('./tsClient.unit.tests')
+// require('./076_tsClient.unit.tests')
 
 // // cf class tests
-require('./cfClient.int.tests')
+require('./078_cfClient.int.tests')
 
 
 before(async function () {

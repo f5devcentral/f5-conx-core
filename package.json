@@ -32,7 +32,7 @@
         "watch": "tsc -watch -p ./",
         "compile": "tsc -p ./",
         "rest-server": "nodemon ./tests/testServer/restServer.ts --inspect",
-        "test": "nyc mocha -r ts-node/register \"tests/all.tests.ts\"",
+        "test": "nyc mocha -r ts-node/register \"tests/000_all.tests.ts\"",
         "build-code-docs": "typedoc --out code_docs src",
         "build-package": "npm run compile && npm pack"
     },
