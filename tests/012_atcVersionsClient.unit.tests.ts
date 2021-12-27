@@ -22,7 +22,7 @@ describe('atc versions unit tests', function () {
 
     before(function () {
         // log test file name - makes it easer for troubleshooting
-        console.log('       Test file:', __filename)
+        console.log('       file:', __filename)
     })
 
     after(async function () {

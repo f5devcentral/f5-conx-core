@@ -62,7 +62,7 @@ describe('mgmtClient unit tests - successes', function () {
         }
 
         // log test file name - makes it easer for troubleshooting
-        console.log('       Test file:', __filename)
+        console.log('       file:', __filename)
 
         // setup mgmt client
         mgmtClient = getMgmtClient();

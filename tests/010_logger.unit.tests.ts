@@ -21,7 +21,7 @@ describe('Logger Class Unit Tests', function () {
 
     before(function () {
         // log test file name - makes it easer for troubleshooting
-        console.log('       Test file:', __filename)
+        console.log('       file:', __filename)
 
         // logger = Logger.getLogger();
         logger = new Logger('F5_CONX_CORE_LOG_LEVEL');

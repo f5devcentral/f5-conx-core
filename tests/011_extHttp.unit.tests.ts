@@ -40,7 +40,10 @@ describe('ExtHttps class tests', function () {
 
     before(function () {
         // log test file name - makes it easer for troubleshooting
-        console.log('       Test file:', __filename)
+        console.log('       file:', __filename)
+
+        // removes conflict from vscode-f5 developement
+        delete process.env.F5_CONX_CORE_EXT_HTTP_AGENT;
 
         // setup nock
         nockScope = nock(`https://${testHost}`)

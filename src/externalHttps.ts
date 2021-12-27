@@ -20,24 +20,24 @@ import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "
 import { getRandomUUID } from './utils/misc';
 import { TMP_DIR } from './constants';
 
-/**
- * Used to inject http call timers
- * transport:request: httpsWithTimer
- * @szmarczak/http-timer
- */
-const transport = {
-    request: function httpsWithTimer(...args: unknown[]): AxiosRequestConfig {
-        const request = https.request.apply(null, args)
-        timer(request);
-        return request;
-    }
-};
+// /**
+//  * Used to inject http call timers
+//  * transport:request: httpsWithTimer
+//  * @szmarczak/http-timer
+//  */
+// const transport = {
+//     request: function httpsWithTimer(...args: unknown[]): AxiosRequestConfig {
+//         const request = https.request.apply(null, args)
+//         timer(request);
+//         return request;
+//     }
+// };
 
 
-// by default axios will refuse self-signed certs.  We disable this for all F5 connections.  For external connections, we leave this on, but wrap it in a switch for easy access
-interface extRegCfg extends uuidAxiosRequestConfig {
-    rejectUnauthorized?: boolean,
-}
+// // by default axios will refuse self-signed certs.  We disable this for all F5 connections.  For external connections, we leave this on, but wrap it in a switch for easy access
+// interface extRegCfg extends uuidAxiosRequestConfig {
+//     rejectUnauthorized?: boolean,
+// }
 
 
 /**
@@ -60,7 +60,7 @@ export class ExtHttp {
     /**
      * axios instance for making all external https calls
      */
-    private axios: AxiosInstance;
+    axios: AxiosInstance;
     /**
      * cache directory for default download directory
      */
@@ -95,7 +95,7 @@ export class ExtHttp {
      * core external axios instance
      * @param reqBase 
      */
-    private createAxiosInstance(reqBase: extRegCfg = {}): AxiosInstance {
+    createAxiosInstance(reqBase: uuidAxiosRequestConfig = {}): AxiosInstance {
 
         // #####################################
         // Request timings are disabled for external resolution.  There was a corner case where they are breaking the download function with github and redirects.  

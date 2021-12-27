@@ -26,6 +26,11 @@ let workingDec;
 
 describe('atcSchema Class Unit Tests', function () {
     
+    before(function () {
+        // log test file name - makes it easer for troubleshooting
+        console.log('       file:', __filename)
+    })
+    
     beforeEach(function() {
         // runs before each test in this block\
         logger.clearLogs();

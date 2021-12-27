@@ -56,7 +56,7 @@ describe('f5Client basic tests - ipv6', async function () {
 
     before(function () {
         // log test file name - makes it easer for troubleshooting
-        console.log('       Test file:', __filename)
+        console.log('       file:', __filename)
         
         if (!fs.existsSync(tmpDir)) {
             // console.log('creating temp directory for file upload/download tests')

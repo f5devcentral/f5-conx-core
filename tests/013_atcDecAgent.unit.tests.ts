@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
- 'use strict';
+'use strict';
 
 // import Logger from '../src/logger';
 import { injectAtcAgent } from '../src/bigip/atcAgent'
@@ -40,6 +40,10 @@ describe('Inject ATC Declaration Agent Tests', function () {
      *  this shows F5 how much the extension is being used and adopted in the wild
      */
 
+    before(function () {
+        // log test file name - makes it easer for troubleshooting
+        console.log('       file:', __filename)
+    })
 
     it('findAtcDecType As3Declaration - good', async function () {
 

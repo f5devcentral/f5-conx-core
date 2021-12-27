@@ -49,7 +49,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
     // runs once before the first test in this block
     before(async function () {
         // log test file name - makes it easer for troubleshooting
-        console.log('       Test file:', __filename)
+        console.log('       file:', __filename)
 
         if (!fs.existsSync(tmpDir)) {
             // console.log('creating temp directory for file upload/download tests')

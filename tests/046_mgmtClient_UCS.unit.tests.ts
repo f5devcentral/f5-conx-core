@@ -46,7 +46,8 @@ describe('ucs download dev', function () {
     // runs once before the first test in this block
     before(function () {
         // log test file name - makes it easer for troubleshooting
-        console.log('       Test file:', __filename)
+        console.log('       file:', __filename)
+
         const x = this.currentTest
         if (!fs.existsSync(tmpDir)) {
             // console.log('creating temp directory for file upload/download tests')

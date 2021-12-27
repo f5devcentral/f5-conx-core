@@ -41,7 +41,7 @@ describe('f5Client rpm mgmt integration tests', function () {
     // runs once before the first test in this block
     before(async function () {
         // log test file name - makes it easer for troubleshooting
-        console.log('       Test file:', __filename)
+        console.log('       file:', __filename)
         
         nockScope = nock(`https://${ipv6Host}`)
             .post(iControlEndpoints.login)
