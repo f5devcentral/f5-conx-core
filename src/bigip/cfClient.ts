@@ -13,7 +13,7 @@ import { AtcInfo } from "./bigipModels";
 import { atcMetaData } from '../constants';
 import { MgmtClient } from "./mgmtClient";
 import { AxiosResponseWithTimings } from "../utils/httpModels";
-import { cfDeclaration, cfTriggerDeclaration } from "./cfModels";
+import { cfDeclaration } from "./cfModels";
 
 
 /**
@@ -52,6 +52,7 @@ export class CfClient {
 
     /**
      * post/configure cfe
+     * @param cf declaration
      * @returns axios/http response
      */
     async postDeclare(data: cfDeclaration): Promise<AxiosResponseWithTimings> {
@@ -71,12 +72,14 @@ export class CfClient {
 
     /**
      * post/execute a trigger
+     * 
+     * @param action trigger action -> 'execute' by default
      * @returns axios/http response
      */
-    async postTrigger(data: cfTriggerDeclaration): Promise<AxiosResponseWithTimings> {
+    async trigger(action: 'dry-run' | 'execute' = 'execute'): Promise<AxiosResponseWithTimings> {
         return await this.mgmtClient.makeRequest(CfClient.metaData.endPoints.trigger, {
             method: 'POST',
-            data
+            data: { action }
         });
     }
 

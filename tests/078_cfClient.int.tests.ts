@@ -175,9 +175,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.trigger)
             .reply(200, cfPostTriggerDrResp)
 
-        const resp = await f5Client.cf.postTrigger({
-            "action": "dry-run"
-          });
+        const resp = await f5Client.cf.trigger('dry-run');
 
         assert.deepStrictEqual(resp.data, cfPostTriggerDrResp);
     });
@@ -189,9 +187,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.trigger)
             .reply(200, cfPostTriggerResp)
 
-        const resp = await f5Client.cf.postTrigger({
-            "action": "execute"
-          });
+        const resp = await f5Client.cf.trigger();
 
         assert.deepStrictEqual(resp.data, cfPostTriggerResp);
     });
