@@ -21,7 +21,7 @@
 // import Logger from '../src/logger';
 import { injectAtcAgent } from '../src/bigip/atcAgent'
 import assert from 'assert';
-import { AdcExampleDec, as3ExampleDec } from './artifacts/as3Mocks';
+import { AdcExampleDec, as3ExampleDec } from '../src/bigip/as3Models';
 import { atcMetaData } from '../src/constants';
 import { uuidAxiosRequestConfig } from '../src/utils/httpModels';
 // import { As3Declaration } from '../src/bigip/as3Models';

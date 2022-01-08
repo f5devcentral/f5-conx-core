@@ -12,9 +12,9 @@
 import Logger from '../src/logger';
 import { injectSchema } from '../src/utils/atcSchema'
 import assert from 'assert';
-import { as3ExampleDec } from './artifacts/as3Mocks';
-import { doExampleDec, doExampleDecDevice } from './artifacts/doMocks';
-import { tsExampleDec } from './artifacts/tsMocks';
+import { as3ExampleDec } from '../src/bigip/as3Models';
+import { doExampleDec, doExampleDecDevice } from '../src/bigip/doModels';
+import { tsExampleDec } from '../src/bigip/tsModels';
 import { atcMetaData } from '../src';
 import { cfExampleDec } from '../src/bigip/cfModels';
 

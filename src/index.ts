@@ -16,6 +16,8 @@ export * from './bigip/bigipModels';
 export * from './bigip/as3Models';
 export * from './bigip/as3Tools';
 export * from './bigip/doModels';
+export * from './bigip/tsModels';
+export * from './bigip/cfModels';
 export * from './utils/misc';
 export * from './utils/testingUtils';
 
@@ -28,6 +30,8 @@ export * from './bigip/atcVersionsClient';
 export * from './bigip/mgmtClient';
 export * from './bigip/as3Client';
 export * from './bigip/doClient';
+export * from './bigip/tsClient';
+export * from './bigip/cfClient';
 export * from './bigip/ucsClient';
 
 
