@@ -19,10 +19,11 @@ import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import {  atcMetaData, iControlEndpoints } from '../src/constants';
 import { F5Client } from '../src/bigip/f5Client';
-import { as3InfoApiReponse, deviceInfoIPv6 } from './artifacts/f5_device_atc_infos';
+import { as3InfoApiReponse, deviceInfoIPv6 } from '../src/utils/f5_device_atc_infos';
 // import localAtcMetadata from '../src/bigip/atc_metadata.old.json';
 import { isArray, isObject } from '../src/utils/misc';
-import { as3ExampleDec, as3TargetTens, as3Tasks, as3Tens } from './artifacts/as3Mocks';
+import { as3TargetTens, as3Tasks, as3Tens } from './artifacts/as3Mocks';
+import { exampleAs3Declaration } from '../src/bigip/as3Models'
 
 
 //  *** todo: move all build/mocks to fixtureUtils
@@ -248,11 +249,11 @@ describe('as3Client integration tests', function () {
                         "message": "success"
                     }
                 ],
-                declaration: as3ExampleDec
+                declaration: exampleAs3Declaration
             })
 
         // this operation is async by default
-        const resp = await f5Client.as3.postDec(as3ExampleDec)
+        const resp = await f5Client.as3.postDec(exampleAs3Declaration)
             .then(resp => resp)
             .catch(err => {
                 debugger;
@@ -412,10 +413,10 @@ describe('as3Client integration tests', function () {
                         "message": "success"
                     }
                 ],
-                declaration: as3ExampleDec
+                declaration: exampleAs3Declaration
             })
         // we are doing this again so we can test deleting a declaration with the POST method
-        const resp = await f5Client.as3.postDec(as3ExampleDec);
+        const resp = await f5Client.as3.postDec(exampleAs3Declaration);
 
         // capture posted tenant name again
         const tens = await f5Client.as3.parseDecs(resp.data.declaration)

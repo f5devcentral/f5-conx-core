@@ -156,7 +156,7 @@ export interface Target {
 /**
  * primary as3 example with TS type declaration
  */
-const exampleAs3Declaration: As3Declaration = {
+export const exampleAs3Declaration: As3Declaration = {
     "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/latest/as3-schema.json",
     class: "AS3",
     "action": "deploy",

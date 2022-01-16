@@ -252,8 +252,5 @@ export const tsInfoApiReponse = {
  * cf info api @ '/mgmt/shared/cloud-failover/declare'
  */
 export const cfInfoApiReponse = {
-    "version": "1.9.0",
-    "release": "1",
-    "schemaCurrent": "1.9.0",
-    "schemaMinimum": "0.9.1"
+    
 }
