@@ -9,6 +9,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [0.12.1] - (01-18-2022)
+
+- updated deps + axios
+  - should cover recent CVE-2022-0155
+    - https://github.com/advisories/GHSA-74fj-2j2h-c42q
+
+---
+
 ## [0.12.0] - (12-21-2021)
 
 - updated as3 class extension to parse/hold as3 declarations for easy access/listing
