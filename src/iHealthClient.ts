@@ -177,7 +177,7 @@ export class IhealthClient extends ExtHttp {
         await this.makeRequest({
             url: `${this._api_host}${this._collectionURL}`,
             headers: {
-                'cookie' : this._cookies
+                // cookie : this._cookies
             }
         })
         .then( async resp => {
@@ -220,7 +220,7 @@ export class IhealthClient extends ExtHttp {
         return this.makeRequest({
             url: `${this._api_host}${this._collectionURL}/${id}`,
             headers: {
-                'cookie' : this._cookies
+                // 'cookie' : this._cookies
             }
         })
 
@@ -242,7 +242,7 @@ export class IhealthClient extends ExtHttp {
             method: 'POST',
             url: `${this._api_host}${this._collectionURL}`,
             headers: {
-                'cookie' : this._cookies,
+                // 'cookie' : this._cookies,
                 'Content-Type': 'multipart/form-data'
             },
             data: {
@@ -266,7 +266,7 @@ export class IhealthClient extends ExtHttp {
         return this.makeRequest({
             url: `${this._api_host}${this._collectionURL}/${id}/commands`,
             headers: {
-                'cookie' : this._cookies
+                // 'cookie' : this._cookies
             }
         })
     }
@@ -288,7 +288,7 @@ export class IhealthClient extends ExtHttp {
         return this.makeRequest({
             url: `${this._api_host}${this._collectionURL}/${id}/commands/${cmd}`,
             headers: {
-                'cookie' : this._cookies
+                // 'cookie' : this._cookies
             }
         })
     }
@@ -308,7 +308,7 @@ export class IhealthClient extends ExtHttp {
         return this.makeRequest({
             url: `${this._api_host}${this._collectionURL}/${id}/diagnostics`,
             headers: {
-                'cookie' : this._cookies
+                // 'cookie' : this._cookies
             }
         })
     }
