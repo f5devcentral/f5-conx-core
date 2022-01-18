@@ -17,12 +17,13 @@ import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import {  atcMetaData, iControlEndpoints } from '../src/constants';
 import { F5Client } from '../src/bigip/f5Client';
-import { cfInfoApiReponse, deviceInfoIPv6 } from './artifacts/f5_device_atc_infos';
+import { deviceInfoIPv6 } from '../src/utils/f5_device_atc_infos';
 import { isArray, isObject } from '../src/utils/misc';
 import { 
     cfExampleDec,
     cfGetDeclareResp,
     cfGetTriggerResp,
+    cfInfoResp,
     cfInspectResp,
     cfPostDeclareResp,
     cfPostResetResp,
@@ -56,7 +57,7 @@ describe('cfClient integration tests', function () {
             .get(iControlEndpoints.tmosInfo)
             .reply(200, deviceInfoIPv6)
             .get(atcMetaData.cf.endPoints.info)
-            .reply(200, cfInfoApiReponse)
+            .reply(200, cfInfoResp)
 
         f5Client = getF5Client({ ipv6: true });
 

@@ -22,7 +22,7 @@ import { F5Client } from '../src/bigip/f5Client';
 import { as3InfoApiReponse, deviceInfoIPv6 } from '../src/utils/f5_device_atc_infos';
 // import localAtcMetadata from '../src/bigip/atc_metadata.old.json';
 import { isArray, isObject } from '../src/utils/misc';
-import { as3TargetTens, as3Tasks, as3Tens } from './artifacts/as3Mocks';
+import { as3TargetTens, as3Tasks, as3Tens } from '../src/bigip/as3Models';
 import { exampleAs3Declaration } from '../src/bigip/as3Models'
 
 

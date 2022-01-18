@@ -16,6 +16,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - cf class support
   - full info/inspect/declare/trigger/reset endpoint support
 - consolidated ATC models and mocks to export tests for integration with other tools
+- fixed download functions to create f5_cache directory if not present
 
 ---
 

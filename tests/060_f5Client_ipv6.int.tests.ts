@@ -22,7 +22,7 @@ import {
     fastInfoApiResponse,
     tsInfoApiReponse,
     cfInfoApiReponse 
-} from './artifacts/f5_device_atc_infos';
+} from '../src/utils/f5_device_atc_infos';
 
 import { 
     getF5Client,

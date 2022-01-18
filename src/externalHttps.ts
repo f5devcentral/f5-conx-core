@@ -276,6 +276,12 @@ export class ExtHttp {
      */
     async download(url: string, fileName?: string, destPath?: string, options: uuidAxiosRequestConfig = {}): Promise<HttpResponse> {
 
+        // recreate cache dir
+        if (!fs.existsSync(this.cacheDir)) {
+            console.log(`creating ${this.cacheDir} directory for file upload/download tests`)
+            fs.mkdirSync(this.cacheDir);
+        }
+
         // extract path from URL
         const urlPath = new URL(url).pathname
 
