@@ -9,6 +9,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [0.12.2] - (01-19-2022)
+
+- re-export atc schema inject
+
+---
+
 ## [0.12.1] - (01-18-2022)
 
 - updated deps + axios
