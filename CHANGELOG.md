@@ -9,6 +9,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [0.12.4] - (01-19-2022)
+
+- fix as3 delete
+- add function to extract tenant/schemaVersion/target from declaration
+
+## [0.12.3] - (01-19-2022)
+
+- fix exports again
+
+---
+
 ## [0.12.2] - (01-19-2022)
 
 - re-export atc schema inject
@@ -19,7 +30,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - updated deps + axios
   - should cover recent CVE-2022-0155
-    - https://github.com/advisories/GHSA-74fj-2j2h-c42q
+    - <https://github.com/advisories/GHSA-74fj-2j2h-c42q>
 
 ---
 

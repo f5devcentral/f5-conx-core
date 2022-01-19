@@ -3,12 +3,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 
-import { AdcDeclaration, As3AppMap, As3AppMapTenants } from "./as3Models";
+import { AdcDeclaration, As3AppMap, As3AppMapTenants, Target } from "./as3Models";
 
 import { isObject } from "../utils/misc";
+import { As3Declaration } from "..";
 
 
 
+/**
+ * extracts tenant name and target from declaration
+ * 	used for crafting tenant delete calls
+ * @param dec AS3/ADC declaration
+ * @returns { tenant, schemaVersion, target}
+ */
+export async function tenantFromDec(dec: As3Declaration | AdcDeclaration): Promise<{tenant: string, schemaVersion: string, target: Target }> {
+	let tenant
+	
+	if (dec.class === "AS3") {
+		dec = dec.declaration
+	}
+
+	const schemaVersion = dec.schemaVersion;
+	const target = dec.target;
+
+	// loop through declaration (adc) level
+	Object.entries(dec).forEach(([key, val]) => { 
+	
+		if (isObject(val) && key !== 'target' && key !== 'controls') {
+			tenant = key;
+		}
+	})
+	
+	return { tenant, schemaVersion, target }
+}
 
 
 /**

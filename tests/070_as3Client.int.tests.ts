@@ -20,10 +20,8 @@ import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import {  atcMetaData, iControlEndpoints } from '../src/constants';
 import { F5Client } from '../src/bigip/f5Client';
 import { as3InfoApiReponse, deviceInfoIPv6 } from '../src/bigip/f5_device_atc_infos';
-// import localAtcMetadata from '../src/bigip/atc_metadata.old.json';
 import { isArray, isObject } from '../src/utils/misc';
-import { as3TargetTens, as3Tasks, as3Tens } from '../src/bigip/as3Models';
-import { exampleAs3Declaration } from '../src/bigip/as3Models'
+import { as3ExampleDec, as3TargetTens, as3Tasks, as3Tens } from '../src/bigip/as3Models';
 
 
 //  *** todo: move all build/mocks to fixtureUtils
@@ -249,11 +247,11 @@ describe('as3Client integration tests', function () {
                         "message": "success"
                     }
                 ],
-                declaration: exampleAs3Declaration
+                declaration: as3ExampleDec
             })
 
         // this operation is async by default
-        const resp = await f5Client.as3.postDec(exampleAs3Declaration)
+        const resp = await f5Client.as3.postDec(as3ExampleDec)
             .then(resp => resp)
             .catch(err => {
                 debugger;
@@ -361,16 +359,7 @@ describe('as3Client integration tests', function () {
         // nock.recorder.rec();
 
         nockInst
-            .post('/mgmt/shared/appsvcs/declare', {
-                "class": "AS3",
-                "declaration": {
-                    "class": "ADC",
-                    "schemaVersion": "3.0.0",
-                    [tenant]: {
-                        "class": "Tenant"
-                    }
-                }
-            })
+            .post('/mgmt/shared/appsvcs/declare')
             .reply(200, {
                 "results": [{
                     "code": 200,
@@ -379,7 +368,7 @@ describe('as3Client integration tests', function () {
             })
 
         // delete tenant from previous test
-        const resp = await f5Client.as3.deleteTenant(tenant);
+        const resp = await f5Client.as3.deleteTenant(as3ExampleDec);
 
         assert.deepStrictEqual(resp.data.results[0].message, 'success');
 
@@ -413,10 +402,10 @@ describe('as3Client integration tests', function () {
                         "message": "success"
                     }
                 ],
-                declaration: exampleAs3Declaration
+                declaration: as3ExampleDec
             })
         // we are doing this again so we can test deleting a declaration with the POST method
-        const resp = await f5Client.as3.postDec(exampleAs3Declaration);
+        const resp = await f5Client.as3.postDec(as3ExampleDec);
 
         // capture posted tenant name again
         const tens = await f5Client.as3.parseDecs(resp.data.declaration)
@@ -426,43 +415,6 @@ describe('as3Client integration tests', function () {
         assert.ok(isObject(resp.data.declaration));
         assert.ok(isObject(resp.data.results[0]));
     });
-
-
-
-    it('delete sample declaration - POST empty tenant', async function () {
-
-        nockInst
-            .post('/mgmt/shared/appsvcs/declare', {
-                "class": "AS3",
-                "declaration": {
-                    "class": "ADC",
-                    "schemaVersion": "3.0.0",
-                    [tenant]: {
-                        "class": "Tenant"
-                    }
-                }
-            })
-            .reply(200, {
-                "results": [{
-                    "code": 200,
-                    "message": "success",
-                }]
-            })
-
-        const resp = await f5Client.as3.deleteTenant({
-            class: 'AS3',
-            declaration: {
-                class: 'ADC',
-                schemaVersion: '3.0.0',
-                [tenant]: {
-                    class: 'Tenant'
-                }
-            }
-        });
-
-        assert.deepStrictEqual(resp.data.results[0].message, 'success');
-    });
-
 
 });
 
