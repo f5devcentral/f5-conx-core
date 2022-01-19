@@ -22,7 +22,9 @@ const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 logger.console = false;
 
 let workingDec;
-
+const simpleDec = {
+    "some": "thing"
+};
 
 describe('atc injectSchema Unit Tests', function () {
     
@@ -36,6 +38,31 @@ describe('atc injectSchema Unit Tests', function () {
         logger.clearLogs();
       });
 
+
+    it('not valid atc declaration, NO logger', async function () {
+
+        // clone example declaration
+        workingDec = Object.assign({}, simpleDec)
+
+        const addedSchemaDec = await injectSchema(workingDec)
+        
+        assert.ok(!addedSchemaDec.$schema);
+        assert.deepStrictEqual(addedSchemaDec, simpleDec);
+        assert.ok(logger.journal.length === 0)
+    });
+    
+    it('not valid atc declaration, with logger', async function () {
+        
+        // clone example declaration
+        workingDec = Object.assign({}, simpleDec)
+        
+        const addedSchemaDec = await injectSchema(workingDec, logger)
+        
+        assert.ok(!addedSchemaDec.$schema);
+        assert.ok(logger.journal.length === 1)
+        assert.ok(logger.journal[0].includes('valid json, but not f5 atc declaration -> no change'))
+        assert.deepStrictEqual(addedSchemaDec, simpleDec);
+    });
 
     it('add as3 schema, NO logger', async function () {
 

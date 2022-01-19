@@ -92,7 +92,9 @@ export async function injectSchema(dec: Record<string, unknown>, logger?: Logger
                 "$schema": atcMetaData.cf.schema,
                 ...dec
             };
+        } else {
+            logger?.info('valid json, but not f5 atc declaration -> no change');
+            return dec;
         }
     }
-    return dec;
 }
