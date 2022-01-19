@@ -19,6 +19,11 @@
 import { uuidAxiosRequestConfig } from "../utils/httpModels";
 import { atcMetaData } from '../constants'
 
+/**
+ * injects user agent into declaration for F5 TEEM
+ * @param req HTTP request
+ * @param userAgent user agent string to inject
+ */
 export async function injectAtcAgent(req: uuidAxiosRequestConfig, userAgent: string): Promise<void> {
 
     const atcDeclareEndPoints = [

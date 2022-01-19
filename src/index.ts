@@ -16,12 +16,13 @@ export * from './iHealthClient';
 export * from './utils/httpModels'
 export * from './utils/misc';
 export * from './utils/testingUtils';
-export * from './utils/f5_device_atc_infos';
+export * from './bigip/f5_device_atc_infos';
 
 
 // main f5 client
 export * from './bigip/f5Client';
 export * from './bigip/atcVersionsClient';
+export * from './bigip/atcSchema';
 
 // f5 models
 export * from './bigip/bigipModels';
