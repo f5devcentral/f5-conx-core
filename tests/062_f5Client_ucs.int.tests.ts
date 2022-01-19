@@ -22,7 +22,7 @@ import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import { F5DownloadPaths, iControlEndpoints } from '../src/constants';
 
 
-import { deviceInfoIPv6 } from '../src/utils/f5_device_atc_infos';
+import { deviceInfoIPv6 } from '../src/bigip/f5_device_atc_infos';
 import { ucsListApiReponse } from './artifacts/ucsList'
 import { HttpResponse } from '../src/utils/httpModels';
 

@@ -10,7 +10,7 @@
 'use strict';
 
 import Logger from '../src/logger';
-import { injectSchema } from '../src/utils/atcSchema'
+import { injectSchema } from '../src/bigip/atcSchema'
 import assert from 'assert';
 import { as3ExampleDec } from '../src/bigip/as3Models';
 import { doExampleDec, doExampleDecDevice } from '../src/bigip/doModels';
@@ -24,7 +24,7 @@ logger.console = false;
 let workingDec;
 
 
-describe('atcSchema Class Unit Tests', function () {
+describe('atc injectSchema Unit Tests', function () {
     
     before(function () {
         // log test file name - makes it easer for troubleshooting

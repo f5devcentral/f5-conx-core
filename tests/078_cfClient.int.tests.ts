@@ -17,7 +17,7 @@ import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import {  atcMetaData, iControlEndpoints } from '../src/constants';
 import { F5Client } from '../src/bigip/f5Client';
-import { deviceInfoIPv6 } from '../src/utils/f5_device_atc_infos';
+import { deviceInfoIPv6 } from '../src/bigip/f5_device_atc_infos';
 import { isArray, isObject } from '../src/utils/misc';
 import { 
     cfExampleDec,
