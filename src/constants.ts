@@ -51,7 +51,8 @@ export const atcMetaData = {
             info: '/mgmt/shared/fast/info'
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-appsvcs-templates/releases',
-        repo: 'https://github.com/F5Networks/f5-appsvcs-templates'
+        repo: 'https://github.com/F5Networks/f5-appsvcs-templates',
+        schema: 'https://raw.githubusercontent.com/f5devcentral/f5-fast-core/master/schema/template.json'
     },
     as3: {
         endPoints: {
