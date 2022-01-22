@@ -13,10 +13,11 @@
 
 import { HttpResponse } from "../utils/httpModels";
 import { isObject } from "../utils/misc";
-import { As3Dec, AtcInfo } from "./bigipModels";
+import { AtcInfo } from "./bigipModels";
 import { MgmtClient } from "./mgmtClient";
 import { atcMetaData } from '../constants';
 import { AdcDeclaration, As3Declaration } from "./as3Models";
+import { tenantFromDec } from "..";
 
 
 /**
@@ -36,7 +37,7 @@ export class As3Client {
     /**
      * declarations of targets (typically from bigiq)
      */
-    public readonly targets: {
+    targets!: {
         label: string,
         declaration: unknown,
         target: string,
@@ -47,7 +48,7 @@ export class As3Client {
     /**
      * list of tenants/declarations
      */
-    public readonly tenants: {
+    tenants!: {
         class: string,
         schemaVersion: string,
         updateMode: string,
@@ -106,6 +107,11 @@ export class As3Client {
                 : str;
 
         return await this.mgmtClient.makeRequest(`${atcMetaData.as3.endPoints.declare}${str}`)
+            .then(async resp => {
+                // parse and store the decs in the local class for easy access
+                this.tenants = await this.parseDecs(resp.data);
+                return resp
+            })
     }
 
 
@@ -135,7 +141,7 @@ export class As3Client {
     /**
      * Remove AS3 tenant - works with both bigip and bigiq
      * 
-     * ** target parameter is optional!!! **
+     * ** target parameter required for bigiq **
      * 
      * ```json
      * {
@@ -154,30 +160,24 @@ export class As3Client {
      * @param tenant tenant to delete
      * @param dec empty declaration to remove from multi-target system
      */
-    // async deleteTenant(x: string): Promise<HttpResponse>;
-    // async deleteTenant(x: as3Dec): Promise<HttpResponse>;
-    async deleteTenant(x: As3Dec | string): Promise<HttpResponse> {
+    async deleteTenant(dec: As3Declaration | AdcDeclaration): Promise<HttpResponse> {
 
-        // if (typeof x === 'string' || x instanceof String) {
-        if (typeof x === 'string') {
-
-            x = {
-                class: 'AS3',
-                declaration: {
-                    class: 'ADC',
-                    schemaVersion: '3.0.0',
-                    [x]: {
-                        class: 'Tenant'
-                    }
-                }
-            }
-
-        }
+        const { tenant, target, schemaVersion} = await tenantFromDec(dec);
 
         // while the "DELETE" http method is waaay easier, this method works for all situations, including bigiq multi-target/tenant
         return await this.mgmtClient.makeRequest(atcMetaData.as3.endPoints.declare, {
             method: 'POST',
-            data: x
+            data: {
+                class: 'AS3',
+                declaration: {
+                    schemaVersion,
+                    class: 'ADC',
+                    target,
+                    [tenant]: {
+                        class: 'Tenant'
+                    }
+                }
+            }
         })
 
 

@@ -67,6 +67,7 @@ export interface AxiosResponseWithTimings extends AxiosResponse {
 
 export interface uuidAxiosRequestConfig extends AxiosRequestConfig {
     uuid?: string,
-    transport?: unknown
+    transport?: unknown,
+    rejectUnauthorized?: boolean,
 }
 

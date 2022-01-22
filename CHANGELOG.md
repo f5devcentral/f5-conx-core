@@ -9,6 +9,42 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [0.12.4] - (01-19-2022)
+
+- fix as3 delete
+- add function to extract tenant/schemaVersion/target from declaration
+
+## [0.12.3] - (01-19-2022)
+
+- fix exports again
+
+---
+
+## [0.12.2] - (01-19-2022)
+
+- re-export atc schema inject
+
+---
+
+## [0.12.1] - (01-18-2022)
+
+- updated deps + axios
+  - should cover recent CVE-2022-0155
+    - <https://github.com/advisories/GHSA-74fj-2j2h-c42q>
+
+---
+
+## [0.12.0] - (12-21-2021)
+
+- updated as3 class extension to parse/hold as3 declarations for easy access/listing
+- configured atc schema inject/remove function from vscode-f5
+- cf class support
+  - full info/inspect/declare/trigger/reset endpoint support
+- consolidated ATC models and mocks to export tests for integration with other tools
+- fixed download functions to create f5_cache directory if not present
+
+---
+
 ## [0.11.0] - (11-14-2021)
 
 - added cookie insert to BIGIP mgmt client.  This is for injecting auth cookie for UDF

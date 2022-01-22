@@ -74,6 +74,7 @@ export const atcMetaData = {
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-declarative-onboarding/releases',
         repo: 'https://github.com/F5Networks/f5-declarative-onboarding',
         schema: 'https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/base.schema.json',
+        parentSchema: 'https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/remote.schema.json',
         examples: 'https://github.com/F5Networks/f5-declarative-onboarding/tree/master/examples'
     },
     ts: {

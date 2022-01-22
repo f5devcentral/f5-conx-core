@@ -9,6 +9,22 @@
     ],
     "configurations": [
         {
+            "name": "Mocha All",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "-r",
+                "ts-node/register",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/tests/*.tests.ts",
+            ],
+            "internalConsoleOptions": "neverOpen",
+            "protocol": "inspector",
+        },
+        {
             "name": "Launch test rest server",
             "request": "launch",
             "runtimeArgs": [
@@ -20,22 +36,6 @@
                 "<node_internals>/**"
             ],
             "type": "pwa-node"
-        },
-        {
-            "name": "Mocha All",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-            "args": [
-                "-r",
-                "ts-node/register",
-                "--timeout",
-                "999999",
-                "--colors",
-                "${workspaceFolder}/tests/all.tests.ts",
-            ],
-            "internalConsoleOptions": "neverOpen",
-            "protocol": "inspector",
         },
         {
             "name": "mgmtClient unit tests",
@@ -53,7 +53,7 @@
             "protocol": "inspector",
         },
         {
-            "name": "newMgmtClient unit tests",
+            "name": "Debug current test",
             "type": "node",
             "request": "launch",
             "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
@@ -62,7 +62,7 @@
                 "ts-node/register",
                 "--no-timeout",
                 "--colors",
-                "${workspaceFolder}/tests/newMgmtClient.unit.tests.ts",
+                "${file}",
             ],
             "internalConsoleOptions": "neverOpen",
             "protocol": "inspector",

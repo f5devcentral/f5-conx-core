@@ -45,7 +45,7 @@ export class AtcMgmtClient {
     private morphBigiq() {
         // if bigiq, update functions to support the different work flow
 
-        if(this.mgmtClient.hostInfo.product === 'BIG-IQ') {
+        if (this.mgmtClient.hostInfo.product === 'BIG-IQ') {
             // not bigiq, so don't apply any updates
             // return;
             this.isBigiq = true;
@@ -59,7 +59,7 @@ export class AtcMgmtClient {
 
             // copy package into directory
             // cp /shared/tmp/f5-appsvcs-3.24.0-5.noarch.rpm /usr/lib/dco/packages/f5-appsvcs/
-            
+
             // mount back to ro
             // mount -o remount,ro /usr
 
@@ -80,31 +80,39 @@ export class AtcMgmtClient {
      * @param url ex.
      * `https://github.com/F5Networks/f5-appsvcs-templates/releases/download/v1.4.0/f5-appsvcs-templates-1.4.0-1.noarch.rpm`
      */
-    async download(url: string): Promise<HttpResponse|{data: { file: string, bytes: number}}> {
+    async download(url: string): Promise<HttpResponse | { data: { file: string, bytes: number } }> {
+
+        // recreate cache dir
+        if (!fs.existsSync(this.extHttp.cacheDir)) {
+            console.log(`creating ${this.extHttp.cacheDir} directory for file upload/download tests`)
+            fs.mkdirSync(this.extHttp.cacheDir);
+        }
 
         this.mgmtClient.events.emit('log-info', {
             msg: 'downloading rpm from web',
             url
         })
-        
+
         // extract path from URL
         const urlPath = new URL(url).pathname
-        
+
         const fileName = path.basename(urlPath);
-        
+
         const localFilePath = path.join(this.extHttp.cacheDir, fileName)
-        
+
         const existing = fs.existsSync(localFilePath)
-        
-        if(existing) {
+
+        if (existing) {
             // file was found in cache
             const fileStat = fs.statSync(localFilePath);
-            
-            const resp = { data: {
-                file: localFilePath,
-                cache: true,
-                bytes: fileStat.size
-            }};
+
+            const resp = {
+                data: {
+                    file: localFilePath,
+                    cache: true,
+                    bytes: fileStat.size
+                }
+            };
 
             this.mgmtClient.events.emit('log-info', {
                 msg: 'found local cached rpm',
@@ -117,7 +125,7 @@ export class AtcMgmtClient {
             // file not found in cache, download
             return await this.extHttp.download(url)
         }
-        
+
     }
 
 
@@ -218,9 +226,9 @@ export class AtcMgmtClient {
                 const awaitServiceRestart: HttpResponse = await this.mgmtClient.followAsync(`${iControlEndpoints.atcPackageMgmt}/${resp.data.id}`)
 
                 // await this.watchAtcRestart();
-                
+
                 this.mgmtClient.events.emit('log-info', `un-installing atc rpm job complete, waiting for services to restart (~30 seconds)`);
-  
+
                 await new Promise(resolve => { setTimeout(resolve, 30000); });
 
                 // check if atc services restarted and append thier responses when complete
