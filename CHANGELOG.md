@@ -9,6 +9,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [0.13.0] - (02-00-2022)
+
+- updated deps
+- started building testing service
+  - tmos auth token + as3 endpoints
+
+---
+
 ## [0.12.4] - (01-19-2022)
 
 - fix as3 delete
