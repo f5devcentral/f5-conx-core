@@ -13,7 +13,7 @@ import { AtcInfo } from "./bigipModels";
 import { atcMetaData } from '../constants'
 import { MgmtClient } from "./mgmtClient";
 import { AxiosResponseWithTimings } from "../utils/httpModels";
-import { DoDecDevice, DoDecParent } from "./doModels";
+import { DeviceDeclaration, DoDeclaration } from "./doModels";
 
 
 export class DoClient {
@@ -103,7 +103,7 @@ export class DoClient {
      * @param data do declaration
      * @returns true/false
      */
-    isAsync(data: DoDecParent | DoDecDevice): boolean {
+    isAsync(data: DoDeclaration | DeviceDeclaration ): boolean {
 
         // inspect json dec for async param
         if (data.class === 'DO' && data.declaration.async === true) {
