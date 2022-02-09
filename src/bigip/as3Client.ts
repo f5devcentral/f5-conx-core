@@ -191,7 +191,7 @@ export class As3Client {
      * - todo: provide better typing for this entire function 'any'=bad
      * @param x delcare endpoint response
      */
-    async parseDecs(x: any): Promise<any[]> {
+    async parseDecs(x: AdcDeclaration[] | AdcDeclaration): Promise<any[]> {
 
         const tarTens = []
         if (Array.isArray(x)) {

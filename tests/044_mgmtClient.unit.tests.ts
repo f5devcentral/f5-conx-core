@@ -221,6 +221,80 @@ describe('mgmtClient unit tests - successes', function () {
     });
 
 
+    it('make basic request - inspect special token', async function () {
+
+        // clean all the nocks since we didn't use any of the pre-built stuff
+        nock.cleanAll();
+
+        const provider = 'someSpecialProvider'
+
+        // custom mgmt client for this test
+        const mgmtClient = new MgmtClient(
+            defaultHost,
+            defaultUser,
+            defaultPassword, {
+            port: 444,
+            provider,
+        }
+
+        )
+
+        let tokenPostBody
+        let tokenRespBody
+
+        const request = '/mgmt/tm/sys/clock';
+        const response = {
+            "kind": "tm:sys:clock:clockstats",
+            "selfLink": "https://localhost/mgmt/tm/sys/clock?ver=14.1.2.6",
+            "entries": {
+                "https://localhost/mgmt/tm/sys/clock/0": {
+                    "nestedStats": {
+                        "entries": {
+                            "fullDate": {
+                                "description": "2021-02-13T11:44:02Z"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        let token;
+        nock(`https://${defaultHost}:444`)
+            .get('/api/v1/login')
+            .reply(function () {
+                const head = this.req.headers?.authorization;
+                token = `mbip-${head.split(' ')[1]}`
+                return [200, { token }]
+            })
+            .get(request)
+            .reply(function () {
+                const token = this.req.headers?.authorization;
+                if(token.startsWith('mbip-')) {
+                    return [200, response]
+                } else {
+                    return [401, { 
+                        message: 'authorization header token invalid', 
+                        headers: this.req.headers
+                    }]
+                }
+            });
+
+        await mgmtClient.makeRequest(request)
+            .then(resp => {
+                assert.deepStrictEqual(resp.data, response)
+            })
+            .catch(err => {
+                debugger;
+                // assert.fail('was supposed to make a basic request')
+            })
+
+        assert.ok(mgmtClient.tokenTimeout > 1100)
+        mgmtClient.clearToken();
+
+    });
+
+
     it('confirm http response object/structure/details through simplifyHttpReponse', async function () {
 
         const request = '/mgmt/tm/sys/sshd'

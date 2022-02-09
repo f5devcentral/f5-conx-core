@@ -203,10 +203,17 @@ export const fastInfoApiResponse = {
 };
 
 
+export type As3Info = {
+    version: string;
+    release: string;
+    schemaCurrent: string;
+    schemaMinimum: string;
+}
+
 /**
  * as3 info api @ '/mgmt/shared/appsvcs/info'
  */
-export const as3InfoApiReponse = {
+export const as3InfoApiReponse: As3Info = {
     "version": "3.22.0",
     "release": "2",
     "schemaCurrent": "3.22.0",

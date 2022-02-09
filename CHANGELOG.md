@@ -12,8 +12,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [0.13.0] - (02-00-2022)
 
 - updated deps
-- started building testing service
-  - tmos auth token + as3 endpoints
+- refactor and extend atc models for stronger typing
+- special auth token testing
 
 ---
 

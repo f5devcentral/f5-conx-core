@@ -803,7 +803,7 @@ export const as3Tens: AdcDeclaration = {
 }
 
 /**
- * example as3 declare response with targets
+ * example as3 declare response with multiple targets
  */
 export const as3TargetTens: AdcDeclaration[] = [
     {
@@ -1025,17 +1025,21 @@ export const as3TargetTens: AdcDeclaration[] = [
  * as3 task response type
  */
 export type As3TaskType = {
-    items: {
+    items: As3TaskItemType[]
+}
+
+export type As3TaskItemType = {
         id: string;
         results: As3TaskResultsType[];
         declaration: AdcDeclaration | Record<string, never>;
-    }[]
-}
-/**
+    }
+
+
+    /**
  * as3 task response Results type
  */
 export type As3TaskResultsType = {
-    code?: number;
+    code: number;
     message: string;
     errors?: string[]
     host?: string;
