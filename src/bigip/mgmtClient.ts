@@ -29,6 +29,7 @@ import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "
 import { F5DownloadPaths, F5UploadPaths } from '../constants';
 import { getRandomUUID } from '../utils/misc';
 import { injectAtcAgent } from './atcAgent';
+import { Mtoken } from './mModels';
 
 
 
@@ -109,7 +110,7 @@ export class MgmtClient {
     /**
      * new token
      */
-    protected _mbip_token: Token | undefined;
+    protected _mbip_token: Mtoken | undefined;
     /**
      * token timer value
      * 
@@ -158,6 +159,7 @@ export class MgmtClient {
 
     private _cbip_auth = '/mgmt/shared/authn/login'
     private _mbip_auth = '/api/v1/login'
+    bigType: 'cbip' | 'mbip' = 'cbip';
 
     /**
      * @param options function options
@@ -331,13 +333,15 @@ export class MgmtClient {
             .then(resp => {
 
                 // capture entire token
-                this._mbip_token = resp.data.token;
+                this._mbip_token = resp.data;
                 // set token timeout for timer
-                this.tokenTimeout = 1200;
+                this.tokenTimeout = resp.data.expiresIn;
 
                 this.events.emit('log-debug', `auth token aquired, timeout: ${this.tokenTimeout}`);
 
                 this.tokenTimer();  // start token timer
+
+                this.bigType = 'mbip';
 
                 return;
 
@@ -432,7 +436,7 @@ export class MgmtClient {
                 url: uri,
                 method: options?.method || undefined,
                 headers: Object.assign(options?.headers || {}, {
-                    'Authorization': this._mbip_token
+                    'Authorization': `Bearer ${this._mbip_token.token}`
                 }),
                 data: options?.data || undefined
             }, options)

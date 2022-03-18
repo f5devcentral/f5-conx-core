@@ -13,9 +13,8 @@ import assert from 'assert';
 import nock from 'nock';
 
 import { defaultHost, getFakeToken, getMgmtClient } from '../src/utils/testingUtils';
-import { failedAuthResp } from './artifacts/authToken';
 import { MgmtClient } from '../src/bigip/mgmtClient';
-import { AuthTokenReqBody } from '../src/bigip/bigipModels';
+import { AuthTokenReqBody, exampleAuthRespFailed } from '../src/bigip/bigipModels';
 
 
 describe('mgmtClient tests - failures', async function () {
@@ -119,7 +118,7 @@ describe('mgmtClient tests - failures', async function () {
     it('fail auth', async function () {
         nock(`https://${defaultHost}`)
             .post('/mgmt/shared/authn/login')
-            .reply(401, failedAuthResp)
+            .reply(401, exampleAuthRespFailed)
 
 
         const eventsLocal = [];

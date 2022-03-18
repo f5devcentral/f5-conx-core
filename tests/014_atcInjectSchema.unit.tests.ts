@@ -74,7 +74,12 @@ describe('atc injectSchema Unit Tests', function () {
 
         const addedSchemaDec = await injectSchema(workingDec)
         
+        // assert schema is correct
         assert.ok(addedSchemaDec.$schema === atcMetaData.as3.schema);
+        
+        // make sure we still have "declaration" key
+        assert.ok(addedSchemaDec.declaration);
+
         assert.ok(logger.journal.length === 0)
     });
 

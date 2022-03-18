@@ -56,7 +56,7 @@
  * base "device" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/base.schema.json
  * parent "DO" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest.remote.schema.json
  */
-export interface DoDeclaration {
+export type DoDeclaration = {
     /**
      * Indicates that this is a Declarative Onboarding request
      */
@@ -170,7 +170,7 @@ type DoBigIqConflictOptions = 'NONE' | 'USE_BIGIP' | 'USE_BIGIQ' | 'KEEP_VERSION
  * Top level schema for onboarding a BIG-IP.
  * DO declaration body (typical NON-BIGIQ deployment)
  */
-export interface DeviceDeclaration {
+export type DeviceDeclaration = {
     /**
      * Version of Declarative Onboarding schema this declaration uses.
      */

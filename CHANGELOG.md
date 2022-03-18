@@ -9,10 +9,18 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
-## [0.13.0] - (02-00-2022)
+## [0.13.1] - (03-18-2022)
+
+- [bug] schema inject changes declaration to "dec" #20
+  - <https://github.com/f5devcentral/f5-conx-core/issues/20>
+
+---
+
+## [0.13.0] - (02-10-2022)
 
 - updated deps
 - refactor and extend atc models for stronger typing
+  - Mainly DO
 - special auth token testing
 
 ---

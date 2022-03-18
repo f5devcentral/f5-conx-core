@@ -134,30 +134,28 @@ export class F5Client {
         teemEnv?: string,
         teemAgent?: string
     ) {
+
+        // setup cache dir
+        this.cacheDir = process.env.F5_CONX_CORE_CACHE || path.join(process.cwd(), TMP_DIR);
+
+        // setup eventer
+        this.events = eventEmmiter ? eventEmmiter : new EventEmitter();
+
         this.mgmtClient = new MgmtClient(
             host,
             user,
             password,
             hostOptions,
-            eventEmmiter,
+            eventEmmiter = this.events,
             teemEnv,
             teemAgent
         )
 
-        this.cacheDir = process.env.F5_CONX_CORE_CACHE || path.join(process.cwd(), TMP_DIR);
-
-        this.events = eventEmmiter ? eventEmmiter : new EventEmitter();
 
         // setup external http class (feed it the events instance)
         this.extHttp = extHttp ? extHttp : new ExtHttp({
             eventEmitter: this.events,
         });
-
-        // setup ucsClient
-        this.ucs = new UcsClient(this.mgmtClient)
-
-        // setup qkviewClient
-        this.qkview = new QkviewClient(this.mgmtClient)
 
         // setup atc rpm ilx mgmt
         this.atc = new AtcMgmtClient(this.mgmtClient, this.extHttp)
@@ -200,32 +198,6 @@ export class F5Client {
 
         const returnInfo: DiscoverInfo = {};
 
-        // get device info
-        await this.mgmtClient.makeRequest('/mgmt/shared/identified-devices/config/device-info')
-            .then(resp => {
-
-                // assign details to this and mgmtClient class
-                this.host = resp.data
-                this.mgmtClient.hostInfo = resp.data
-
-                returnInfo.hostname = this.host.hostname;
-                returnInfo.version = this.host.version;
-                returnInfo.product = this.host.product;
-
-
-            })
-
-        // check FAST installed by getting verion info
-        await this.mgmtClient.makeRequest(this.atcMetaData.fast.endPoints.info)
-            .then(resp => {
-                this.fast = new FastClient(resp.data as AtcInfo, this.atcMetaData.fast, this.mgmtClient);
-                returnInfo.atc = {}
-                returnInfo.atc.fast = this.fast.version.version
-            })
-            .catch(() => {
-                // do nothing... but catch the error from bubbling up and causing other issues
-                // this.logger.debug(err);
-            })
 
         // check AS3 installed by getting verion info
         await this.mgmtClient.makeRequest(this.atcMetaData.as3.endPoints.info)
@@ -238,55 +210,116 @@ export class F5Client {
                 }
                 returnInfo.atc.as3 = this.as3.version.version;
             })
-            .catch(() => {
+            .catch(err => {
                 // do nothing... but catch the error from bubbling up and causing other issues
                 // this.logger.debug(err);
+                // debugger;
             })
 
 
-        // check DO installed by getting verion info
-        await this.mgmtClient.makeRequest(this.atcMetaData.do.endPoints.info)
-            .then(resp => {
-                this.do = new DoClient(resp.data[0] as AtcInfo, this.atcMetaData.do, this.mgmtClient);
-                if (!returnInfo.atc) {
+        if (this.mgmtClient.bigType === 'cbip') {
+
+            // setup ucsClient
+            this.ucs = new UcsClient(this.mgmtClient)
+
+            // setup qkviewClient
+            this.qkview = new QkviewClient(this.mgmtClient)
+
+            // get device info
+            await this.mgmtClient.makeRequest('/mgmt/shared/identified-devices/config/device-info')
+                .then(resp => {
+
+                    // assign details to this and mgmtClient class
+                    this.host = resp.data
+                    this.mgmtClient.hostInfo = resp.data
+
+                    returnInfo.hostname = this.host.hostname;
+                    returnInfo.version = this.host.version;
+                    returnInfo.product = this.host.product;
+
+                })
+                .catch(() => {
+                    // do nothing... but catch the error from bubbling up and causing other issues
+                    //  --- special does not have this endpoint... to catch, do nothing for now
+                    // this.logger.debug(err);
+                })
+
+            // check FAST installed by getting verion info
+            await this.mgmtClient.makeRequest(this.atcMetaData.fast.endPoints.info)
+                .then(resp => {
+                    this.fast = new FastClient(resp.data as AtcInfo, this.atcMetaData.fast, this.mgmtClient);
                     returnInfo.atc = {}
-                }
-                returnInfo.atc.do = this.do.version.version;
-            })
-            .catch(() => {
-                // do nothing... but catch the error from bubbling up and causing other issues
-                // this.logger.debug(err);
-            })
+                    returnInfo.atc.fast = this.fast.version.version
+                })
+                .catch(() => {
+                    // do nothing... but catch the error from bubbling up and causing other issues
+                    // this.logger.debug(err);
+                })
 
 
-        // check TS installed by getting verion info
-        await this.mgmtClient.makeRequest(this.atcMetaData.ts.endPoints.info)
-            .then(resp => {
-                this.ts = new TsClient(resp.data as AtcInfo, this.atcMetaData.ts, this.mgmtClient);
-                if (!returnInfo.atc) {
-                    returnInfo.atc = {}
-                }
-                returnInfo.atc.ts = this.ts.version.version;
-            })
-            .catch(() => {
-                // do nothing... but catch the error from bubbling up and causing other issues
-                // this.logger.debug(err);
-            })
+            // check DO installed by getting verion info
+            await this.mgmtClient.makeRequest(this.atcMetaData.do.endPoints.info)
+                .then(resp => {
+                    this.do = new DoClient(resp.data[0] as AtcInfo, this.atcMetaData.do, this.mgmtClient);
+                    if (!returnInfo.atc) {
+                        returnInfo.atc = {}
+                    }
+                    returnInfo.atc.do = this.do.version.version;
+                })
+                .catch(() => {
+                    // do nothing... but catch the error from bubbling up and causing other issues
+                    // this.logger.debug(err);
+                })
 
 
-        // check CF installed by getting verion info
-        await this.mgmtClient.makeRequest(this.atcMetaData.cf.endPoints.info)
-            .then(resp => {
-                this.cf = new CfClient(resp.data as AtcInfo, this.mgmtClient);
-                if (!returnInfo.atc) {
-                    returnInfo.atc = {}
-                }
-                returnInfo.atc.cf = this.cf.version.version;
-            })
-            .catch(() => {
-                // do nothing... but catch the error from bubbling up and causing other issues
-                // this.logger.debug(err);
-            })
+            // check TS installed by getting verion info
+            await this.mgmtClient.makeRequest(this.atcMetaData.ts.endPoints.info)
+                .then(resp => {
+                    this.ts = new TsClient(resp.data as AtcInfo, this.atcMetaData.ts, this.mgmtClient);
+                    if (!returnInfo.atc) {
+                        returnInfo.atc = {}
+                    }
+                    returnInfo.atc.ts = this.ts.version.version;
+                })
+                .catch(() => {
+                    // do nothing... but catch the error from bubbling up and causing other issues
+                    // this.logger.debug(err);
+                })
+
+
+            // check CF installed by getting verion info
+            await this.mgmtClient.makeRequest(this.atcMetaData.cf.endPoints.info)
+                .then(resp => {
+                    this.cf = new CfClient(resp.data as AtcInfo, this.mgmtClient);
+                    if (!returnInfo.atc) {
+                        returnInfo.atc = {}
+                    }
+                    returnInfo.atc.cf = this.cf.version.version;
+                })
+                .catch(() => {
+                    // do nothing... but catch the error from bubbling up and causing other issues
+                    // this.logger.debug(err);
+                })
+        } else {
+            // mbip discover stuff
+
+            // check AS3 installed by getting verion info
+            await this.mgmtClient.makeRequest(this.atcMetaData.as3.endPoints.info)
+                .then(resp => {
+                    // if http 2xx, create as3 client
+                    // notice the recast of resp.data type of "unknown" to "AtcInfo"
+                    this.as3 = new As3Client(resp.data as AtcInfo, this.atcMetaData.as3, this.mgmtClient);
+                    if (!returnInfo.atc) {
+                        returnInfo.atc = {}
+                    }
+                    returnInfo.atc.as3 = this.as3.version.version;
+                })
+                .catch(err => {
+                    // do nothing... but catch the error from bubbling up and causing other issues
+                    // this.logger.debug(err);
+                    debugger;
+                })
+        }
 
 
         return returnInfo;

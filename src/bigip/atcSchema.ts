@@ -58,7 +58,7 @@ export async function injectSchema(dec: Record<string, unknown>, logger?: Logger
             return {
                 "$schema": atcMetaData.as3.schema,
                 "class": "AS3",
-                dec: dec
+                declaration: dec
             };
 
         } else if (dec.class === 'DO') {

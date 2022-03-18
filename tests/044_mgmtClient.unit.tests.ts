@@ -265,16 +265,23 @@ describe('mgmtClient unit tests - successes', function () {
             .reply(function () {
                 const head = this.req.headers?.authorization;
                 token = `mbip-${head.split(' ')[1]}`
-                return [200, { token }]
+                return [200, {
+                    token,
+                    tokenType: 'Bearer',
+                    expiresIn: 3600,
+                    refreshToken: 'some other special token for refreshing tokens',
+                    refreshExpiresIn: 1209600,
+                    refreshEndDate: '2022-05-10T20:55:06Z'
+                }]
             })
             .get(request)
             .reply(function () {
                 const token = this.req.headers?.authorization;
-                if(token.startsWith('mbip-')) {
+                if (token.startsWith('Bearer mbip-')) {
                     return [200, response]
                 } else {
-                    return [401, { 
-                        message: 'authorization header token invalid', 
+                    return [401, {
+                        message: 'authorization header token invalid',
                         headers: this.req.headers
                     }]
                 }
@@ -450,7 +457,7 @@ describe('mgmtClient unit tests - successes', function () {
         const nockDef = nock.loadDefs('tests/artifacts/nocks/downloadNock.json').map(item => {
             item.scope = `https://${defaultHost}:443`
 
-            if(item.path !== "/mgmt/shared/authn/login") {
+            if (item.path !== "/mgmt/shared/authn/login") {
                 item.path = `${F5DownloadPaths.iso.uri}/f5-declarative-onboarding-1.19.0-2.noarch.rpm`
             }
 
