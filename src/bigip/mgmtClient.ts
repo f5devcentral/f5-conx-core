@@ -29,7 +29,7 @@ import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "
 import { F5DownloadPaths, F5UploadPaths } from '../constants';
 import { getRandomUUID } from '../utils/misc';
 import { injectAtcAgent } from './atcAgent';
-import { Mtoken } from './mModels';
+// import { Mtoken } from './mModels';
 
 
 
@@ -107,10 +107,10 @@ export class MgmtClient {
      * **check out the auth token events for active token feedback**
      */
     protected _cbip_token: Token | undefined;
-    /**
-     * new token
-     */
-    protected _mbip_token: Mtoken | undefined;
+    // /**
+    //  * new token
+    //  */
+    // protected _mbip_token: Mtoken | undefined;
     /**
      * token timer value
      * 
@@ -158,8 +158,8 @@ export class MgmtClient {
     cookies = 'F5_CONX_CORE_COOKIES';
 
     private _cbip_auth = '/mgmt/shared/authn/login'
-    private _mbip_auth = '/api/v1/login'
-    bigType: 'cbip' | 'mbip' = 'cbip';
+    // private _mbip_auth = '/api/v1/login'
+    // bigType: 'cbip' | 'mbip' = 'cbip';
 
     /**
      * @param options function options
@@ -209,7 +209,7 @@ export class MgmtClient {
         this.events.emit('log-info', `clearing token/timer with ${this.tokenTimeout} left`);
         const tokenTimeOut = this.tokenTimeout;
         this._cbip_token = undefined;
-        this._mbip_token = undefined;
+        // this._mbip_token = undefined;
         clearInterval(this._tokenIntervalId);
         return tokenTimeOut;
     }
@@ -322,45 +322,45 @@ export class MgmtClient {
 
         this.events.emit('log-debug', `getting auth token from: ${this.host}:${this.port}`);
 
-        // GET basic auth -> /api/v1/login
-        await this.axios({
-            url: this._mbip_auth,
-            auth: {
-                username: this._user,
-                password: this._password
-            }
-        })
-            .then(resp => {
+        // // GET basic auth -> /api/v1/login
+        // await this.axios({
+        //     url: this._mbip_auth,
+        //     auth: {
+        //         username: this._user,
+        //         password: this._password
+        //     }
+        // })
+        //     .then(resp => {
 
-                // capture entire token
-                this._mbip_token = resp.data;
-                // set token timeout for timer
-                this.tokenTimeout = resp.data.expiresIn;
+        //         // capture entire token
+        //         this._mbip_token = resp.data;
+        //         // set token timeout for timer
+        //         this.tokenTimeout = resp.data.expiresIn;
 
-                this.events.emit('log-debug', `auth token aquired, timeout: ${this.tokenTimeout}`);
+        //         this.events.emit('log-debug', `auth token aquired, timeout: ${this.tokenTimeout}`);
 
-                this.tokenTimer();  // start token timer
+        //         this.tokenTimer();  // start token timer
 
-                this.bigType = 'mbip';
+        //         this.bigType = 'mbip';
 
-                return;
+        //         return;
 
-            })
-            .catch(err => {
+        //     })
+        //     .catch(err => {
 
-                this.events.emit('log-debug', `special token request failed to ${this._mbip_auth}: ${err.message}`);
+        //         this.events.emit('log-debug', `special token request failed to ${this._mbip_auth}: ${err.message}`);
 
-                // todo: add non http error details to log
+        //         // todo: add non http error details to log
 
-                // no error here, we attemp the special api, then fallback to the original
+        //         // no error here, we attemp the special api, then fallback to the original
 
-                // reThrow the error back up the chain
-                // return Promise.reject(err)
-            })
+        //         // reThrow the error back up the chain
+        //         // return Promise.reject(err)
+        //     })
 
-        if (!this._mbip_token) {
+        // if (!this._mbip_token) {
 
-            return await this.axios({
+            return this.axios({
                 url: this._cbip_auth,
                 method: 'POST',
                 data: {
@@ -392,9 +392,9 @@ export class MgmtClient {
                     // reThrow the error back up the chain
                     return Promise.reject(err)
                 })
-        } else {
-            return;
-        }
+        // } else {
+        //     return;
+        // }
 
 
     }
@@ -414,11 +414,11 @@ export class MgmtClient {
     async makeRequest(uri: string, options?: uuidAxiosRequestConfig): Promise<AxiosResponseWithTimings> {
 
         // if auth token has expired, it should have been cleared, get new one
-        if (!this._cbip_token && !this._mbip_token) {
+        if (!this._cbip_token) {
             await this.getToken();
         }
 
-        if (this._cbip_token) {
+        // if (this._cbip_token) {
 
             // merge incoming options into requestDefaults object
             options = Object.assign({
@@ -430,17 +430,17 @@ export class MgmtClient {
                 data: options?.data || undefined
             }, options)
 
-        } else {
+        // } else {
 
-            options = Object.assign({
-                url: uri,
-                method: options?.method || undefined,
-                headers: Object.assign(options?.headers || {}, {
-                    'Authorization': `Bearer ${this._mbip_token.token}`
-                }),
-                data: options?.data || undefined
-            }, options)
-        }
+        //     options = Object.assign({
+        //         url: uri,
+        //         method: options?.method || undefined,
+        //         headers: Object.assign(options?.headers || {}, {
+        //             'Authorization': `Bearer ${this._mbip_token.token}`
+        //         }),
+        //         data: options?.data || undefined
+        //     }, options)
+        // }
 
         // const requestDefaults = {
         //     url: uri,
@@ -455,7 +455,7 @@ export class MgmtClient {
         // merge incoming options into requestDefaults object
         // options = Object.assign(requestDefaults, options)
 
-        return await this.axios.request(options)
+        return this.axios.request(options)
     }
 
 
@@ -485,7 +485,7 @@ export class MgmtClient {
             // kill the token 10 seconds early to give us time to get a new one with all the other calls going on
             if (this.tokenTimeout <= 10) {
                 this._cbip_token = undefined; // clearing token details should get a new token
-                this._mbip_token = undefined;
+                // this._mbip_token = undefined;
             }
 
             // keep running the timer so everything looks good, but clear the rest when it reaches 0
