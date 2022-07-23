@@ -103,11 +103,16 @@ export class ExtHttp {
         // reqBase.transport = transport;
         // #####################################
 
-        // add option to allow self-signed cert
-        if (reqBase?.rejectUnauthorized === false) {
-            // add agent option
-            reqBase.httpsAgent = new https.Agent({ rejectUnauthorized: false });
-        }
+        // // add option to allow self-signed cert
+        // if (reqBase?.rejectUnauthorized === false) {
+        //     // add agent option
+        //     reqBase.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+        // }
+
+        reqBase.httpsAgent =
+            reqBase?.rejectUnauthorized === false ?
+                new https.Agent({ rejectUnauthorized: false }) :
+                new https.Agent({ rejectUnauthorized: true });
 
         // remove param
         delete reqBase?.rejectUnauthorized

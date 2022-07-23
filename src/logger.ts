@@ -136,12 +136,15 @@ export default class Logger {
     async httpRequest(config: uuidAxiosRequestConfig): Promise<void> {
         // use logging level env to log "info" or "debug" request information
 
+        const url = config.baseURL ? `${config.baseURL}${config.url}` : config.url;
+
         if (process.env[this.logEnv] === 'DEBUG') {
 
             this.debug('debug-http-request', config);
+
         } else {
 
-            this.info(`HTTPS-REQU [${config.uuid}]: ${config.method} -> ${config.baseURL}${config.url}`);
+            this.info(`HTTPS-REQU [${config.uuid}]: ${config.method} -> ${url}`);
         }
     }
 

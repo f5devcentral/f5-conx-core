@@ -13,6 +13,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - [bug] schema inject changes declaration to "dec" #20
   - <https://github.com/f5devcentral/f5-conx-core/issues/20>
+- tweak logger for telemetry
+- updated extHttp https agent to always be configured
+  - without rejectUnAuthorized=false, it would not get configured and cause logging errors
 
 ---
 
