@@ -30,6 +30,7 @@ import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import { F5DownloadPaths, F5UploadPaths } from '../src/constants';
 import { MgmtClient, simplifyHttpResponse } from '../src/bigip/mgmtClient';
 import Logger from '../src/logger';
+import { wait } from '../src';
 
 
 // let mgmtClient: mgmtClient;
@@ -128,7 +129,7 @@ describe('mgmtClient unit tests - successes', function () {
 
     it('get/test event emitter instance', async function () {
 
-        const events = []
+        const events: string[] = []
         const emitr = mgmtClient.getEvenEmitter();
 
         emitr.on('test', msg => events.push(msg))
@@ -149,6 +150,17 @@ describe('mgmtClient unit tests - successes', function () {
         await mgmtClient.clearToken()
 
         assert.ok(JSON.stringify(logger.journal).includes('clearing token/timer'), 'did not get any test events');
+
+        // clean all the nocks since we didn't use any
+        nock.cleanAll();
+    });
+
+    it('clear auth token/timer twice - should not error', async function () {
+
+        await mgmtClient.clearToken()
+
+        wait(1000)
+        await mgmtClient.clearToken()
 
         // clean all the nocks since we didn't use any
         nock.cleanAll();
@@ -344,7 +356,7 @@ describe('mgmtClient unit tests - successes', function () {
                 assert.ok(resp.request.url)
 
                 // make sure test cookie is inserted
-                assert.ok(resp.request.headers['cookie'] = process.env.F5_CONX_CORE_COOKIES)
+                assert.ok(resp.request.headers.cookie === process.env.F5_CONX_CORE_COOKIES)
             })
             .catch(err => {
                 debugger;

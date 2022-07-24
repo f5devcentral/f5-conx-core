@@ -9,7 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
-## [0.14.0] - (07-25-2022)
+## [0.15.1] - (07-25-2022)
 
 - branch off NEXT connectivity from mgmtClient/f5Client
   - Solves this issue:<https://github.com/f5devcentral/vscode-f5/issues/179>

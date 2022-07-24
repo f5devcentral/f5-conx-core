@@ -206,11 +206,18 @@ export class MgmtClient {
      *  - used for logging out/disconnecting, and testing
      */
     async clearToken(): Promise<number> {
-        this.events.emit('log-info', `clearing token/timer with ${this.tokenTimeout} left`);
-        const tokenTimeOut = this.tokenTimeout;
+
+        if(this.tokenTimeout) {
+            this.events.emit('log-info', `clearing token/timer with ${this.tokenTimeout} left`);
+        } else {
+            this.events.emit('log-info', `clearing token/timer`);
+        }
+        const tokenTimeOut = this.tokenTimeout || 0;
         this._cbip_token = undefined;
         // this._mbip_token = undefined;
-        clearInterval(this._tokenIntervalId);
+        if(this._tokenIntervalId) {
+            clearInterval(this._tokenIntervalId);
+        }
         return tokenTimeOut;
     }
 
@@ -252,9 +259,9 @@ export class MgmtClient {
 
         // re-assign parent this objects needed within the parent instance objects...
         const events = this.events;
-        const clearToken = function () {
-            this.clearToken()
-        }
+        // const clearTokenLocal = function () {
+        //     this.clearToken()
+        // }
 
         const teemEnv = this.teemEnv;
         const teemAgent = this.teemAgent;
@@ -302,7 +309,7 @@ export class MgmtClient {
             ) {
                 // fire failed password event so upper logic can clear details
                 events.emit('failedAuth', err.response.data);
-                clearToken();  // clear the token anyway
+                // clearTokenLocal();  // clear the token anyway
                 // throw err;  // rethrow error since we failed auth?
             }
 
