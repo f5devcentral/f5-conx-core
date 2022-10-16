@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * Copyright 2020. F5 Networks, Inc. See End User License Agreement ("EULA") for
@@ -34,7 +35,7 @@ import {
 
 let f5Client: F5Client;
 let nockInst: nock.Scope;
-let events = [];
+let events: string[] = [];
 
 describe('cfClient integration tests', function () {
 
@@ -88,8 +89,8 @@ describe('cfClient integration tests', function () {
         // clear nocks since we aren't using them for this test
         nock.cleanAll();
 
-        assert.ok(isObject(f5Client.cf.version), 'no cf version object detected');
-        assert.ok(f5Client.cf.version.release, 'no cf release information detected');
+        assert.ok(isObject(f5Client.cf!.version), 'no cf version object detected');
+        assert.ok(f5Client.cf!.version.release, 'no cf release information detected');
 
     });
 
@@ -128,7 +129,7 @@ describe('cfClient integration tests', function () {
             .get(atcMetaData.cf.endPoints.inspect)
             .reply(200, cfInspectResp)
 
-        const resp = await f5Client.cf.inspect();
+        const resp = await f5Client.cf!.inspect();
 
         assert.deepStrictEqual(resp.data, cfInspectResp);
     });
@@ -140,7 +141,7 @@ describe('cfClient integration tests', function () {
             .get(atcMetaData.cf.endPoints.declare)
             .reply(200, cfGetDeclareResp)
 
-        const resp = await f5Client.cf.getDeclare();
+        const resp = await f5Client.cf!.getDeclare();
 
         assert.deepStrictEqual(resp.data, cfGetDeclareResp);
     });
@@ -152,7 +153,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.declare)
             .reply(200, cfPostDeclareResp)
 
-        const resp = await f5Client.cf.postDeclare(cfExampleDec);
+        const resp = await f5Client.cf!.postDeclare(cfExampleDec);
 
         assert.deepStrictEqual(resp.data, cfPostDeclareResp);
     });
@@ -164,7 +165,7 @@ describe('cfClient integration tests', function () {
             .get(atcMetaData.cf.endPoints.trigger)
             .reply(200, cfGetTriggerResp)
 
-        const resp = await f5Client.cf.getTrigger();
+        const resp = await f5Client.cf!.getTrigger();
 
         assert.deepStrictEqual(resp.data, cfGetTriggerResp);
     });
@@ -176,7 +177,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.trigger)
             .reply(200, cfPostTriggerDrResp)
 
-        const resp = await f5Client.cf.trigger('dry-run');
+        const resp = await f5Client.cf!.trigger('dry-run');
 
         assert.deepStrictEqual(resp.data, cfPostTriggerDrResp);
     });
@@ -188,7 +189,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.trigger)
             .reply(200, cfPostTriggerResp)
 
-        const resp = await f5Client.cf.trigger();
+        const resp = await f5Client.cf!.trigger();
 
         assert.deepStrictEqual(resp.data, cfPostTriggerResp);
     });
@@ -200,7 +201,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.reset)
             .reply(200, cfPostResetResp)
 
-        const resp = await f5Client.cf.reset();
+        const resp = await f5Client.cf!.reset();
 
         assert.deepStrictEqual(resp.data, cfPostResetResp);
     });

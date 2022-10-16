@@ -12,7 +12,7 @@
 import { EventEmitter } from 'events';
 
 import { AtcInfo, F5InfoApi, F5DownLoad, F5Upload, DiscoverInfo } from "./bigipModels";
-import { HttpResponse, F5HttpRequest, AxiosResponseWithTimings } from "../utils/httpModels";
+import { HttpResponse, F5HttpRequest } from "../utils/httpModels";
 // import { MetadataClient } from "./metadata";
 
 import { MgmtClient } from "./mgmtClient";
@@ -188,7 +188,7 @@ export class F5Client {
      * 
      * @returns request response
      */
-    async https(uri: string, options?: F5HttpRequest): Promise<AxiosResponseWithTimings> {
+    async https(uri: string, options?: F5HttpRequest): Promise<HttpResponse> {
         return await this.mgmtClient.makeRequest(uri, options)
     }
 
@@ -312,7 +312,7 @@ export class F5Client {
      * @param localSourcePathFilename 
      * @param uploadType
      */
-    async upload(localSourcePathFilename: string, uploadType: F5Upload): Promise<AxiosResponseWithTimings> {
+    async upload(localSourcePathFilename: string, uploadType: F5Upload): Promise<HttpResponse> {
         return this.mgmtClient.upload(localSourcePathFilename, uploadType)
     }
 

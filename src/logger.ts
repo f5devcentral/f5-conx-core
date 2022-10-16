@@ -10,7 +10,7 @@
 
 import { inspect } from 'util';
 import {
-    AxiosResponseWithTimings,
+    HttpResponse,
     uuidAxiosRequestConfig
 } from './utils/httpModels';
 
@@ -62,7 +62,7 @@ export default class Logger {
     /**
      * journal array of log messages
      */
-    readonly journal = [];
+    readonly journal: string[] = [];
 
     /**
      * log level
@@ -156,40 +156,16 @@ export default class Logger {
      * 
      * @param resp 
      */
-    async httpResponse(resp: AxiosResponseWithTimings): Promise<void> {
+    async httpResponse(resp: HttpResponse): Promise<void> {
 
         if (process.env[this.logEnv] === 'DEBUG') {
 
-            // *** delete method modified the original object causing other errors... ***
-            // delete resp.config.httpAgent;
-            // delete resp.config.httpsAgent;
-            // delete resp.config.transformRequest;
-            // delete resp.config.transformResponse;
-            // delete resp.config.adapter;
-            // delete resp.request.socket;
-            // delete resp.request.res;
-            // delete resp.request.connection;
-            // delete resp.request.agent;
+            this.debug('debug-http-response', resp);
 
-            // re-assign the information we want/need for user debugging
-            const thinResp = {
-                status: resp.status,
-                statusText: resp.statusText,
-                headers: resp.headers,
-                request: {
-                    baseURL: resp.config.baseURL,
-                    url: resp.config.url,
-                    method: resp.request.method,
-                    headers: resp.config.headers,
-                    timings: resp.request.timings
-                },
-                data: resp.data
-            };
-
-            this.debug('debug-http-response', thinResp);
         } else {
 
-            this.info(`HTTPS-RESP [${resp.config.uuid}]: ${resp.status} - ${resp.statusText}`);
+            this.info(`HTTPS-RESP [${resp.request.uuid}]: ${resp.status} - ${resp.statusText}`);
+            
         }
     }
 

@@ -9,13 +9,14 @@
 
 'use strict';
 
+import assert from 'assert';
+
 import Logger from '../src/logger';
 import { injectSchema } from '../src/bigip/atcSchema'
-import assert from 'assert';
 import { as3ExampleDec } from '../src/bigip/as3Models';
 import { doExampleDec, deviceExampleDec } from '../src/bigip/doModels';
 import { tsExampleDec } from '../src/bigip/tsModels';
-import { atcMetaData } from '../src';
+import { atcMetaData } from '../src/constants';
 import { cfExampleDec } from '../src/bigip/cfModels';
 
 const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');

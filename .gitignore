@@ -21,3 +21,4 @@ tests/localTestDevice.ts
 tests/tmp/*
 # build/dist npm packages
 f5-conx-core-*.tgz
+notes.txt

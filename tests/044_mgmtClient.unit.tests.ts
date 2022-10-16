@@ -28,9 +28,9 @@ import { defaultHost, defaultPassword, defaultUser, getMgmtClient, ipv6Host } fr
 import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import { F5DownloadPaths, F5UploadPaths } from '../src/constants';
-import { MgmtClient, simplifyHttpResponse } from '../src/bigip/mgmtClient';
+import { MgmtClient } from '../src/bigip/mgmtClient';
 import Logger from '../src/logger';
-import { wait } from '../src';
+import { simplifyHttpResponse, wait } from '../src';
 
 
 // let mgmtClient: mgmtClient;
@@ -339,7 +339,6 @@ describe('mgmtClient unit tests - successes', function () {
 
 
         await mgmtClient.makeRequest(request)
-            .then(oResp => simplifyHttpResponse(oResp))
             .then(resp => {
                 // 
                 assert.ok(resp.data.allow, 'sshd response should have an "allow" object param')

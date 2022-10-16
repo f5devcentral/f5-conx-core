@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * Copyright 2020. F5 Networks, Inc. See End User License Agreement ("EULA") for
@@ -43,7 +44,7 @@ const tmp = path.join(tmpDir, rpm)
 
 let f5Client: F5Client;
 let nockInst: nock.Scope;
-let events = [];
+let events: string[] = [];
 let taskId: string;
 let tenant: string;
 
@@ -109,7 +110,7 @@ describe('as3Client integration tests', function () {
         // clear nocks since we aren't using them for this test
         nock.cleanAll();
 
-        const tenList = await f5Client.as3.parseDecs(as3Tens);
+        const tenList = await f5Client.as3!.parseDecs(as3Tens);
 
         assert.ok(tenList.length > 1, 'did not return array of tenant decs');
 
@@ -122,7 +123,7 @@ describe('as3Client integration tests', function () {
         // clear nocks since we aren't using them for this test
         nock.cleanAll();
 
-        const tenList = await f5Client.as3.parseDecs(as3TargetTens);
+        const tenList = await f5Client.as3!.parseDecs(as3TargetTens);
 
         assert.ok(tenList.length > 1, 'did not return array of targets');
 
@@ -135,7 +136,7 @@ describe('as3Client integration tests', function () {
         // clear nocks since we aren't using them for this test
         nock.cleanAll();
 
-        assert.ok(isObject(f5Client.as3.version), 'no as3 version object detected');
+        assert.ok(isObject(f5Client.as3!.version), 'no as3 version object detected');
 
     });
 
@@ -192,7 +193,7 @@ describe('as3Client integration tests', function () {
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        const resp = f5Client.as3.postDec({
+        const resp = f5Client.as3!.postDec({
             declaration: {
                 class: 'Tenant',
                 something: 'missing'
@@ -278,7 +279,7 @@ describe('as3Client integration tests', function () {
             })
 
         // this operation is async by default
-        const resp = await f5Client.as3.postDec(exampleAs3Declaration_1)
+        const resp = await f5Client.as3!.postDec(exampleAs3Declaration_1)
             .then(resp => resp)
             .catch(err => {
                 debugger;
@@ -286,7 +287,7 @@ describe('as3Client integration tests', function () {
             })
 
         // capture posted tenant name
-        const tens = await f5Client.as3.parseDecs(resp.data.declaration)
+        const tens = await f5Client.as3!.parseDecs(resp.data.declaration)
         tenant = Object.keys(tens[0])[0]
 
         assert.ok(resp.data.id);
@@ -367,7 +368,7 @@ describe('as3Client integration tests', function () {
         })
 
         // this operation is async by default
-        const resp = await f5Client.as3.postDec(exampleAs3Declaration_2)
+        const resp = await f5Client.as3!.postDec(exampleAs3Declaration_2)
             .then(resp => resp)
             .catch(err => {
                 debugger;
@@ -375,7 +376,7 @@ describe('as3Client integration tests', function () {
             })
 
         // capture posted tenant name
-        const tens = await f5Client.as3.parseDecs(resp.data.declaration)
+        const tens = await f5Client.as3!.parseDecs(resp.data.declaration)
         // tenant = Object.keys(tens[0])[0]
 
         assert.ok(resp.data.id);
@@ -407,9 +408,9 @@ describe('as3Client integration tests', function () {
             )
 
         // get all as3 declarations from device
-        const resp = await f5Client.as3.getDecs();
+        const resp = await f5Client.as3!.getDecs();
         // parse response into list of target/tenant details
-        const tenList = await f5Client.as3.parseDecs(resp.data);
+        const tenList = await f5Client.as3!.parseDecs(resp.data);
         // get the first target/tenant object, and return first key (should only be one)
         // this tenant will be used to get a single tenant in the next test
         tenant = Object.keys(tenList[0])[0];
@@ -417,7 +418,7 @@ describe('as3Client integration tests', function () {
         // tenant response check
         assert.ok(tenant);
         // tenants should also be in the main class
-        assert.ok(f5Client.as3.tenants.length === 2)
+        assert.ok(f5Client.as3!.tenants.length === 2)
 
         // this flow allows the tests to work with mocks and against a real F5
     });
@@ -441,7 +442,7 @@ describe('as3Client integration tests', function () {
             )
 
         // using tenant from previous test...
-        const resp = await f5Client.as3.getDecs({ tenant });
+        const resp = await f5Client.as3!.getDecs({ tenant });
         assert.deepStrictEqual(resp.data.class, 'ADC');
     });
 
@@ -464,7 +465,7 @@ describe('as3Client integration tests', function () {
             )
 
         // using tenant from previous test...
-        const resp = await f5Client.as3.getDecs({ tenant, expanded: true });
+        const resp = await f5Client.as3!.getDecs({ tenant, expanded: true });
         assert.deepStrictEqual(resp.data.class, 'ADC');
     });
 
@@ -484,7 +485,7 @@ describe('as3Client integration tests', function () {
             })
 
         // delete tenant from previous test
-        const resp = await f5Client.as3.deleteTenant(as3ExampleDec);
+        const resp = await f5Client.as3!.deleteTenant(as3ExampleDec);
 
         assert.deepStrictEqual(resp.data.results[0].message, 'success');
 
@@ -521,10 +522,10 @@ describe('as3Client integration tests', function () {
                 declaration: as3ExampleDec
             })
         // we are doing this again so we can test deleting a declaration with the POST method
-        const resp = await f5Client.as3.postDec(as3ExampleDec);
+        const resp = await f5Client.as3!.postDec(as3ExampleDec);
 
         // capture posted tenant name again
-        const tens = await f5Client.as3.parseDecs(resp.data.declaration)
+        const tens = await f5Client.as3!.parseDecs(resp.data.declaration)
         tenant = Object.keys(tens[0])[0]
 
         assert.ok(resp.data.id);
@@ -537,10 +538,10 @@ describe('as3Client integration tests', function () {
 
         nockInst
             .get(atcMetaData.as3.endPoints.tasks)
-            // .get(f5Client.as3.taskEndpoint)
+            // .get(f5Client.as3!.taskEndpoint)
             .reply(200, as3Tasks)
 
-        const resp = await f5Client.as3.getTasks();
+        const resp = await f5Client.as3!.getTasks();
 
         // capture a task id for next test
         taskId = resp.data?.items[0]?.id
@@ -560,7 +561,7 @@ describe('as3Client integration tests', function () {
                 }
             )
 
-        const resp = await f5Client.as3.getTasks(taskId);
+        const resp = await f5Client.as3!.getTasks(taskId);
         assert.ok(resp.data.id);
     });
 });

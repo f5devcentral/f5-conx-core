@@ -9,8 +9,9 @@
 
 'use strict';
 
-import { Timings } from "@szmarczak/http-timer/dist/source";
-import { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, AxiosResponseHeaders, Method, ResponseType } from "axios";
+import { Timings } from "@szmarczak/http-timer";
+
+import { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, Method, ResponseType } from "axios";
 
 // the following models are for making and using http requests within this project (what the end user will use/see).  It seems easier to re-define the model here instead of inheriting from the official axios models.  With multiple layers of model inheritance (inheriting base models from axios), the user looses visibility into what the model actually looks like when using vscode hover/intellisense.  
 
@@ -39,7 +40,7 @@ export type HttpResponse<T = any> = {
     data?: T;
     status: number,
     statusText: string,
-    headers: AxiosResponseHeaders,
+    headers?: AxiosRequestHeaders | Partial<Record<string, string> & { "set-cookie"?: string[]; }>,
     async?: HttpResponse[],
     request?: {
         baseURL: string,

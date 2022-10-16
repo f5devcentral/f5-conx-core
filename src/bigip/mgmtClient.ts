@@ -22,12 +22,12 @@ import * as fs from 'fs';
 import { EventEmitter } from 'events';
 
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import timer from '@szmarczak/http-timer/dist/source';
+import timer from '@szmarczak/http-timer';
 
 import { Token, F5DownLoad, F5Upload, F5InfoApi } from './bigipModels';
 import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "../utils/httpModels";
 import { F5DownloadPaths, F5UploadPaths } from '../constants';
-import { getRandomUUID } from '../utils/misc';
+import { getRandomUUID, simplifyHttpResponse } from '../utils/misc';
 import { injectAtcAgent } from './atcAgent';
 // import { Mtoken } from './mModels';
 
@@ -418,7 +418,7 @@ export class MgmtClient {
      * 
      * @returns request response
      */
-    async makeRequest(uri: string, options?: uuidAxiosRequestConfig): Promise<AxiosResponseWithTimings> {
+    async makeRequest(uri: string, options?: uuidAxiosRequestConfig): Promise<HttpResponse> {
 
         // if auth token has expired, it should have been cleared, get new one
         if (!this._cbip_token) {
@@ -462,7 +462,14 @@ export class MgmtClient {
         // merge incoming options into requestDefaults object
         // options = Object.assign(requestDefaults, options)
 
-        return this.axios.request(options)
+        // return this.axios.request(options)
+
+        const resp = await this.axios.request(options);
+
+        const sResp = await simplifyHttpResponse(resp);
+
+        return sResp;
+
     }
 
 
@@ -514,7 +521,7 @@ export class MgmtClient {
 
 
 
-    async followAsync(url: string): Promise<AxiosResponseWithTimings> {
+    async followAsync(url: string): Promise<HttpResponse> {
 
         // todo: add the ability to add even more time for extra long calls for ucs-create/qkview-create/do
         // todo: potentially make this more generic.  kinda like a generator/iterator contruct
@@ -530,7 +537,7 @@ export class MgmtClient {
         // next 30 rounds, wait 30 seconds each (15 minutes total)
         retryTimerArray.push(...Array.from({ length: 30 }, () => 30))
 
-        const responses: AxiosResponseWithTimings[] = [];
+        const responses: HttpResponse[] = [];
         while (retryTimerArray.length > 0) {
 
             // set makeRequest to never throw an error, but keep going till a valid response
@@ -689,24 +696,11 @@ export class MgmtClient {
                         file.write(respIn.data, 'binary')   // write the chunk to file
 
                         // set total download size if not set yet
-                        const contentRange = respIn.headers['content-range'];
+                        const contentRange = respIn.headers['content-range'] as string;
                         totalSize = parseInt(contentRange.split('/')[1]);
 
                         // catch all the responses (simplified)
-                        downloadResponses.push({
-                            headers: respIn.headers,
-                            status: respIn.status,
-                            statusText: respIn.statusText,
-                            request: {
-                                uuid: respIn.config.uuid,
-                                baseURL: respIn.config.baseURL,
-                                url: respIn.config.url,
-                                method: respIn.request.method,
-                                headers: respIn.config.headers,
-                                protocol: respIn.config.httpsAgent.protocol,
-                                timings: respIn.request.timings
-                            }
-                        })
+                        downloadResponses.push(respIn)
 
                     })
                     .catch(err => {
@@ -774,7 +768,7 @@ export class MgmtClient {
      * @param localSourcePathFilename 
      * @param uploadType
      */
-    async upload(localSourcePathFilename: string, uploadType: F5Upload): Promise<AxiosResponseWithTimings> {
+    async upload(localSourcePathFilename: string, uploadType: F5Upload): Promise<HttpResponse> {
 
         // array to hold responses
         const responses = [];
@@ -866,48 +860,3 @@ export class MgmtClient {
         }
     }
 }
-
-
-/**
- * returns simplified http response object
- * 
- * ```ts
- *     return {
- *      data: resp.data,
- *      headers: resp.headers,
- *      status: resp.status,
- *      statusText: resp.statusText,
- *      request: {
- *          uuid: resp.config.uuid,
- *          baseURL: resp.config.baseURL,
- *          url: resp.config.url,
- *          method: resp.request.method,
- *          headers: resp.config.headers,
- *          protocol: resp.config.httpsAgent.protocol,
- *          timings: resp.request.timings
- *      }
- *  }
- * ```
- * @param resp orgininal axios response with timing
- * @returns simplified http response
- */
-export async function simplifyHttpResponse(resp: AxiosResponseWithTimings): Promise<HttpResponse> {
-    // only return the things we need
-    return {
-        data: resp.data,
-        headers: resp.headers,
-        status: resp.status,
-        statusText: resp.statusText,
-        request: {
-            uuid: resp.config.uuid,
-            baseURL: resp.config.baseURL,
-            url: resp.config.url,
-            method: resp.request.method,
-            headers: resp.config.headers,
-            protocol: resp.config.httpsAgent.protocol,
-            timings: resp.request.timings
-        }
-    }
-}
-
-

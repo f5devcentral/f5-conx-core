@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /*
@@ -152,7 +153,7 @@ describe('f5Client m integration tests', function () {
         // should query as3 info endpoint, prompting auth token aquire
         await f5Client.discover();
 
-        assert.ok(f5Client.as3.version.version, 'as3 should always be installed')
+        assert.ok(f5Client.as3!.version.version, 'as3 should always be installed')
 
     });
 
@@ -254,7 +255,7 @@ describe('f5Client m integration tests', function () {
 
     it('post as3', async function () {
 
-        const resp = await f5Client.as3.postDec(as3ExampleDec)
+        const resp = await f5Client.as3!.postDec(as3ExampleDec)
         .then(resp => resp)
         .catch(err => {
             debugger;
@@ -268,7 +269,7 @@ describe('f5Client m integration tests', function () {
 
     it('delete as3 - empty tenant', async function () {
 
-        const resp = await f5Client.as3.deleteTenant(as3ExampleDec)
+        const resp = await f5Client.as3!.deleteTenant(as3ExampleDec)
         .then(resp => resp)
         .catch(err => {
             debugger;
@@ -283,7 +284,7 @@ describe('f5Client m integration tests', function () {
 
     it('delete as3 - DELETE method', async function () {
 
-        // const resp = await f5Client.as3.deleteTenant(as3ExampleDec)
+        // const resp = await f5Client.as3!.deleteTenant(as3ExampleDec)
         const resp = await f5Client.https(`${atcMetaData.as3.endPoints.declare}/Sample_01_tst12345`, {
             method: 'DELETE'
         })
@@ -300,7 +301,7 @@ describe('f5Client m integration tests', function () {
 
     it('get as3 tenants', async function () {
 
-        const resp = await f5Client.as3.getDecs()
+        const resp = await f5Client.as3!.getDecs()
         .then(resp => resp)
         .catch(err => {
             debugger;

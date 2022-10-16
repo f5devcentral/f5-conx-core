@@ -22,7 +22,6 @@
                 "${workspaceFolder}/tests/*.tests.ts",
             ],
             "internalConsoleOptions": "neverOpen",
-            "protocol": "inspector",
         },
         {
             "name": "Debug current test",
@@ -37,7 +36,6 @@
                 "${file}",
             ],
             "internalConsoleOptions": "neverOpen",
-            "protocol": "inspector",
         },
         {
             "name": "Launch test rest server",
@@ -50,7 +48,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "type": "pwa-node"
+            "type": "node"
         }
     ]
 }

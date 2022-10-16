@@ -212,7 +212,7 @@ export class AtcVersionsClient {
         await Promise.all(promiseArray)
 
         // if we made i this far and still no atc version information from github
-        if(this.atcVersions === {}) {
+        if(Object.keys(this.atcVersions).length === 0) {
             // apply base cache that comes with the project
             // this should get updated at every package release
             this.atcVersions = this.atcVersionsBaseCache;

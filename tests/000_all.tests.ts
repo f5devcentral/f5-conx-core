@@ -37,6 +37,24 @@ delete process.env.F5_CONX_CORE_EXT_HTTP_AGENT;
 // tmp directory
 const tmpDir = path.join(__dirname, 'tmp')
 
+
+before(async function () {
+
+    // remove temp dir if present
+    if (fs.existsSync(tmpDir)) {
+        console.log(`deleting ${tmpDir} directory/files to prepare for tests`)
+        // fs.rmSync(tmpDir, { recursive: true, force: true });
+    
+    }
+
+    // recreate temp dir
+    if (!fs.existsSync(tmpDir)) {
+        console.log(`creating ${tmpDir} directory for file upload/download tests`)
+        fs.mkdirSync(tmpDir);
+    }
+
+});
+
 // // unit test example logger class
 // require('./010_logger.unit.tests')
 
@@ -114,22 +132,7 @@ const tmpDir = path.join(__dirname, 'tmp')
 // require('./078_cfClient.int.tests')
 
 
-before(async function () {
 
-    // remove temp dir if present
-    if (fs.existsSync(tmpDir)) {
-        console.log(`deleting ${tmpDir} directory/files to prepare for tests`)
-        fs.rmSync(tmpDir, { recursive: true, force: true });
-    
-    }
-
-    // recreate temp dir
-    if (!fs.existsSync(tmpDir)) {
-        console.log(`creating ${tmpDir} directory for file upload/download tests`)
-        fs.mkdirSync(tmpDir);
-    }
-
-});
 
 // // runs once after the last test in this block
 // after(function () {

@@ -33,7 +33,7 @@ const rpm = 'f5-appsvcs-templates-1.4.0-1.noarch.rpm';
 // source file with path
 const filePath = path.join(__dirname, 'artifacts', rpm)
 
-const events = []
+const events: string[] = []
 let installedRpm;
 
 describe('f5Client rpm mgmt integration tests', function () {
