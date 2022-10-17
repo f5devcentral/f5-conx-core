@@ -22,14 +22,13 @@ import * as fs from 'fs';
 import { EventEmitter } from 'events';
 
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import timer from '@szmarczak/http-timer';
 
 import { Token, F5DownLoad, F5Upload, F5InfoApi } from './bigipModels';
 import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "../utils/httpModels";
 import { F5DownloadPaths, F5UploadPaths } from '../constants';
 import { getRandomUUID, simplifyHttpResponse } from '../utils/misc';
 import { injectAtcAgent } from './atcAgent';
-// import { Mtoken } from './mModels';
+import { httpTimer } from '../httpTimer';
 
 
 
@@ -41,7 +40,7 @@ import { injectAtcAgent } from './atcAgent';
 const transport = {
     request: function httpsWithTimer(...args: unknown[]): AxiosRequestConfig {
         const request = https.request.apply(null, args)
-        timer(request);
+        httpTimer(request);
         return request;
     }
 };

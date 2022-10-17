@@ -13,12 +13,12 @@
 import assert from 'assert';
 import nock from 'nock';
 
-import { getF5Client, ipv6Host } from '../src/utils/testingUtils';
+import { defaultHost, getF5Client } from '../src/utils/testingUtils';
 import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import {  atcMetaData, iControlEndpoints } from '../src/constants';
 import { F5Client } from '../src/bigip/f5Client';
-import { deviceInfoIPv6 } from '../src/bigip/f5_device_atc_infos';
+import { deviceInfo, deviceInfoIPv6 } from '../src/bigip/f5_device_atc_infos';
 import { isArray, isObject } from '../src/utils/misc';
 import { 
     cfExampleDec,
@@ -49,7 +49,7 @@ describe('cfClient integration tests', function () {
         // clear events
         events = [];
 
-        nockInst = nock(`https://${ipv6Host}`)
+        nockInst = nock(`https://${defaultHost}`)
             .post(iControlEndpoints.login)
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
@@ -60,7 +60,7 @@ describe('cfClient integration tests', function () {
             .get(atcMetaData.cf.endPoints.info)
             .reply(200, cfInfoResp)
 
-        f5Client = getF5Client({ ipv6: true });
+        f5Client = getF5Client({ ipv6: false });
 
         f5Client.events.on('failedAuth', msg => events.push(msg));
         f5Client.events.on('log-debug', msg => events.push(msg));
@@ -102,17 +102,17 @@ describe('cfClient integration tests', function () {
         await f5Client.clearLogin();
 
         // overwrite instantiation where no AS3 is installed
-        nockInst = nock(`https://${ipv6Host}`)
+        nockInst = nock(`https://${defaultHost}`)
             .post(iControlEndpoints.login)
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
             })
             //discover with no AS3
             .get(iControlEndpoints.tmosInfo)
-            .reply(200, deviceInfoIPv6)
+            .reply(200, deviceInfo)
 
 
-        f5Client = getF5Client({ ipv6: true });
+        f5Client = getF5Client({ ipv6: false });
         await f5Client.discover()
 
         const x = isObject(f5Client.cf?.version)

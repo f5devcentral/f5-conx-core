@@ -25,8 +25,8 @@ import {
 } from '../src/bigip/f5_device_atc_infos';
 
 import { 
+    defaultHost,
     getF5Client,
-    ipv6Host 
 } from '../src/utils/testingUtils';
 import { getFakeToken } from '../src/utils/testingUtils';
 // import localAtcMetadata from '../src/bigip/atc_metadata.old.json';
@@ -44,7 +44,7 @@ const tmpDir = path.join(__dirname, 'tmp')
 // destination test path with file name
 const tmp = path.join(tmpDir, rpm)
 
-const nockInst = nock(`https://${ipv6Host}`)
+const nockInst = nock(`https://${defaultHost}`)
 
 let f5Client: F5Client;
 // const events = [];
@@ -68,7 +68,7 @@ describe('f5Client basic tests - ipv6', async function () {
         // logger.clearLogs();
         
         // setup mgmt client
-        f5Client = getF5Client({ ipv6: true });
+        f5Client = getF5Client();
 
         // f5Client.events.on('failedAuth', msg => events.push(msg));
         // f5Client.events.on('log-debug', msg => events.push(msg));

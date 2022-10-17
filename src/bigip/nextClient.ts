@@ -22,7 +22,7 @@
  import { EventEmitter } from 'events';
  
  import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
- import timer from '@szmarczak/http-timer';
+//  import timer from '@szmarczak/http-timer';
  
  import { F5DownLoad, F5Upload, F5InfoApi } from './bigipModels';
  import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "../utils/httpModels";
@@ -30,6 +30,7 @@
  import { getRandomUUID } from '../utils/misc';
  import { injectAtcAgent } from './atcAgent';
  import { Mtoken } from './mModels';
+import { httpTimer } from '../httpTimer';
  
  
  
@@ -41,7 +42,7 @@
  const transport = {
      request: function httpsWithTimer(...args: unknown[]): AxiosRequestConfig {
          const request = https.request.apply(null, args)
-         timer(request);
+         httpTimer(request);
          return request;
      }
  };

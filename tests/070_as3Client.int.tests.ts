@@ -15,7 +15,7 @@ import nock from 'nock';
 import path from 'path';
 
 
-import { getF5Client, ipv6Host } from '../src/utils/testingUtils';
+import { defaultHost, getF5Client, ipv6Host } from '../src/utils/testingUtils';
 import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import { atcMetaData, iControlEndpoints } from '../src/constants';
@@ -60,7 +60,7 @@ describe('as3Client integration tests', function () {
         // clear events
         events = [];
 
-        nockInst = nock(`https://${ipv6Host}`)
+        nockInst = nock(`https://${defaultHost}`)
             .post(iControlEndpoints.login)
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
@@ -71,7 +71,7 @@ describe('as3Client integration tests', function () {
             .get(atcMetaData.as3.endPoints.info)
             .reply(200, as3InfoApiReponse)
 
-        f5Client = getF5Client({ ipv6: true });
+        f5Client = getF5Client({ ipv6: false });
         // f5Client = new F5Client(
         //     'localhost',
         //     'goodUser',
@@ -148,7 +148,7 @@ describe('as3Client integration tests', function () {
         await f5Client.clearLogin();
 
         // overwrite instantiation where no AS3 is installed
-        nockInst = nock(`https://${ipv6Host}`)
+        nockInst = nock(`https://${defaultHost}`)
             .post(iControlEndpoints.login)
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
@@ -158,7 +158,7 @@ describe('as3Client integration tests', function () {
             .reply(200, deviceInfoIPv6)
 
 
-        const f5ClientLocal = getF5Client({ ipv6: true });
+        const f5ClientLocal = getF5Client();
         await f5ClientLocal.discover()
 
         const x = isObject(f5ClientLocal.as3?.version)

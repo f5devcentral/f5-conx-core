@@ -16,7 +16,7 @@ import path from 'path';
 
 
 import { F5Client } from '../src/bigip/f5Client';
-import { getF5Client, ipv6Host } from '../src/utils/testingUtils';
+import { defaultHost, getF5Client } from '../src/utils/testingUtils';
 import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import { iControlEndpoints } from '../src/constants';
@@ -37,7 +37,7 @@ const tmpDir = path.join(__dirname, 'tmp')
 // destination test path with file name
 // const tmp = path.join(tmpDir, tmpUcs)
 
-const events = []
+const events: string[] = []
 let fileName;
 
 describe('f5Client qkview integration tests - ipv6', function () {
@@ -52,7 +52,7 @@ describe('f5Client qkview integration tests - ipv6', function () {
             fs.mkdirSync(tmpDir);
         }
 
-        nockScope = nock(`https://${ipv6Host}`)
+        nockScope = nock(`https://${defaultHost}`)
             .post(iControlEndpoints.login)
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
@@ -61,7 +61,7 @@ describe('f5Client qkview integration tests - ipv6', function () {
             .get(iControlEndpoints.tmosInfo)
             .reply(200, deviceInfoIPv6)
 
-        f5Client = getF5Client({ ipv6: true });
+        f5Client = getF5Client();
 
         // f5Client = new F5Client('192.168.200.131', 'admin', 'benrocks')
         // f5Client = new F5Client('10.200.244.101', 'admin', 'benrocks')

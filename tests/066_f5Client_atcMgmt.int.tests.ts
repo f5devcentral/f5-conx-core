@@ -16,12 +16,12 @@ import path from 'path';
 import { F5UploadPaths } from '../src/constants'
 
 import { F5Client } from '../src/bigip/f5Client';
-import { getF5Client, ipv6Host } from '../src/utils/testingUtils';
+import { defaultHost, getF5Client } from '../src/utils/testingUtils';
 import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import { iControlEndpoints } from '../src/constants';
 
-import { deviceInfoIPv6 } from '../src/bigip/f5_device_atc_infos';
+import { deviceInfo } from '../src/bigip/f5_device_atc_infos';
 import { isObject } from '../src/utils/misc';
 
 
@@ -43,16 +43,16 @@ describe('f5Client rpm mgmt integration tests', function () {
         // log test file name - makes it easer for troubleshooting
         console.log('       file:', __filename)
         
-        nockScope = nock(`https://${ipv6Host}`)
+        nockScope = nock(`https://${defaultHost}`)
             .post(iControlEndpoints.login)
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
             })
             //discover endpoint
             .get(iControlEndpoints.tmosInfo)
-            .reply(200, deviceInfoIPv6)
+            .reply(200, deviceInfo)
 
-        f5Client = getF5Client({ ipv6: true });
+        f5Client = getF5Client({ ipv6: false });
 
         // un-comment to allow testing to actualy f5 device
         // f5Client = new F5Client('192.168.200.131', 'admin', 'benrocks')

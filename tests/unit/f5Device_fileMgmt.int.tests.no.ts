@@ -15,8 +15,7 @@ import path from 'path';
 
 
 import { F5Client } from '../../src/bigip/f5Client';
-import { getF5Client, ipv6Host } from '../src/utils/testingUtils';
-import { getFakeToken } from '../src/utils/testingUtils';
+import { getFakeToken, getF5Client, defaultHost } from '../../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../../src/bigip/bigipModels';
 import { F5DownloadPaths } from '../../src/constants';
 
@@ -58,7 +57,7 @@ describe('F5Device file upload/download integration tests - ipv6', function () {
 
     beforeEach(function () {
         // refresh the device client class
-        f5Client = getF5Client({ ipv6: true });
+        f5Client = getF5Client({ ipv6: false });
     });
 
     afterEach(async function () {
@@ -75,7 +74,7 @@ describe('F5Device file upload/download integration tests - ipv6', function () {
 
 
     it('download file from F5 - ISO path', async function () {
-        nock(`https://${ipv6Host}`)
+        nock(`https://${defaultHost}`)
             .post('/mgmt/shared/authn/login')
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
@@ -92,7 +91,7 @@ describe('F5Device file upload/download integration tests - ipv6', function () {
     });
 
     it('download file from F5 - UCS path', async function () {
-        nock(`https://${ipv6Host}`)
+        nock(`https://${defaultHost}`)
             .post('/mgmt/shared/authn/login')
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
@@ -109,7 +108,7 @@ describe('F5Device file upload/download integration tests - ipv6', function () {
     });
 
     it('download file from F5 - qkview path', async function () {
-        nock(`https://${ipv6Host}`)
+        nock(`https://${defaultHost}`)
             .post('/mgmt/shared/authn/login')
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
@@ -127,7 +126,7 @@ describe('F5Device file upload/download integration tests - ipv6', function () {
 
 
     it('upload file to F5', async function () {
-        nock(`https://${ipv6Host}`)
+        nock(`https://${defaultHost}`)
             .post('/mgmt/shared/authn/login')
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
