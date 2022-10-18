@@ -60,11 +60,11 @@ process.env.F5_M_LOG_LEVEL = 'INFO'
 
 // set env to inject default cookies
 // process.env.F5_CONX_CORE_COOKIES = "peanut=/butter/salt; cookie=monster";
-process.env.F5_CONX_CORE_COOKIES = "udf.sid=s%3AXHWugvvTfJaQnSSDtdUMR92WjkKYQWTs.sVna0KGeoc6gmXa7AcgjM2pRPW5Fmq7kcadYUT2pQKM"
+process.env.F5_CONX_CORE_COOKIES = "udf.sid=s%3AHxt-W_iYnGSrfMK8x95AsuX6MA10KJN3.ayFQByX48vOVElPy8iSvui1ntgs20x5A0eQjcXkm89g"
 
 const events = []
 
-describe('f5Client m integration tests', function () {
+describe('nextClientBase unit tests', function () {
 
     // runs once before the first test in this block
     before(async function () {
@@ -87,7 +87,7 @@ describe('f5Client m integration tests', function () {
 
         // f5Client = getF5Client({ ipv6: true });
         f5Client = new F5Client(
-            '0f48c338-d1d2-471e-b5a3-ee680fbee96d.access.udf.f5.com',
+            'a38d7c27-346b-4c51-bd55-c761236a1092.access.udf.f5.com',
             'admin',
             'ben4Ever!',
             {
