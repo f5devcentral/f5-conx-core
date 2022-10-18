@@ -207,7 +207,7 @@ export class MgmtClient {
      *  - used for logging out/disconnecting, and testing
      */
     async clearToken(): Promise<number> {
-        this.events.emit('log-info', `clearing token/timer with ${this.tokenTimeout} left`);
+        this.events.emit('log-info', `clearing mbip token/timer with ${this.tokenTimeout} left`);
         const tokenTimeOut = this.tokenTimeout;
         //  this._cbip_token = undefined;
         this._mbip_token = undefined;
@@ -342,8 +342,6 @@ export class MgmtClient {
 
                 this.tokenTimer();  // start token timer
 
-                //  this.bigType = 'mbip';
-
                 return;
 
             })
@@ -356,7 +354,7 @@ export class MgmtClient {
                 // no error here, we attemp the special api, then fallback to the original
 
                 // reThrow the error back up the chain
-                // return Promise.reject(err)
+                return Promise.reject(err)
             })
 
     }
