@@ -22,12 +22,14 @@ import * as fs from 'fs';
 import { EventEmitter } from 'events';
 
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+//  import timer from '@szmarczak/http-timer';
 
-import { Token, F5DownLoad, F5Upload, F5InfoApi } from './bigipModels';
+import { F5DownLoad, F5Upload, F5InfoApi } from './bigipModels';
 import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "../utils/httpModels";
 import { F5DownloadPaths, F5UploadPaths } from '../constants';
 import { getRandomUUID, simplifyHttpResponse } from '../utils/misc';
 import { injectAtcAgent } from './atcAgent';
+import { NCMtoken } from './nextModels';
 import { httpTimer } from '../httpTimer';
 
 
@@ -57,7 +59,7 @@ const transport = {
  * @param options.provider (default = tmos)
  * 
  */
-export class MgmtClient {
+export class NextCmMgmtClient {
     /**
      * hostname or IP address of F5 device
      */
@@ -98,18 +100,18 @@ export class MgmtClient {
      * authentication provider for connected device
      */
     provider: string;
+    //  /**
+    //   * full auth token details for connected device
+    //   * 
+    //   * **this gets cleared and refreshed as needed**
+    //   * 
+    //   * **check out the auth token events for active token feedback**
+    //   */
+    //  protected _cbip_token: Token | undefined;
     /**
-     * full auth token details for connected device
-     * 
-     * **this gets cleared and refreshed as needed**
-     * 
-     * **check out the auth token events for active token feedback**
+     * new token
      */
-    token: Token | undefined;
-    // /**
-    //  * new token
-    //  */
-    // protected _mbip_token: Mtoken | undefined;
+    token: NCMtoken | undefined;
     /**
      * token timer value
      * 
@@ -156,9 +158,9 @@ export class MgmtClient {
      */
     cookies = 'F5_CONX_CORE_COOKIES';
 
-    authEndpoint = '/mgmt/shared/authn/login'
-    // private _mbip_auth = '/api/v1/login'
-    // bigType: 'cbip' | 'mbip' = 'cbip';
+    //  private _cbip_auth = '/mgmt/shared/authn/login'
+    authEndpoint = '/api/login'
+    //  bigType: 'cbip' | 'mbip' = 'cbip';
 
     /**
      * @param options function options
@@ -205,18 +207,11 @@ export class MgmtClient {
      *  - used for logging out/disconnecting, and testing
      */
     async clearToken(): Promise<number> {
-
-        if(this.tokenTimeout) {
-            this.events.emit('log-info', `clearing token/timer with ${this.tokenTimeout} left`);
-        } else {
-            this.events.emit('log-info', `clearing token/timer`);
-        }
-        const tokenTimeOut = this.tokenTimeout || 0;
+        this.events.emit('log-info', `clearing mbip-cm token/timer with ${this.tokenTimeout} left`);
+        const tokenTimeOut = this.tokenTimeout;
+        //  this._cbip_token = undefined;
         this.token = undefined;
-        // this._mbip_token = undefined;
-        if(this.tokenIntervalId) {
-            clearInterval(this.tokenIntervalId);
-        }
+        clearInterval(this.tokenIntervalId);
         return tokenTimeOut;
     }
 
@@ -258,9 +253,9 @@ export class MgmtClient {
 
         // re-assign parent this objects needed within the parent instance objects...
         const events = this.events;
-        // const clearTokenLocal = function () {
-        //     this.clearToken()
-        // }
+        const clearToken = function () {
+            this.clearToken()
+        }
 
         const teemEnv = this.teemEnv;
         const teemAgent = this.teemAgent;
@@ -304,11 +299,11 @@ export class MgmtClient {
             // if we got a failed password response
             if (
                 err.response?.status === 401 &&
-                err.response?.data.message === 'Authentication failed.'
+                err.response?.data.message === 'Unauthorized'
             ) {
                 // fire failed password event so upper logic can clear details
                 events.emit('failedAuth', err.response.data);
-                // clearTokenLocal();  // clear the token anyway
+                clearToken();  // clear the token anyway
                 // throw err;  // rethrow error since we failed auth?
             }
 
@@ -326,82 +321,49 @@ export class MgmtClient {
      */
     private async getToken(): Promise<void> {
 
-        this.events.emit('log-debug', `getting auth token from: ${this.host}:${this.port}`);
+        this.events.emit('log-debug', `getting mbip-cm auth token from: ${this.host}:${this.port}`);
 
-        // // GET basic auth -> /api/v1/login
-        // await this.axios({
-        //     url: this._mbip_auth,
-        //     auth: {
-        //         username: this._user,
-        //         password: this._password
-        //     }
-        // })
-        //     .then(resp => {
+        // GET basic auth -> /api/v1/login
+        await this.axios({
+            url: this.authEndpoint,
+            method: 'POST',
+            data: {
+                username: this.user,
+                password: this.password
+            }
+        })
+            .then(resp => {
 
-        //         // capture entire token
-        //         this._mbip_token = resp.data;
-        //         // set token timeout for timer
-        //         this.tokenTimeout = resp.data.expiresIn;
+                // capture entire token
+                this.token = resp.data;
+                // set token timeout for timer
+                // this.tokenTimeout = resp.data.expiresIn;
+                this.tokenTimeout = 300;
 
-        //         this.events.emit('log-debug', `auth token aquired, timeout: ${this.tokenTimeout}`);
+                /**
+                 * as of 10.26.2022, the auth token from next-cm, does not follow next style, which more closely followed classic
+                 * furthermore, there is no information about token timeout!!! so, we presume it's the standard 300 seconds...
+                 * check the mModels.ts for example and typing
+                 */
 
-        //         this.tokenTimer();  // start token timer
+                this.events.emit('log-debug', `mbip-cm auth token aquired, timeout: ${this.tokenTimeout}`);
 
-        //         this.bigType = 'mbip';
+                this.tokenTimer();  // start token timer
 
-        //         return;
+                return;
 
-        //     })
-        //     .catch(err => {
-
-        //         this.events.emit('log-debug', `special token request failed to ${this._mbip_auth}: ${err.message}`);
-
-        //         // todo: add non http error details to log
-
-        //         // no error here, we attemp the special api, then fallback to the original
-
-        //         // reThrow the error back up the chain
-        //         // return Promise.reject(err)
-        //     })
-
-        // if (!this._mbip_token) {
-
-            return this.axios({
-                url: this.authEndpoint,
-                method: 'POST',
-                data: {
-                    username: this.user,
-                    password: this.password,
-                    loginProviderName: this.provider
-                }
             })
-                .then(resp => {
+            .catch(err => {
 
-                    // capture entire token
-                    this.token = resp.data['token'];
-                    // set token timeout for timer
-                    this.tokenTimeout = resp.data.token.timeout;
+                this.events.emit('log-debug', `mbip token request failed to ${this.authEndpoint}: ${err.message}`);
 
-                    this.events.emit('log-debug', `auth token aquired, timeout: ${this.tokenTimeout}`);
+                // todo: add non http error details to log
 
-                    this.tokenTimer();  // start token timer
+                // no error here, we attemp the special api, then fallback to the original
 
-                    return;
-
-                })
-                .catch(err => {
-
-                    this.events.emit('log-error', `token request failed: ${err.message}`);
-
-                    // todo: add non http error details to log
-
-                    // reThrow the error back up the chain
-                    return Promise.reject(err)
-                })
-        // } else {
-        //     return;
-        // }
-
+                // reThrow the error back up the chain
+                return Promise.reject(err)
+            })
 
     }
 
@@ -424,51 +386,19 @@ export class MgmtClient {
             await this.getToken();
         }
 
-        // if (this._cbip_token) {
-
-            // merge incoming options into requestDefaults object
-            options = Object.assign({
-                url: uri,
-                method: options?.method || undefined,
-                headers: Object.assign(options?.headers || {}, {
-                    'x-f5-auth-token': this.token.token
-                }),
-                data: options?.data || undefined
-            }, options)
-
-        // } else {
-
-        //     options = Object.assign({
-        //         url: uri,
-        //         method: options?.method || undefined,
-        //         headers: Object.assign(options?.headers || {}, {
-        //             'Authorization': `Bearer ${this._mbip_token.token}`
-        //         }),
-        //         data: options?.data || undefined
-        //     }, options)
-        // }
-
-        // const requestDefaults = {
-        //     url: uri,
-        //     method: options?.method || undefined,
-        //     headers: Object.assign(options?.headers || {}, {
-        //         'x-f5-auth-token': this._cbip_token?.token || undefined,
-        //         'Authorization': this._mbip_token || undefined
-        //     }),
-        //     data: options?.data || undefined
-        // }
-
-        // merge incoming options into requestDefaults object
-        // options = Object.assign(requestDefaults, options)
-
-        // return this.axios.request(options)
+        options = Object.assign({
+            url: uri,
+            method: options?.method || undefined,
+            headers: Object.assign(options?.headers || {}, {
+                'Authorization': `Bearer ${this.token.access_token}`
+            }),
+            data: options?.data || undefined
+        }, options)
 
         const resp = await this.axios.request(options);
-
-        const sResp = await simplifyHttpResponse(resp);
+        const sResp = await simplifyHttpResponse(resp as unknown as AxiosResponseWithTimings);
 
         return sResp;
-
     }
 
 
@@ -482,7 +412,7 @@ export class MgmtClient {
      */
     private async tokenTimer(): Promise<void> {
 
-        this.events.emit('token-timer-start', `Starting token timer: ${this.tokenTimeout}`);
+        this.events.emit('token-timer-start', `Starting mbip-cm token timer: ${this.tokenTimeout}`);
 
         // clear any timer we are currently tracking
         clearInterval(this.tokenIntervalId);
@@ -497,8 +427,8 @@ export class MgmtClient {
 
             // kill the token 10 seconds early to give us time to get a new one with all the other calls going on
             if (this.tokenTimeout <= 10) {
-                this.token = undefined; // clearing token details should get a new token
-                // this._mbip_token = undefined;
+                //  this._cbip_token = undefined; // clearing token details should get a new token
+                this.token = undefined;
             }
 
             // keep running the timer so everything looks good, but clear the rest when it reaches 0
@@ -508,7 +438,7 @@ export class MgmtClient {
                 // just in case this timer got orphaned from the main class, also clear using self reference
                 clearInterval(timerId);
 
-                this.events.emit('token-timer-expired', 'authToken expired -> will refresh with next HTTPS call');
+                this.events.emit('token-timer-expired', 'mbip authToken expired -> will refresh with next HTTPS call');
                 // this.clearToken();
             }
         }, 1000);
@@ -855,7 +785,7 @@ export class MgmtClient {
             }
         } else {
             this.events.emit('log-error', 'getFileName function called, but no hostInfo, discover device first')
-            return Promise.reject('getFileName function called, but no hostInfo, discover device first')
+            throw Error('getFileName function called, but no hostInfo, discover device first')
         }
     }
 }

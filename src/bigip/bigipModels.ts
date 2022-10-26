@@ -254,56 +254,56 @@ export type CfMetaData = {
 
 
 export type F5InfoApi = {
-    baseMac: string;
-    hostMac: string;
-    halUuid: string;
-    chassisSerialNumber: string;
-    slots: {
+    baseMac?: string;
+    hostMac?: string;
+    halUuid?: string;
+    chassisSerialNumber?: string;
+    slots?: {
         volume: string;
         product: string;
         version: string;
         build: string;
         isActive: boolean;
     }[];
-    license: {
+    license?: {
         licenseEndDateTime: string;
         registrationKey: string;
         activeModules: string[];
         generation: number;
         lastUpdateMicros: number;
     };
-    interfaces: string[];
-    isIControlRestSupported: boolean;
-    icrdPort: number;
-    time: number;
-    physicalMemory: number;
-    platform: string;
-    cpu: string;
-    machineId: string;
-    address: string;
-    hostname: string;
-    version: string;
-    product: 'BIG-IP' | 'BIG-IQ';
-    platformMarketingName: string;
-    edition: string;
-    build: string;
-    restFrameworkVersion: string;
-    managementAddress: string;
-    mcpDeviceName: string;
-    isClustered: boolean;
-    isVirtual: boolean;
-    hypervisorType: string;
-    generation: number;
-    lastUpdateMicros: number;
-    kind: string;
-    selfLink: string;
+    interfaces?: string[];
+    isIControlRestSupported?: boolean;
+    icrdPort?: number;
+    time?: number;
+    physicalMemory?: number;
+    platform?: string;
+    cpu?: string;
+    machineId?: string;
+    address?: string;
+    hostname?: string;
+    version?: string;
+    product?: 'BIG-IP' | 'BIG-IQ' | 'NEXT' | 'NEXT-CM' | string;
+    platformMarketingName?: string;
+    edition?: string;
+    build?: string;
+    restFrameworkVersion?: string;
+    managementAddress?: string;
+    mcpDeviceName?: string;
+    isClustered?: boolean;
+    isVirtual?: boolean;
+    hypervisorType?: string;
+    generation?: number;
+    lastUpdateMicros?: number;
+    kind?: string;
+    selfLink?: string;
 }
 
 
 
 
 /**
- * example tmos auth token
+ * example classic tmos auth token
  */
  export const exampleAuthToken = {
     "username": "admin",
@@ -335,7 +335,7 @@ export type F5InfoApi = {
 }
 
 /**
- * example tmos fail auth response
+ * example classic tmos fail auth response
  */
 export const exampleAuthRespFailed = {
     code: 401,

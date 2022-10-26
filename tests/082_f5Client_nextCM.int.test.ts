@@ -54,15 +54,17 @@ const tmpDir = path.join(__dirname, 'tmp')
 // const rpm = 'f5-declarative-onboarding-1.19.0-2.noarch.rpm';
 
 const logger = new Logger('F5_M_LOG_LEVEL');
-logger.console = false;
+logger.console = true;
 // logger.logLevel = 'INFO';
-process.env.F5_M_LOG_LEVEL = 'INFO'
+process.env.F5_M_LOG_LEVEL = 'DEBUG'
 
 // set env to inject default cookies
 // process.env.F5_CONX_CORE_COOKIES = "peanut=/butter/salt; cookie=monster";
-process.env.F5_CONX_CORE_COOKIES = "udf.sid=s%3AHxt-W_iYnGSrfMK8x95AsuX6MA10KJN3.ayFQByX48vOVElPy8iSvui1ntgs20x5A0eQjcXkm89g"
+process.env.F5_CONX_CORE_COOKIES = "udf.sid=s%3AaLVTgY7QNC-F887_p0osPg9354NmElfZ.TtUIuDF1gYhkwqY7n%2B1Wo4zqAGtDg4VMrGUzLg98hHY"
+// const udfNext = 'e5fdfd3c-f976-4fc8-b794-f52e83de0e28.access.udf.f5.com';  // mbip3
+const udfNext = '91a4bfd3-b94f-4c2b-a8dd-b9d6ccff31bd.access.udf.f5.com';  // cm
 
-const events = []
+// const events: string[] = []
 
 describe('nextClientBase unit tests', function () {
 
@@ -87,12 +89,9 @@ describe('nextClientBase unit tests', function () {
 
         // f5Client = getF5Client({ ipv6: true });
         f5Client = new F5Client(
-            'a38d7c27-346b-4c51-bd55-c761236a1092.access.udf.f5.com',
+            udfNext,
             'admin',
-            'ben4Ever!',
-            {
-                port: 443,
-            },
+            'Welcome123!'
         );
 
         f5Client.events
@@ -130,7 +129,7 @@ describe('nextClientBase unit tests', function () {
 
     beforeEach(async function () {
         // setting the array length to 0 emptys it, so we can use it as a "const"
-        events.length = 0;
+        // events.length = 0;
 
     });
 
@@ -158,168 +157,169 @@ describe('nextClientBase unit tests', function () {
     });
 
 
-    it('check out openapi', async function () {
+    it('check out device inventory', async function () {
 
         // clean all the nocks since we didn't use any of the pre-built stuff
         nock.cleanAll();
 
-        const resp = await f5Client.https('/api/v1/openapi')
+        const resp = await f5Client.https('/api/device/v1/inventory')
         .then(resp => resp)
         .catch(err => {
             debugger;
             return err
         })
         
-        assert.ok(typeof resp.data.openapi === 'string')
-        assert.ok(typeof resp.data.info === 'object')
-        assert.ok(isArray(resp.data.servers))
-        assert.ok(isObject(resp.data.paths))
+        assert.ok(isArray(resp.data._embedded.devices))
+        // assert.ok(typeof resp.data.openapi === 'string')
+        // assert.ok(typeof resp.data.info === 'object')
+        // assert.ok(isArray(resp.data.security))
+        // assert.ok(isObject(resp.data.paths))
 
     });
 
-    it('check out systems', async function () {
+    // it('check out systems', async function () {
 
-        // clean all the nocks since we didn't use any of the pre-built stuff
-        nock.cleanAll();
+    //     // clean all the nocks since we didn't use any of the pre-built stuff
+    //     nock.cleanAll();
 
-        const resp = await f5Client.https('/api/v1/systems')
-        .then(resp => resp)
-        .catch(err => {
-            debugger;
-            return err
-        })
+    //     const resp = await f5Client.https('/api/v1/systems')
+    //     .then(resp => resp)
+    //     .catch(err => {
+    //         debugger;
+    //         return err
+    //     })
 
-        assert.ok(typeof resp.data._embedded.systems[0].id === 'string')
+    //     assert.ok(typeof resp.data._embedded.systems[0].id === 'string')
 
-    });
+    // });
 
-    it('check out services', async function () {
+    // it('check out services', async function () {
 
-        // clean all the nocks since we didn't use any of the pre-built stuff
-        nock.cleanAll();
+    //     // clean all the nocks since we didn't use any of the pre-built stuff
+    //     nock.cleanAll();
 
-        const resp = await f5Client.https('/api/v1/services')
-        .then(resp => resp)
-        .catch(err => {
-            debugger;
-            return err
-        })
+    //     const resp = await f5Client.https('/api/v1/services')
+    //     .then(resp => resp)
+    //     .catch(err => {
+    //         debugger;
+    //         return err
+    //     })
 
-        assert.ok(isArray(resp.data._embedded.services))
+    //     assert.ok(isArray(resp.data._embedded.services))
 
-    });
+    // });
 
-    it('check out files', async function () {
+    // it('check out files', async function () {
 
-        // clean all the nocks since we didn't use any of the pre-built stuff
-        nock.cleanAll();
+    //     // clean all the nocks since we didn't use any of the pre-built stuff
+    //     nock.cleanAll();
 
-        const resp = await f5Client.https('/api/v1/files')
-        .then(resp => resp)
-        .catch(err => {
-            debugger;
-            return err
-        })
+    //     const resp = await f5Client.https('/api/v1/files')
+    //     .then(resp => resp)
+    //     .catch(err => {
+    //         debugger;
+    //         return err
+    //     })
 
-        assert.ok(isArray(resp.data._embedded.files))
+    //     assert.ok(isArray(resp.data._embedded.files))
 
-    });
+    // });
 
-    it('check out health', async function () {
+    // it('check out health', async function () {
 
-        const resp = await f5Client.https('/api/v1/health')
-        .then(resp => resp)
-        .catch(err => {
-            // debugger;
-            return err
-        })
+    //     const resp = await f5Client.https('/api/v1/health')
+    //     .then(resp => resp)
+    //     .catch(err => {
+    //         // debugger;
+    //         return err
+    //     })
 
-        // *** this is broken -> responses with 'Request failed with status code 502'
-        // assert.ok(isArray(resp.data._embedded.health))
+    //     // *** this is broken -> responses with 'Request failed with status code 502'
+    //     assert.ok(isArray(resp.data._embedded.health))
 
-    });
-
-
-    it('check out applications', async function () {
-
-        const resp = await f5Client.https('/api/v1/applications')
-        .then(resp => resp)
-        .catch(err => {
-            debugger;
-            return err
-        })
-
-        assert.ok(isArray(resp.data._embedded.applications))
-
-    });
-
-    it('post as3', async function () {
-
-        const resp = await f5Client.as3!.postDec(as3ExampleDec)
-        .then(resp => resp)
-        .catch(err => {
-            debugger;
-            return err
-        })
-
-        assert.ok(resp.data.results[0].message === 'success')
-        assert.ok(typeof resp.data.results[0].runTime === 'number')
-
-    });
-
-    it('delete as3 - empty tenant', async function () {
-
-        const resp = await f5Client.as3!.deleteTenant(as3ExampleDec)
-        .then(resp => resp)
-        .catch(err => {
-            debugger;
-            return err
-        })
-
-        assert.ok(resp.data)
-        // assert.ok(resp.data.results[0].message === 'success')
-        // assert.ok(typeof resp.data.results[0].runTime === 'number')
-
-    });
-
-    it('delete as3 - DELETE method', async function () {
-
-        // const resp = await f5Client.as3!.deleteTenant(as3ExampleDec)
-        const resp = await f5Client.https(`${atcMetaData.as3.endPoints.declare}/Sample_01_tst12345`, {
-            method: 'DELETE'
-        })
-        .then(resp => resp)
-        .catch(err => {
-            debugger;
-            return err
-        })
-
-        assert.ok(resp.data)
-
-    });
+    // });
 
 
-    it('get as3 tenants', async function () {
+    // it('check out applications', async function () {
 
-        const resp = await f5Client.as3!.getDecs()
-        .then(resp => resp)
-        .catch(err => {
-            debugger;
-            return err
-        })
+    //     const resp = await f5Client.https('/api/v1/applications')
+    //     .then(resp => resp)
+    //     .catch(err => {
+    //         debugger;
+    //         return err
+    //     })
 
-        assert.ok(resp.data)
+    //     assert.ok(isArray(resp.data._embedded.applications))
 
-        // example response from this call...
-        const response = {
-            class: "ADC",
-            schemaVersion: "3.0.0",
-            id: "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d",
-            label: "Sample 1",
-            remark: "Simple HTTP application with RR pool",
-          }
+    // });
 
-    });
+    // it('post as3', async function () {
+
+    //     const resp = await f5Client.as3!.postDec(as3ExampleDec)
+    //     .then(resp => resp)
+    //     .catch(err => {
+    //         debugger;
+    //         return err
+    //     })
+
+    //     assert.ok(resp.data.results[0].message === 'success')
+    //     assert.ok(typeof resp.data.results[0].runTime === 'number')
+
+    // });
+
+    // it('delete as3 - empty tenant', async function () {
+
+    //     const resp = await f5Client.as3!.deleteTenant(as3ExampleDec)
+    //     .then(resp => resp)
+    //     .catch(err => {
+    //         debugger;
+    //         return err
+    //     })
+
+    //     assert.ok(resp.data)
+    //     // assert.ok(resp.data.results[0].message === 'success')
+    //     // assert.ok(typeof resp.data.results[0].runTime === 'number')
+
+    // });
+
+    // it('delete as3 - DELETE method', async function () {
+
+    //     // const resp = await f5Client.as3!.deleteTenant(as3ExampleDec)
+    //     const resp = await f5Client.https(`${atcMetaData.as3.endPoints.declare}/Sample_01_tst12345`, {
+    //         method: 'DELETE'
+    //     })
+    //     .then(resp => resp)
+    //     .catch(err => {
+    //         debugger;
+    //         return err
+    //     })
+
+    //     assert.ok(resp.data)
+
+    // });
+
+
+    // it('get as3 tenants', async function () {
+
+    //     const resp = await f5Client.as3!.getDecs()
+    //     .then(resp => resp)
+    //     .catch(err => {
+    //         debugger;
+    //         return err
+    //     })
+
+    //     assert.ok(resp.data)
+
+    //     // example response from this call...
+    //     const response = {
+    //         class: "ADC",
+    //         schemaVersion: "3.0.0",
+    //         id: "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d",
+    //         label: "Sample 1",
+    //         remark: "Simple HTTP application with RR pool",
+    //       }
+
+    // });
 
 
 

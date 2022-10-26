@@ -29,7 +29,7 @@ import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "
 import { F5DownloadPaths, F5UploadPaths } from '../constants';
 import { getRandomUUID, simplifyHttpResponse } from '../utils/misc';
 import { injectAtcAgent } from './atcAgent';
-import { Mtoken } from './mModels';
+import { Ntoken } from './nextModels';
 import { httpTimer } from '../httpTimer';
 
 
@@ -59,7 +59,7 @@ const transport = {
  * @param options.provider (default = tmos)
  * 
  */
-export class MgmtClient {
+export class NextMgmtClient {
     /**
      * hostname or IP address of F5 device
      */
@@ -91,15 +91,15 @@ export class MgmtClient {
     /**
      * username for connected f5 device
      */
-    protected _user: string;
+    user: string;
     /**
      * password for connected device
      */
-    protected _password: string;
+    password: string;
     /**
      * authentication provider for connected device
      */
-    protected _provider: string;
+    provider: string;
     //  /**
     //   * full auth token details for connected device
     //   * 
@@ -111,7 +111,7 @@ export class MgmtClient {
     /**
      * new token
      */
-    protected _mbip_token: Mtoken | undefined;
+    token: Ntoken | undefined;
     /**
      * token timer value
      * 
@@ -126,7 +126,7 @@ export class MgmtClient {
      * 
      * **pre-emptivly clears token at <10 seconds but keeps counting to zero**
      */
-    protected _tokenIntervalId: NodeJS.Timeout | undefined;
+    tokenIntervalId: NodeJS.Timeout | undefined;
 
     /**
      * reject self signed certs
@@ -159,7 +159,7 @@ export class MgmtClient {
     cookies = 'F5_CONX_CORE_COOKIES';
 
     //  private _cbip_auth = '/mgmt/shared/authn/login'
-    private _mbip_auth = '/api/v1/login'
+    authEndpoint = '/api/v1/login'
     //  bigType: 'cbip' | 'mbip' = 'cbip';
 
     /**
@@ -178,10 +178,10 @@ export class MgmtClient {
         teemAgent?: string
     ) {
         this.host = host;
-        this._user = user;
-        this._password = password;
+        this.user = user;
+        this.password = password;
         this.port = options?.port || 443;
-        this._provider = options?.provider || 'tmos';
+        this.provider = options?.provider || 'tmos';
         this.events = eventEmitter ? eventEmitter : new EventEmitter;
         this.teemEnv = teemEnv;
         this.teemAgent = teemAgent;
@@ -210,8 +210,8 @@ export class MgmtClient {
         this.events.emit('log-info', `clearing mbip token/timer with ${this.tokenTimeout} left`);
         const tokenTimeOut = this.tokenTimeout;
         //  this._cbip_token = undefined;
-        this._mbip_token = undefined;
-        clearInterval(this._tokenIntervalId);
+        this.token = undefined;
+        clearInterval(this.tokenIntervalId);
         return tokenTimeOut;
     }
 
@@ -325,16 +325,16 @@ export class MgmtClient {
 
         // GET basic auth -> /api/v1/login
         await this.axios({
-            url: this._mbip_auth,
+            url: this.authEndpoint,
             auth: {
-                username: this._user,
-                password: this._password
+                username: this.user,
+                password: this.password
             }
         })
             .then(resp => {
 
                 // capture entire token
-                this._mbip_token = resp.data;
+                this.token = resp.data;
                 // set token timeout for timer
                 this.tokenTimeout = resp.data.expiresIn;
 
@@ -347,7 +347,7 @@ export class MgmtClient {
             })
             .catch(err => {
 
-                this.events.emit('log-debug', `mbip token request failed to ${this._mbip_auth}: ${err.message}`);
+                this.events.emit('log-debug', `mbip token request failed to ${this.authEndpoint}: ${err.message}`);
 
                 // todo: add non http error details to log
 
@@ -374,7 +374,7 @@ export class MgmtClient {
     async makeRequest(uri: string, options?: uuidAxiosRequestConfig): Promise<HttpResponse> {
 
         // if auth token has expired, it should have been cleared, get new one
-        if (!this._mbip_token) {
+        if (!this.token) {
             await this.getToken();
         }
 
@@ -382,12 +382,12 @@ export class MgmtClient {
             url: uri,
             method: options?.method || undefined,
             headers: Object.assign(options?.headers || {}, {
-                'Authorization': `Bearer ${this._mbip_token.token}`
+                'Authorization': `Bearer ${this.token.token}`
             }),
             data: options?.data || undefined
         }, options)
 
-        const resp = this.axios.request(options);
+        const resp = await this.axios.request(options);
         const sResp = await simplifyHttpResponse(resp as unknown as AxiosResponseWithTimings);
 
         return sResp;
@@ -407,25 +407,25 @@ export class MgmtClient {
         this.events.emit('token-timer-start', `Starting mbip token timer: ${this.tokenTimeout}`);
 
         // clear any timer we are currently tracking
-        clearInterval(this._tokenIntervalId);
+        clearInterval(this.tokenIntervalId);
 
-        this._tokenIntervalId = setInterval(() => {
+        this.tokenIntervalId = setInterval(() => {
             this.tokenTimeout--;
 
             // capture the self timer instance
-            const timerId = this._tokenIntervalId;
+            const timerId = this.tokenIntervalId;
 
             this.events.emit('token-timer-count', this.tokenTimeout);
 
             // kill the token 10 seconds early to give us time to get a new one with all the other calls going on
             if (this.tokenTimeout <= 10) {
                 //  this._cbip_token = undefined; // clearing token details should get a new token
-                this._mbip_token = undefined;
+                this.token = undefined;
             }
 
             // keep running the timer so everything looks good, but clear the rest when it reaches 0
             if (this.tokenTimeout <= 0) {
-                clearInterval(this._tokenIntervalId);
+                clearInterval(this.tokenIntervalId);
 
                 // just in case this timer got orphaned from the main class, also clear using self reference
                 clearInterval(timerId);
