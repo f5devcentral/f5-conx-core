@@ -228,56 +228,68 @@ export class F5Client {
      *  - installed atc services and versions
      *  
      */
-    async discover(): Promise<DiscoverInfo> {
+    async discover(product?: string): Promise<DiscoverInfo> {
 
-        // discover if mbip, overwrite with NextMgmtClient
-        const type = await detectNextAsync(this.mgmtClient.host)
-            .then(type => {
+        const returnInfo: DiscoverInfo = {};
 
-                if (type.product === 'NEXT') {
-
-                    this.mgmtClient = new NextMgmtClient(
-                        this.mgmtClient.host,
-                        this.mgmtClient.user,
-                        this.mgmtClient.password,
-                        {
-                            port: this.mgmtClient.port,
-                            provider: this.mgmtClient.provider,
-                        },
-                        this.mgmtClient.events,
-                        this.mgmtClient.teemEnv,
-                        this.mgmtClient.teemAgent
-                    )
-
-                } else {
-
-                    // this is NEXT-CM
-                    this.mgmtClient = new NextCmMgmtClient(
-                        this.mgmtClient.host,
-                        this.mgmtClient.user,
-                        this.mgmtClient.password,
-                        {
-                            port: this.mgmtClient.port,
-                            provider: this.mgmtClient.provider,
-                        },
-                        this.mgmtClient.events,
-                        this.mgmtClient.teemEnv,
-                        this.mgmtClient.teemAgent
-                    )
-                }
-
-                this.mgmtClient.hostInfo = {};
-                this.mgmtClient.hostInfo.product = type.product
-                return type;
-
-            })
+        // todo; enable a flag to bypass check if we know what we are connecting to
+        if (true) {
 
 
+            // discover if mbip, overwrite with NextMgmtClient
+            const type = await detectNextAsync(this.mgmtClient.host)
+                .then(type => {
+
+                    if (type.product === 'NEXT') {
+
+                        this.mgmtClient = new NextMgmtClient(
+                            this.mgmtClient.host,
+                            this.mgmtClient.user,
+                            this.mgmtClient.password,
+                            {
+                                port: this.mgmtClient.port,
+                                provider: this.mgmtClient.provider,
+                            },
+                            this.mgmtClient.events,
+                            this.mgmtClient.teemEnv,
+                            this.mgmtClient.teemAgent
+                        )
+
+                    } else {
+
+                        // this is NEXT-CM
+                        this.mgmtClient = new NextCmMgmtClient(
+                            this.mgmtClient.host,
+                            this.mgmtClient.user,
+                            this.mgmtClient.password,
+                            {
+                                port: this.mgmtClient.port,
+                                provider: this.mgmtClient.provider,
+                            },
+                            this.mgmtClient.events,
+                            this.mgmtClient.teemEnv,
+                            this.mgmtClient.teemAgent
+                        )
+                    }
+
+                    this.mgmtClient.hostInfo = {};
+                    this.mgmtClient.hostInfo.product = type.product
+
+                    returnInfo.product = type.product;
+
+                    return type;
 
 
-        const returnInfo: DiscoverInfo = {
-            product: this.mgmtClient.hostInfo.product
-        };
+                })
+                .catch(err => {
+                    // just log the error to prevent it from stopping the flow
+                    this.events.emit('log-debug', `no Next/CM detected: ${err}`);
+                })
+        }
+
+
+
+
 
         if (this.mgmtClient instanceof MgmtClient) {
             // this is a classic bigip as defined by the class type

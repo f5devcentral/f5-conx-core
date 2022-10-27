@@ -61,8 +61,8 @@ process.env.F5_M_LOG_LEVEL = 'DEBUG'
 // set env to inject default cookies
 // process.env.F5_CONX_CORE_COOKIES = "peanut=/butter/salt; cookie=monster";
 process.env.F5_CONX_CORE_COOKIES = "udf.sid=s%3AaLVTgY7QNC-F887_p0osPg9354NmElfZ.TtUIuDF1gYhkwqY7n%2B1Wo4zqAGtDg4VMrGUzLg98hHY"
-// const udfNext = 'e5fdfd3c-f976-4fc8-b794-f52e83de0e28.access.udf.f5.com';  // mbip3
-const udfNext = '91a4bfd3-b94f-4c2b-a8dd-b9d6ccff31bd.access.udf.f5.com';  // cm
+const udfNext = 'e5fdfd3c-f976-4fc8-b794-.access.udf.f5.com';  // mbip3
+// const udfNext = '91a4bfd3-b94f-4c2b-a8dd-.access.udf.f5.com';  // cm
 
 // const events: string[] = []
 

@@ -95,6 +95,7 @@ export type DetectNext = {
     return await extHttp.makeRequest({
         url: `https://${host}/api/v1/login`,
         method: "GET",
+        timeout: 10,
         auth: {
             username,
             password
@@ -129,6 +130,7 @@ export type DetectNext = {
         return await extHttp.makeRequest({
             url: `https://${host}/api/login`,
             method: "POST",
+            timeout: 10,
             data: {
                 username,
                 password
