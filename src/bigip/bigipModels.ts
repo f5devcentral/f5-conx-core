@@ -251,9 +251,12 @@ export type CfMetaData = {
 };
 
 
-
+export type F5TmosProduct = 'BIG-IP' | 'BIG-IQ' | 'NEXT' | 'NEXT-CM';
 
 export type F5InfoApi = {
+    product: F5TmosProduct;
+    hostname?: string;
+    machineId?: string;
     baseMac?: string;
     hostMac?: string;
     halUuid?: string;
@@ -279,11 +282,8 @@ export type F5InfoApi = {
     physicalMemory?: number;
     platform?: string;
     cpu?: string;
-    machineId?: string;
     address?: string;
-    hostname?: string;
     version?: string;
-    product?: 'BIG-IP' | 'BIG-IQ' | 'NEXT' | 'NEXT-CM' | string;
     platformMarketingName?: string;
     edition?: string;
     build?: string;

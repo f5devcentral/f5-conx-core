@@ -10,9 +10,11 @@
 
 import { inspect } from 'util';
 import {
+    AxiosResponseWithTimings,
     HttpResponse,
     uuidAxiosRequestConfig
 } from './utils/httpModels';
+import { simplifyHttpResponse } from './utils/misc';
 
 
 const LOG_LEVELS = {
@@ -156,15 +158,17 @@ export default class Logger {
      * 
      * @param resp 
      */
-    async httpResponse(resp: HttpResponse): Promise<void> {
+    async httpResponse(resp: AxiosResponseWithTimings): Promise<void> {
+
+        const smallResp = await simplifyHttpResponse(resp)
 
         if (process.env[this.logEnv] === 'DEBUG') {
 
-            this.debug('debug-http-response', resp);
+            this.debug('debug-http-response', smallResp);
 
         } else {
 
-            this.info(`HTTPS-RESP [${resp.request.uuid}]: ${resp.status} - ${resp.statusText}`);
+            this.info(`HTTPS-RESP [${smallResp.request.uuid}]: ${smallResp.status} - ${smallResp.statusText}`);
             
         }
     }

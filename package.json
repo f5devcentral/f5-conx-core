@@ -1,7 +1,7 @@
 {
     "name": "f5-conx-core",
     "author": "F5 Networks",
-    "version": "0.17.0-a1",
+    "version": "0.17.0-11022022",
     "description": "F5 SDK for JavaScript with Typescript type definitions",
     "license": "SEE LICENSE IN LICENSE file",
     "main": "dist/index.js",

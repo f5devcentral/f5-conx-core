@@ -158,9 +158,7 @@ export class NextCmMgmtClient {
      */
     cookies = 'F5_CONX_CORE_COOKIES';
 
-    //  private _cbip_auth = '/mgmt/shared/authn/login'
     authEndpoint = '/api/login'
-    //  bigType: 'cbip' | 'mbip' = 'cbip';
 
     /**
      * @param options function options
@@ -181,7 +179,7 @@ export class NextCmMgmtClient {
         this.user = user;
         this.password = password;
         this.port = options?.port || 443;
-        this.provider = options?.provider || 'tmos';
+        // this.provider = options?.provider || 'tmos';
         this.events = eventEmitter ? eventEmitter : new EventEmitter;
         this.teemEnv = teemEnv;
         this.teemAgent = teemAgent;
@@ -207,7 +205,7 @@ export class NextCmMgmtClient {
      *  - used for logging out/disconnecting, and testing
      */
     async clearToken(): Promise<number> {
-        this.events.emit('log-info', `clearing mbip-cm token/timer with ${this.tokenTimeout} left`);
+        this.events.emit('log-info', `clearing next-cm token/timer with ${this.tokenTimeout} left`);
         const tokenTimeOut = this.tokenTimeout;
         //  this._cbip_token = undefined;
         this.token = undefined;
@@ -321,7 +319,7 @@ export class NextCmMgmtClient {
      */
     private async getToken(): Promise<void> {
 
-        this.events.emit('log-debug', `getting mbip-cm auth token from: ${this.host}:${this.port}`);
+        this.events.emit('log-debug', `getting next-cm auth token from: ${this.host}:${this.port}`);
 
         // GET basic auth -> /api/v1/login
         await this.axios({
@@ -346,7 +344,7 @@ export class NextCmMgmtClient {
                  * check the mModels.ts for example and typing
                  */
 
-                this.events.emit('log-debug', `mbip-cm auth token aquired, timeout: ${this.tokenTimeout}`);
+                this.events.emit('log-debug', `next-cm auth token aquired, timeout: ${this.tokenTimeout}`);
 
                 this.tokenTimer();  // start token timer
 
@@ -355,7 +353,7 @@ export class NextCmMgmtClient {
             })
             .catch(err => {
 
-                this.events.emit('log-debug', `mbip token request failed to ${this.authEndpoint}: ${err.message}`);
+                this.events.emit('log-debug', `next-cm token request failed to ${this.authEndpoint}: ${err.message}`);
 
                 // todo: add non http error details to log
 
@@ -396,7 +394,7 @@ export class NextCmMgmtClient {
         }, options)
 
         const resp = await this.axios.request(options);
-        const sResp = await simplifyHttpResponse(resp as unknown as AxiosResponseWithTimings);
+        const sResp = await simplifyHttpResponse(resp);
 
         return sResp;
     }
@@ -412,7 +410,7 @@ export class NextCmMgmtClient {
      */
     private async tokenTimer(): Promise<void> {
 
-        this.events.emit('token-timer-start', `Starting mbip-cm token timer: ${this.tokenTimeout}`);
+        this.events.emit('token-timer-start', `Starting next-cm token timer: ${this.tokenTimeout}`);
 
         // clear any timer we are currently tracking
         clearInterval(this.tokenIntervalId);
@@ -438,7 +436,7 @@ export class NextCmMgmtClient {
                 // just in case this timer got orphaned from the main class, also clear using self reference
                 clearInterval(timerId);
 
-                this.events.emit('token-timer-expired', 'mbip authToken expired -> will refresh with next HTTPS call');
+                this.events.emit('token-timer-expired', 'next-cm authToken expired -> will refresh with next HTTPS call');
                 // this.clearToken();
             }
         }, 1000);

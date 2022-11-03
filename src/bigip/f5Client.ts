@@ -12,12 +12,13 @@
 
 import { EventEmitter } from 'events';
 
-import { AtcInfo, F5InfoApi, F5DownLoad, F5Upload, DiscoverInfo } from "./bigipModels";
+import { AtcInfo, F5InfoApi, F5DownLoad, F5Upload, DiscoverInfo, F5TmosProduct } from "./bigipModels";
 import { HttpResponse, F5HttpRequest } from "../utils/httpModels";
 // import { MetadataClient } from "./metadata";
 
 import { MgmtClient } from "./mgmtClient";
 import { NextMgmtClient } from "./nextClientBase";
+import { NextCmMgmtClient } from './nextCmClientBase';
 import { UcsClient } from "./ucsClient";
 import { QkviewClient } from "./qkviewClient";
 import { FastClient } from "./fastClient";
@@ -31,7 +32,6 @@ import { TMP_DIR, atcMetaData as atcMetaDataNew } from '../constants'
 import path from 'path';
 import { detectNextAsync } from './detectNextBigip';
 import { NextOpenApi } from './nextModels';
-import { NextCmMgmtClient } from './nextCmClientBase';
 
 
 /**
@@ -154,21 +154,6 @@ export class F5Client {
         });
 
 
-        // detect cbip vs mbip
-
-        // const v = detectNextAsync(host)
-        //     .then(mbip => {
-        //         this.mgmtClient = new NextMgmtClient(
-        //             host,
-        //             user,
-        //             password,
-        //             hostOptions,
-        //             eventEmmiter = this.events,
-        //             teemEnv,
-        //             teemAgent
-        //         )
-        //     })
-        //     .catch(cbip => {
         this.mgmtClient = new MgmtClient(
             host,
             user,
@@ -188,10 +173,6 @@ export class F5Client {
         // setup atc rpm ilx mgmt
         this.atc = new AtcMgmtClient(this.mgmtClient, this.extHttp)
         // })
-
-
-        // return v;
-
 
 
     }
@@ -228,67 +209,73 @@ export class F5Client {
      *  - installed atc services and versions
      *  
      */
-    async discover(product?: string): Promise<DiscoverInfo> {
+    async discover(product: F5TmosProduct = "BIG-IP"): Promise<DiscoverInfo> {
 
         const returnInfo: DiscoverInfo = {};
 
         // todo; enable a flag to bypass check if we know what we are connecting to
-        if (true) {
+        if (product === undefined) {
 
 
-            // discover if mbip, overwrite with NextMgmtClient
-            const type = await detectNextAsync(this.mgmtClient.host)
+            // discover if next/cm
+            await detectNextAsync(this.mgmtClient.host)
                 .then(type => {
 
-                    if (type.product === 'NEXT') {
-
-                        this.mgmtClient = new NextMgmtClient(
-                            this.mgmtClient.host,
-                            this.mgmtClient.user,
-                            this.mgmtClient.password,
-                            {
-                                port: this.mgmtClient.port,
-                                provider: this.mgmtClient.provider,
-                            },
-                            this.mgmtClient.events,
-                            this.mgmtClient.teemEnv,
-                            this.mgmtClient.teemAgent
-                        )
-
-                    } else {
-
-                        // this is NEXT-CM
-                        this.mgmtClient = new NextCmMgmtClient(
-                            this.mgmtClient.host,
-                            this.mgmtClient.user,
-                            this.mgmtClient.password,
-                            {
-                                port: this.mgmtClient.port,
-                                provider: this.mgmtClient.provider,
-                            },
-                            this.mgmtClient.events,
-                            this.mgmtClient.teemEnv,
-                            this.mgmtClient.teemAgent
-                        )
-                    }
-
-                    this.mgmtClient.hostInfo = {};
-                    this.mgmtClient.hostInfo.product = type.product
-
-                    returnInfo.product = type.product;
+                    product = type.product;
 
                     return type;
-
 
                 })
                 .catch(err => {
                     // just log the error to prevent it from stopping the flow
                     this.events.emit('log-debug', `no Next/CM detected: ${err}`);
+                    product = 'BIG-IP'; // we will assume BIG-IP till we connect and know it's BIG-IQ
                 })
         }
 
+        if (product === 'NEXT') {
+
+            this.mgmtClient = new NextMgmtClient(
+                this.mgmtClient.host,
+                this.mgmtClient.user,
+                this.mgmtClient.password,
+                {
+                    port: this.mgmtClient.port,
+                    provider: this.mgmtClient.provider,
+                },
+                this.mgmtClient.events,
+                this.mgmtClient.teemEnv,
+                this.mgmtClient.teemAgent
+            )
+
+        } else if (product === 'NEXT-CM') {
+
+            // this is NEXT-CM
+            this.mgmtClient = new NextCmMgmtClient(
+                this.mgmtClient.host,
+                this.mgmtClient.user,
+                this.mgmtClient.password,
+                {
+                    port: this.mgmtClient.port,
+                    provider: this.mgmtClient.provider,
+                },
+                this.mgmtClient.events,
+                this.mgmtClient.teemEnv,
+                this.mgmtClient.teemAgent
+            )
+        }
+
+        this.mgmtClient.hostInfo = {
+            product
+        }
+
+        returnInfo.product = product;
 
 
+
+
+
+        // discover and plug in additional information
 
 
         if (this.mgmtClient instanceof MgmtClient) {
@@ -374,6 +361,9 @@ export class F5Client {
             await this.mgmtClient.makeRequest('/api/v1/systems')
                 .then(resp => this.host.systems = resp.data._embedded.systems);
 
+                this.host.hostname = this.host.systems[0].hostname;
+                this.host.machineId = this.host.systems[0].machineID;
+
 
             await this.mgmtClient.makeRequest('/api/v1/services')
                 .then(resp => this.host.services = resp.data._embedded.services);
@@ -425,26 +415,26 @@ export class F5Client {
              * no as3 or fast info endpoints implemented to provide status/verioning details
              * so, at this point we will just assume as3/fast are working, like next, and hook them in...
              */
-            const as3Info = {
-                version: 'as3ncm_1_?',
-                release: '0.0.1-dev',
-                schemaCurrent: 'where_is_schema?',
-                schemaMinimum: '>1'
-            }
-            this.as3 = new As3Client(as3Info as AtcInfo, this.atcMetaData.as3, this.mgmtClient);
+            // const as3Info = {
+            //     version: 'as3ncm_1_?',
+            //     release: '0.0.1-dev',
+            //     schemaCurrent: 'where_is_schema?',
+            //     schemaMinimum: '>1'
+            // }
+            // this.as3 = new As3Client(as3Info as AtcInfo, this.atcMetaData.as3, this.mgmtClient);
 
-            const fastInfo = {
-                version: 'fastncm_1_?',
-                release: '0.0.1-dev',
-                schemaCurrent: 'where_is_schema?',
-                schemaMinimum: '>1'
-            }
-            this.fast = new FastClient(fastInfo as AtcInfo, this.atcMetaData.fast, this.mgmtClient);
+            // const fastInfo = {
+            //     version: 'fastncm_1_?',
+            //     release: '0.0.1-dev',
+            //     schemaCurrent: 'where_is_schema?',
+            //     schemaMinimum: '>1'
+            // }
+            // this.fast = new FastClient(fastInfo as AtcInfo, this.atcMetaData.fast, this.mgmtClient);
 
-            returnInfo.atc = {
-                as3: as3Info.version,
-                fast: fastInfo.version
-            }
+            // returnInfo.atc = {
+            //     as3: as3Info.version,
+            //     fast: fastInfo.version
+            // }
 
         }
 

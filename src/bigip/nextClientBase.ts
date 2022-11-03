@@ -158,9 +158,7 @@ export class NextMgmtClient {
      */
     cookies = 'F5_CONX_CORE_COOKIES';
 
-    //  private _cbip_auth = '/mgmt/shared/authn/login'
     authEndpoint = '/api/v1/login'
-    //  bigType: 'cbip' | 'mbip' = 'cbip';
 
     /**
      * @param options function options
@@ -207,7 +205,7 @@ export class NextMgmtClient {
      *  - used for logging out/disconnecting, and testing
      */
     async clearToken(): Promise<number> {
-        this.events.emit('log-info', `clearing mbip token/timer with ${this.tokenTimeout} left`);
+        this.events.emit('log-info', `clearing NEXT token/timer with ${this.tokenTimeout} left`);
         const tokenTimeOut = this.tokenTimeout;
         //  this._cbip_token = undefined;
         this.token = undefined;
@@ -321,7 +319,7 @@ export class NextMgmtClient {
      */
     private async getToken(): Promise<void> {
 
-        this.events.emit('log-debug', `getting mbip auth token from: ${this.host}:${this.port}`);
+        this.events.emit('log-debug', `getting next auth token from: ${this.host}:${this.port}`);
 
         // GET basic auth -> /api/v1/login
         await this.axios({
@@ -338,7 +336,7 @@ export class NextMgmtClient {
                 // set token timeout for timer
                 this.tokenTimeout = resp.data.expiresIn;
 
-                this.events.emit('log-debug', `mbip auth token aquired, timeout: ${this.tokenTimeout}`);
+                this.events.emit('log-debug', `next auth token aquired, timeout: ${this.tokenTimeout}`);
 
                 this.tokenTimer();  // start token timer
 
@@ -347,7 +345,7 @@ export class NextMgmtClient {
             })
             .catch(err => {
 
-                this.events.emit('log-debug', `mbip token request failed to ${this.authEndpoint}: ${err.message}`);
+                this.events.emit('log-debug', `next token request failed to ${this.authEndpoint}: ${err.message}`);
 
                 // todo: add non http error details to log
 
@@ -404,7 +402,7 @@ export class NextMgmtClient {
      */
     private async tokenTimer(): Promise<void> {
 
-        this.events.emit('token-timer-start', `Starting mbip token timer: ${this.tokenTimeout}`);
+        this.events.emit('token-timer-start', `Starting next token timer: ${this.tokenTimeout}`);
 
         // clear any timer we are currently tracking
         clearInterval(this.tokenIntervalId);
@@ -430,7 +428,7 @@ export class NextMgmtClient {
                 // just in case this timer got orphaned from the main class, also clear using self reference
                 clearInterval(timerId);
 
-                this.events.emit('token-timer-expired', 'mbip authToken expired -> will refresh with next HTTPS call');
+                this.events.emit('token-timer-expired', 'next authToken expired -> will refresh with next HTTPS call');
                 // this.clearToken();
             }
         }, 1000);
