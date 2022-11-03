@@ -46,7 +46,11 @@ export interface NextOpenApi {
         }
     ]
     paths: {
-        [k: string]: unknown
+        [k: string]: {
+            [k: string]: {
+                [k: string]: unknown
+            }
+        }
     }
     components: {
         [k: string]: unknown
