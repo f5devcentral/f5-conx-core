@@ -9,8 +9,6 @@
 
 'use strict';
 
-// import { Timings } from "@szmarczak/http-timer";
-
 import { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, Method, ResponseType } from "axios";
 import { HttpTimings } from "../httpTimer";
 
@@ -21,7 +19,7 @@ export type F5HttpRequest = {
     baseURL?: string,
     method?: Method,
     url?: string,
-    headers?: AxiosRequestHeaders,
+    headers?: AxiosRequestHeaders | Partial<Record<string, string> & { "set-cookie"?: string[]; }>,
     data?: any,
     validateStatus?: any,
     advancedReturn?: boolean,

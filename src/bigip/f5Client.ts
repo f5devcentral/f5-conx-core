@@ -310,7 +310,7 @@ export class F5Client {
                 .catch(err => {
                     // do nothing... but catch the error from bubbling up and causing other issues
                     // this.logger.debug(err);
-                    debugger;
+                    // debugger;
                 })
 
             // check AS3 installed by getting verion info
@@ -327,7 +327,7 @@ export class F5Client {
                 .catch(err => {
                     // do nothing... but catch the error from bubbling up and causing other issues
                     // this.logger.debug(err);
-                    debugger;
+                    // debugger;
                 })
 
 
