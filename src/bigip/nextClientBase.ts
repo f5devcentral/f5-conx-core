@@ -179,7 +179,7 @@ export class NextMgmtClient {
         this.user = user;
         this.password = password;
         this.port = options?.port || 443;
-        this.provider = options?.provider || 'tmos';
+        // this.provider = options?.provider || 'tmos';
         this.events = eventEmitter ? eventEmitter : new EventEmitter;
         this.teemEnv = teemEnv;
         this.teemAgent = teemAgent;
@@ -387,8 +387,9 @@ export class NextMgmtClient {
 
         const resp = await this.axios.request(options);
         const sResp = await simplifyHttpResponse(resp as unknown as AxiosResponseWithTimings);
-
-        return sResp;
+        
+        const ssResp = JSON.parse(JSON.stringify(sResp))
+        return ssResp;
     }
 
 

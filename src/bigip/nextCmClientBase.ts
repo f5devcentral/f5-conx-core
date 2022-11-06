@@ -396,7 +396,8 @@ export class NextCmMgmtClient {
         const resp = await this.axios.request(options);
         const sResp = await simplifyHttpResponse(resp);
 
-        return sResp;
+        const ssResp = JSON.parse(JSON.stringify(sResp))
+        return ssResp;
     }
 
 

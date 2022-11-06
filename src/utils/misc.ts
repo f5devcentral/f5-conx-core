@@ -146,12 +146,15 @@ export function verifyHash(file: string, extensionHash: string): boolean {
  * @returns simplified http response
  */
  export async function simplifyHttpResponse(resp: AxiosResponseWithTimings): Promise<HttpResponse> {
+    
+    // const h = JSON.parse(JSON.stringify(resp.headers));
+    
     // only return the things we need
     return {
-        data: resp.data,
-        headers: resp.headers,
         status: resp.status,
         statusText: resp.statusText,
+        data: resp.data,
+        headers: resp.headers,
         request: {
             uuid: resp.config.uuid,
             baseURL: resp.config.baseURL,
@@ -159,7 +162,7 @@ export function verifyHash(file: string, extensionHash: string): boolean {
             method: resp.request.method,
             headers: resp.request.headers,
             protocol: resp.config.httpsAgent.protocol,
-            timings: resp.request.timings
+            // timings: resp.request.timings
         }
     }
 }

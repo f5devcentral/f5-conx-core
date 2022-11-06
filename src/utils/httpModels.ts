@@ -48,7 +48,7 @@ export type HttpResponse<T = any> = {
         method: string,
         headers: AxiosRequestHeaders,
         protocol: string,
-        timings: HttpTimings,
+        timings?: HttpTimings,
     };
 };
 

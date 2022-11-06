@@ -142,7 +142,25 @@ export default class Logger {
 
         if (process.env[this.logEnv] === 'DEBUG') {
 
-            this.debug('debug-http-request', config);
+            // stringify and reparse base request to remove js object details
+            const req = JSON.parse(JSON.stringify({
+                url,
+                headers: config.headers,
+                method: config.method,
+                uuid: config.uuid,
+            }))
+
+            // if POST with data
+            if (config.data) {
+                // stringify data to make it easily searchable
+                const dataString = JSON.stringify(config.data)
+                // hide passwords
+                const dS = dataString.replace(/("password":")(?:\\"|[^"])*"/g, "\"password\":\"***\"");
+                // json parse data and add back to req for logging
+                req.data = JSON.parse(dS)
+            }
+
+            this.debug('debug-http-request', req);
 
         } else {
 
@@ -162,9 +180,11 @@ export default class Logger {
 
         const smallResp = await simplifyHttpResponse(resp)
 
+        const smallerResp = JSON.parse(JSON.stringify(smallResp));
+
         if (process.env[this.logEnv] === 'DEBUG') {
 
-            this.debug('debug-http-response', smallResp);
+            this.debug('debug-http-response', smallerResp);
 
         } else {
 

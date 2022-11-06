@@ -9,6 +9,30 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [0.17.1] - (11-6-2022)
+
+- continue to clean up rest/debug logging
+
+---
+
+## [0.17.0] - (11-4-2022)
+
+- Latest NEXT/CM integration
+- big improvements to rest debug logging
+  - debugging only provided relevant details
+- better http timing integration
+- full deps updates
+  - node v16
+  - ts v4.8
+
+---
+
+## [0.16.0] - (10-5-2022)
+
+NEXT integration branch -> abandoned
+
+---
+
 ## [0.15.1] - (07-25-2022)
 
 - branch off NEXT connectivity from mgmtClient/f5Client

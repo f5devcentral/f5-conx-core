@@ -163,8 +163,6 @@ export class F5Client {
             teemEnv,
             teemAgent
         )
-        // })
-
 
     }
 
@@ -263,14 +261,10 @@ export class F5Client {
         }
 
         // hostname/product/version
-
         returnInfo.product = product;
 
 
 
-
-
-        // discover and plug in additional information
 
 
         if (this.mgmtClient instanceof MgmtClient) {
@@ -381,7 +375,6 @@ export class F5Client {
 
         } else if (this.mgmtClient instanceof NextMgmtClient) {
             // this is mbip, only discover things unique to mbip here...
-            // todo; setup mbip details for F5InfoApi details on this.host -> these details will be used the higher logic to understand how to ineract with the type of bigip we are working with
 
             // get swagger file from connected instance
             //      This file is 1-2Mb, we sure we want to do this EVERYTIME?
@@ -411,7 +404,6 @@ export class F5Client {
                 .then(resp => this.host.health = resp.data._embedded.health);
 
 
-
             // check FAST installed by getting verion info
             await this.mgmtClient.makeRequest(this.atcMetaData.fast.endPoints.info)
                 .then(resp => {
@@ -422,7 +414,6 @@ export class F5Client {
                 .catch(err => {
                     // do nothing... but catch the error from bubbling up and causing other issues
                     // this.logger.debug(err);
-                    debugger;
                 })
 
             // check AS3 installed by getting verion info
@@ -439,16 +430,10 @@ export class F5Client {
                 .catch(err => {
                     // do nothing... but catch the error from bubbling up and causing other issues
                     // this.logger.debug(err);
-                    debugger;
                 })
 
         } else if (this.mgmtClient instanceof NextCmMgmtClient){
             // this is all NEXT-CM setup
-
-            /**
-             * no as3 or fast info endpoints implemented to provide status/verioning details
-             * so, at this point we will just assume as3/fast are working, like next, and hook them in...
-             */
 
             await this.mgmtClient.makeRequest('/api/openapi')
                 .then(resp => {
@@ -465,34 +450,10 @@ export class F5Client {
             // assign details to this and mgmtClient class
             this.mgmtClient.hostInfo.hostname = 'central-manager-hostname'
             
-
             returnInfo.hostname = this.mgmtClient.hostInfo.hostname;
             returnInfo.version = this.mgmtClient.hostInfo.version;
 
-            // const as3Info = {
-            //     version: 'as3ncm_1_?',
-            //     release: '0.0.1-dev',
-            //     schemaCurrent: 'where_is_schema?',
-            //     schemaMinimum: '>1'
-            // }
-            // this.as3 = new As3Client(as3Info as AtcInfo, this.atcMetaData.as3, this.mgmtClient);
-
-            // const fastInfo = {
-            //     version: 'fastncm_1_?',
-            //     release: '0.0.1-dev',
-            //     schemaCurrent: 'where_is_schema?',
-            //     schemaMinimum: '>1'
-            // }
-            // this.fast = new FastClient(fastInfo as AtcInfo, this.atcMetaData.fast, this.mgmtClient);
-
-            // returnInfo.atc = {
-            //     as3: as3Info.version,
-            //     fast: fastInfo.version
-            // }
-
         }
-
-
 
         this.host = this.mgmtClient.hostInfo
 

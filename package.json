@@ -1,7 +1,7 @@
 {
     "name": "f5-conx-core",
     "author": "F5 Networks",
-    "version": "0.17.0",
+    "version": "0.17.1",
     "description": "F5 SDK for JavaScript with Typescript type definitions",
     "license": "SEE LICENSE IN LICENSE file",
     "main": "dist/index.js",
@@ -34,7 +34,7 @@
         "test": "nyc mocha -r ts-node/register \"tests/*.tests.ts\"",
         "build-code-docs": "typedoc --out code_docs src",
         "build-package": "npm run compile && npm pack",
-        "publish": "npm run compile && npm publish"
+        "publish-package": "npm run compile && npm publish"
     },
     "dependencies": {
         "axios": "^1.1.3"
