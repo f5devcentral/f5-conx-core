@@ -31,7 +31,7 @@ import { ExtHttp } from '../externalHttps';
 import { TMP_DIR, atcMetaData as atcMetaDataNew } from '../constants'
 import path from 'path';
 import { detectNextAsync } from './detectNextBigip';
-import { NextOpenApi } from './nextModels';
+import { OpenApi } from './OpenApiModels';
 
 
 /**
@@ -126,7 +126,7 @@ export class F5Client {
      * event emitter instance
      */
     events: EventEmitter;
-    openApi: NextOpenApi | undefined;
+    openApi: OpenApi | undefined;
 
     constructor(
         host: string,

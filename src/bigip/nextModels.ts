@@ -29,41 +29,6 @@ export type Ntoken = {
 }
 
 
-export interface NextOpenApi {
-    openapi: string;
-    info: {
-        title: string;
-        version: string;
-        license: {
-            name: string;
-            url: string;
-        }
-    }
-    servers: [
-        {
-            url: string;
-            description: string
-        }
-    ]
-    paths: {
-        [k: string]: {
-            [k: string]: {
-                [k: string]: unknown
-            }
-        }
-    }
-    components: {
-        [k: string]: unknown
-    }
-    security: [
-        {
-            bearerAuth: unknown;
-        }
-    ]
-}
-
-
-
 export const mtokenExample: Ntoken =  {
     token: 'eyJhbGciOiJIUzM4NCIsImtpZCI6ImZkYjQ3ZDg4LWJiZjItNGI3Ny05ZWU0LTZiMTk2ZWUzZTlmMiIsInR5cCI6IkpXVCJ9.eyJFeHRlbnNpb25zIjp7IngtZjUtdXNlci1wYXNzLWNoYW5nZSI6WyJubyJdLCJ4LWY1LXVzZXItcm9sZSI6WyJhZG1pbmlzdHJhdG9yIl0sIngtZjUtdXNlci1zdGF0dXMiOlsiZW5hYmxlZCJdLCJ4LWY1LXVzZXItc3RyYXRlZ3kiOlsibG9jYWwiXX0sIkdyb3VwcyI6bnVsbCwiSUQiOiIwNzY3ZGZhMy1iM2JkLTRkMzQtYmExOC0xMjY0MzExMDhhMGUiLCJOYW1lIjoiYWRtaW4iLCJhdWQiOlsiIl0sImV4cCI6MTY0NDQ0MzY0NiwiaWF0IjoxNjQ0NDQwMDQ2LCJuYmYiOjE2NDQ0NDAwNDYsInN1YiI6IjA3NjdkZmEzLWIzYmQtNGQzNC1iYTE4LTEyNjQzMTEwOGEwZSJ9.imiwoKu9JH7z2ypiNvSrSuBAD7v1yny84c086NasKVCodvLiVs9_NMjTIG3oEK56',
     tokenType: 'Bearer',

@@ -9,6 +9,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [0.17.2] - (12-12-2022)
+
+- extend and isolate OpenApi types
+
+---
+
 ## [0.17.1] - (11-6-2022)
 
 - continue to clean up rest/debug logging
