@@ -105,8 +105,6 @@ describe('nextClientBase unit tests', function () {
                 logger.error('Failed Authentication Event!', msg);
             });
 
-            logger.info('test');
-        
     });
 
     // runs once after the last test in this block
@@ -143,185 +141,54 @@ describe('nextClientBase unit tests', function () {
     });
 
 
-    it('discover - auth token', async function () {
+    it('auth token -> discover details', async function () {
 
         // clean all the nocks since we didn't use any of the pre-built stuff
         nock.cleanAll();
 
         // kick off discovery
-        // should query as3 info endpoint, prompting auth token aquire
-        await f5Client.discover();
+        const discover = await f5Client.discover();
 
-        assert.ok(f5Client.as3!.version.version, 'as3 should always be installed')
+        // auth token details
+        assert.ok(isObject(f5Client.mgmtClient.token), 'auth token not found to finish discovery')
+
+        // discover should have also called /api/system/v1/info and saved the following details
+        assert.ok(typeof f5Client.mgmtClient.hostInfo!.version === 'string')
+        assert.ok(typeof f5Client.mgmtClient.hostInfo!.build === 'string')
+
+        // auth token has to work to get here
+        assert.deepStrictEqual(discover.product, 'NEXT-CM', 'product != NEXT-CM')
+        assert.ok(typeof discover.hostname === 'string', 'hostname not in discovery')
+        assert.ok(typeof discover.version === 'string', 'verion not in discovery')
 
     });
 
 
-    it('check out device inventory', async function () {
+    it('check out cm main openapi', async function () {
+
+        // clean all the nocks since we didn't use any of the pre-built stuff
+        nock.cleanAll();
+
+        assert.ok(typeof f5Client.openApi?.openapi === 'string', 'no openapi version')
+        assert.ok(isObject(f5Client.openApi?.info), 'no openapi info')
+        assert.ok(isObject(f5Client.openApi?.paths), 'no openapi paths')
+
+    });
+
+    it('check out cm device inventory', async function () {
 
         // clean all the nocks since we didn't use any of the pre-built stuff
         nock.cleanAll();
 
         const resp = await f5Client.https('/api/device/v1/inventory')
-        .then(resp => resp)
-        .catch(err => {
-            debugger;
-            return err
-        })
-        
-        assert.ok(isArray(resp.data._embedded.devices))
-        // assert.ok(typeof resp.data.openapi === 'string')
-        // assert.ok(typeof resp.data.info === 'object')
-        // assert.ok(isArray(resp.data.security))
-        // assert.ok(isObject(resp.data.paths))
+            .then(resp => resp)
+            .catch(err => {
+                debugger;
+                return err
+            })
+
+        assert.ok(isArray(resp.data?._embedded?.devices))
 
     });
-
-    // it('check out systems', async function () {
-
-    //     // clean all the nocks since we didn't use any of the pre-built stuff
-    //     nock.cleanAll();
-
-    //     const resp = await f5Client.https('/api/v1/systems')
-    //     .then(resp => resp)
-    //     .catch(err => {
-    //         debugger;
-    //         return err
-    //     })
-
-    //     assert.ok(typeof resp.data._embedded.systems[0].id === 'string')
-
-    // });
-
-    // it('check out services', async function () {
-
-    //     // clean all the nocks since we didn't use any of the pre-built stuff
-    //     nock.cleanAll();
-
-    //     const resp = await f5Client.https('/api/v1/services')
-    //     .then(resp => resp)
-    //     .catch(err => {
-    //         debugger;
-    //         return err
-    //     })
-
-    //     assert.ok(isArray(resp.data._embedded.services))
-
-    // });
-
-    // it('check out files', async function () {
-
-    //     // clean all the nocks since we didn't use any of the pre-built stuff
-    //     nock.cleanAll();
-
-    //     const resp = await f5Client.https('/api/v1/files')
-    //     .then(resp => resp)
-    //     .catch(err => {
-    //         debugger;
-    //         return err
-    //     })
-
-    //     assert.ok(isArray(resp.data._embedded.files))
-
-    // });
-
-    // it('check out health', async function () {
-
-    //     const resp = await f5Client.https('/api/v1/health')
-    //     .then(resp => resp)
-    //     .catch(err => {
-    //         // debugger;
-    //         return err
-    //     })
-
-    //     // *** this is broken -> responses with 'Request failed with status code 502'
-    //     assert.ok(isArray(resp.data._embedded.health))
-
-    // });
-
-
-    // it('check out applications', async function () {
-
-    //     const resp = await f5Client.https('/api/v1/applications')
-    //     .then(resp => resp)
-    //     .catch(err => {
-    //         debugger;
-    //         return err
-    //     })
-
-    //     assert.ok(isArray(resp.data._embedded.applications))
-
-    // });
-
-    // it('post as3', async function () {
-
-    //     const resp = await f5Client.as3!.postDec(as3ExampleDec)
-    //     .then(resp => resp)
-    //     .catch(err => {
-    //         debugger;
-    //         return err
-    //     })
-
-    //     assert.ok(resp.data.results[0].message === 'success')
-    //     assert.ok(typeof resp.data.results[0].runTime === 'number')
-
-    // });
-
-    // it('delete as3 - empty tenant', async function () {
-
-    //     const resp = await f5Client.as3!.deleteTenant(as3ExampleDec)
-    //     .then(resp => resp)
-    //     .catch(err => {
-    //         debugger;
-    //         return err
-    //     })
-
-    //     assert.ok(resp.data)
-    //     // assert.ok(resp.data.results[0].message === 'success')
-    //     // assert.ok(typeof resp.data.results[0].runTime === 'number')
-
-    // });
-
-    // it('delete as3 - DELETE method', async function () {
-
-    //     // const resp = await f5Client.as3!.deleteTenant(as3ExampleDec)
-    //     const resp = await f5Client.https(`${atcMetaData.as3.endPoints.declare}/Sample_01_tst12345`, {
-    //         method: 'DELETE'
-    //     })
-    //     .then(resp => resp)
-    //     .catch(err => {
-    //         debugger;
-    //         return err
-    //     })
-
-    //     assert.ok(resp.data)
-
-    // });
-
-
-    // it('get as3 tenants', async function () {
-
-    //     const resp = await f5Client.as3!.getDecs()
-    //     .then(resp => resp)
-    //     .catch(err => {
-    //         debugger;
-    //         return err
-    //     })
-
-    //     assert.ok(resp.data)
-
-    //     // example response from this call...
-    //     const response = {
-    //         class: "ADC",
-    //         schemaVersion: "3.0.0",
-    //         id: "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d",
-    //         label: "Sample 1",
-    //         remark: "Simple HTTP application with RR pool",
-    //       }
-
-    // });
-
-
-
 
 });
