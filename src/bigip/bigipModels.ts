@@ -104,30 +104,6 @@ export type F5DownLoad = 'UCS' | 'QKVIEW' | 'ISO'
 export type F5Upload = 'ISO' | 'FILE' | 'UCS'
 
 
-
-
-
-
-/**
- * as3 declaration type model
- */
-export type As3Dec =  {
-    $schema?: string;
-    class: 'AS3';
-    action?: string;
-    persist?: boolean;
-    declaration: {
-        class: 'ADC';
-        schemaVersion: string;
-        id?: string;
-        label?: string;
-        remark?: string;
-        target?: unknown;
-        [key: string]: unknown;
-    };
-}
-
-
 /**
  * atc service info type model
  */
@@ -275,50 +251,97 @@ export type CfMetaData = {
 };
 
 
-
+export type F5TmosProduct = 'BIG-IP' | 'BIG-IQ' | 'NEXT' | 'NEXT-CM';
 
 export type F5InfoApi = {
-    baseMac: string;
-    hostMac: string;
-    halUuid: string;
-    chassisSerialNumber: string;
-    slots: {
+    product: F5TmosProduct;
+    hostname?: string;
+    machineId?: string;
+    baseMac?: string;
+    hostMac?: string;
+    halUuid?: string;
+    chassisSerialNumber?: string;
+    slots?: {
         volume: string;
         product: string;
         version: string;
         build: string;
         isActive: boolean;
     }[];
-    license: {
+    license?: {
         licenseEndDateTime: string;
         registrationKey: string;
         activeModules: string[];
         generation: number;
         lastUpdateMicros: number;
     };
-    interfaces: string[];
-    isIControlRestSupported: boolean;
-    icrdPort: number;
-    time: number;
-    physicalMemory: number;
-    platform: string;
-    cpu: string;
-    machineId: string;
-    address: string;
-    hostname: string;
-    version: string;
-    product: 'BIG-IP' | 'BIG-IQ';
-    platformMarketingName: string;
-    edition: string;
-    build: string;
-    restFrameworkVersion: string;
-    managementAddress: string;
-    mcpDeviceName: string;
-    isClustered: boolean;
-    isVirtual: boolean;
-    hypervisorType: string;
-    generation: number;
-    lastUpdateMicros: number;
-    kind: string;
-    selfLink: string;
+    interfaces?: string[];
+    isIControlRestSupported?: boolean;
+    icrdPort?: number;
+    time?: number;
+    physicalMemory?: number;
+    platform?: string;
+    cpu?: string;
+    address?: string;
+    version?: string;
+    platformMarketingName?: string;
+    edition?: string;
+    build?: string;
+    restFrameworkVersion?: string;
+    managementAddress?: string;
+    mcpDeviceName?: string;
+    isClustered?: boolean;
+    isVirtual?: boolean;
+    hypervisorType?: string;
+    generation?: number;
+    lastUpdateMicros?: number;
+    kind?: string;
+    selfLink?: string;
+}
+
+
+
+
+/**
+ * example classic tmos auth token
+ */
+ export const exampleAuthToken = {
+    "username": "admin",
+    "loginReference": {
+        "link": "https://localhost/mgmt/cm/system/authn/providers/local/login"
+    },
+    "loginProviderName": "local",
+    "token": {
+        "token": "DMLNFTAP22MN7C737JYB3MSGAS",
+        "name": "DMLNFTAP22MN7C737JYB3MSGAS",
+        "userName": "admin",
+        "authProviderName": "local",
+        "user": {
+            "link": "https://localhost/mgmt/shared/authz/users/admin"
+        },
+        "groupReferences": [],
+        "timeout": 1200,
+        "startTime": "2020-11-07T11:56:23.498-0600",
+        "address": "192.168.200.20",
+        "partition": "[All]",
+        "generation": 1,
+        "lastUpdateMicros": 1604771783497184,
+        "expirationMicros": 1604772983498000,
+        "kind": "shared:authz:tokens:authtokenitemstate",
+        "selfLink": "https://localhost/mgmt/shared/authz/tokens/DMLNFTAP22MN7C737JYB3MSGAS"
+    },
+    "generation": 0,
+    "lastUpdateMicros": 0
+}
+
+/**
+ * example classic tmos fail auth response
+ */
+export const exampleAuthRespFailed = {
+    code: 401,
+    message: "Authentication failed.",
+    originalRequestBody: "{\"username\":\"admin\",\"loginProviderName\":\"local\",\"generation\":0,\"lastUpdateMicros\":0}",
+    referer: "192.168.200.20",
+    restOperationId: 36136900,
+    kind: ":resterrorresponse",
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * Copyright 2020. F5 Networks, Inc. See End User License Agreement ("EULA") for
@@ -12,12 +13,12 @@
 import assert from 'assert';
 import nock from 'nock';
 
-import { getF5Client, ipv6Host } from '../src/utils/testingUtils';
+import { defaultHost, getF5Client } from '../src/utils/testingUtils';
 import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import {  atcMetaData, iControlEndpoints } from '../src/constants';
 import { F5Client } from '../src/bigip/f5Client';
-import { deviceInfoIPv6 } from '../src/bigip/f5_device_atc_infos';
+import { deviceInfo, deviceInfoIPv6 } from '../src/bigip/f5_device_atc_infos';
 import { isArray, isObject } from '../src/utils/misc';
 import { 
     cfExampleDec,
@@ -34,7 +35,7 @@ import {
 
 let f5Client: F5Client;
 let nockInst: nock.Scope;
-let events = [];
+let events: string[] = [];
 
 describe('cfClient integration tests', function () {
 
@@ -48,7 +49,7 @@ describe('cfClient integration tests', function () {
         // clear events
         events = [];
 
-        nockInst = nock(`https://${ipv6Host}`)
+        nockInst = nock(`https://${defaultHost}`)
             .post(iControlEndpoints.login)
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
@@ -59,7 +60,7 @@ describe('cfClient integration tests', function () {
             .get(atcMetaData.cf.endPoints.info)
             .reply(200, cfInfoResp)
 
-        f5Client = getF5Client({ ipv6: true });
+        f5Client = getF5Client({ ipv6: false });
 
         f5Client.events.on('failedAuth', msg => events.push(msg));
         f5Client.events.on('log-debug', msg => events.push(msg));
@@ -88,8 +89,8 @@ describe('cfClient integration tests', function () {
         // clear nocks since we aren't using them for this test
         nock.cleanAll();
 
-        assert.ok(isObject(f5Client.cf.version), 'no cf version object detected');
-        assert.ok(f5Client.cf.version.release, 'no cf release information detected');
+        assert.ok(isObject(f5Client.cf!.version), 'no cf version object detected');
+        assert.ok(f5Client.cf!.version.release, 'no cf release information detected');
 
     });
 
@@ -101,17 +102,17 @@ describe('cfClient integration tests', function () {
         await f5Client.clearLogin();
 
         // overwrite instantiation where no AS3 is installed
-        nockInst = nock(`https://${ipv6Host}`)
+        nockInst = nock(`https://${defaultHost}`)
             .post(iControlEndpoints.login)
             .reply(200, (uri, reqBody: AuthTokenReqBody) => {
                 return getFakeToken(reqBody.username, reqBody.loginProviderName);
             })
             //discover with no AS3
             .get(iControlEndpoints.tmosInfo)
-            .reply(200, deviceInfoIPv6)
+            .reply(200, deviceInfo)
 
 
-        f5Client = getF5Client({ ipv6: true });
+        f5Client = getF5Client({ ipv6: false });
         await f5Client.discover()
 
         const x = isObject(f5Client.cf?.version)
@@ -128,7 +129,7 @@ describe('cfClient integration tests', function () {
             .get(atcMetaData.cf.endPoints.inspect)
             .reply(200, cfInspectResp)
 
-        const resp = await f5Client.cf.inspect();
+        const resp = await f5Client.cf!.inspect();
 
         assert.deepStrictEqual(resp.data, cfInspectResp);
     });
@@ -140,7 +141,7 @@ describe('cfClient integration tests', function () {
             .get(atcMetaData.cf.endPoints.declare)
             .reply(200, cfGetDeclareResp)
 
-        const resp = await f5Client.cf.getDeclare();
+        const resp = await f5Client.cf!.getDeclare();
 
         assert.deepStrictEqual(resp.data, cfGetDeclareResp);
     });
@@ -152,7 +153,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.declare)
             .reply(200, cfPostDeclareResp)
 
-        const resp = await f5Client.cf.postDeclare(cfExampleDec);
+        const resp = await f5Client.cf!.postDeclare(cfExampleDec);
 
         assert.deepStrictEqual(resp.data, cfPostDeclareResp);
     });
@@ -164,7 +165,7 @@ describe('cfClient integration tests', function () {
             .get(atcMetaData.cf.endPoints.trigger)
             .reply(200, cfGetTriggerResp)
 
-        const resp = await f5Client.cf.getTrigger();
+        const resp = await f5Client.cf!.getTrigger();
 
         assert.deepStrictEqual(resp.data, cfGetTriggerResp);
     });
@@ -176,7 +177,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.trigger)
             .reply(200, cfPostTriggerDrResp)
 
-        const resp = await f5Client.cf.trigger('dry-run');
+        const resp = await f5Client.cf!.trigger('dry-run');
 
         assert.deepStrictEqual(resp.data, cfPostTriggerDrResp);
     });
@@ -188,7 +189,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.trigger)
             .reply(200, cfPostTriggerResp)
 
-        const resp = await f5Client.cf.trigger();
+        const resp = await f5Client.cf!.trigger();
 
         assert.deepStrictEqual(resp.data, cfPostTriggerResp);
     });
@@ -200,7 +201,7 @@ describe('cfClient integration tests', function () {
             .post(atcMetaData.cf.endPoints.reset)
             .reply(200, cfPostResetResp)
 
-        const resp = await f5Client.cf.reset();
+        const resp = await f5Client.cf!.reset();
 
         assert.deepStrictEqual(resp.data, cfPostResetResp);
     });

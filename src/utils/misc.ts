@@ -11,6 +11,7 @@
 
 import fs from 'fs';
 import crypto from 'crypto';
+import { AxiosResponseWithTimings, HttpResponse } from './httpModels';
 
 
 /**
@@ -117,4 +118,51 @@ export function verifyHash(file: string, extensionHash: string): boolean {
         return false;
     }
     return true;
+}
+
+
+
+/**
+ * returns simplified http response object
+ * 
+ * ```ts
+ *     return {
+ *      data: resp.data,
+ *      headers: resp.headers,
+ *      status: resp.status,
+ *      statusText: resp.statusText,
+ *      request: {
+ *          uuid: resp.config.uuid,
+ *          baseURL: resp.config.baseURL,
+ *          url: resp.config.url,
+ *          method: resp.request.method,
+ *          headers: resp.config.headers,
+ *          protocol: resp.config.httpsAgent.protocol,
+ *          timings: resp.request.timings
+ *      }
+ *  }
+ * ```
+ * @param resp orgininal axios response with timing
+ * @returns simplified http response
+ */
+ export async function simplifyHttpResponse(resp: AxiosResponseWithTimings): Promise<HttpResponse> {
+    
+    // const h = JSON.parse(JSON.stringify(resp.headers));
+    
+    // only return the things we need
+    return {
+        status: resp.status,
+        statusText: resp.statusText,
+        data: resp.data,
+        headers: resp.headers,
+        request: {
+            uuid: resp.config.uuid,
+            baseURL: resp.config.baseURL,
+            url: resp.config.url,
+            method: resp.request.method,
+            headers: resp.request.headers,
+            protocol: resp.config.httpsAgent.protocol,
+            // timings: resp.request.timings
+        }
+    }
 }

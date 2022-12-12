@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
- 'use strict';
+'use strict';
 
 /**
  * target/tenant/app index type
@@ -36,7 +36,7 @@
  * ```
  * 
  */
- export interface As3AppMap {
+export interface As3AppMap {
     // parentType: 'targets' | 'tenants',
     [key: string]: {
         [key: string]: {
@@ -107,7 +107,7 @@ export interface As3AppMapTenants {
 
 
 
-export type As3App =  {
+export type As3App = {
     class: 'Application',
     [key: string]: Record<string, unknown> | string,
 }
@@ -131,6 +131,11 @@ export interface As3Controls {
 }
 
 
+/**
+ * as3 adc declaration (app declaration only)
+ * 
+ * Does not include parent AS3 data (which is for posting to as3 service)
+ */
 export type AdcDeclaration = {
     id?: string;
     class: 'ADC';
@@ -640,7 +645,7 @@ const as3DeclarationEndpointLTM: AdcDeclaration = {
 /**
  * full AS3 parent class as3 declaration
  */
- export const as3ExampleDec: As3Declaration = {
+export const as3ExampleDec: As3Declaration = {
     "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/latest/as3-schema.json",
     "class": "AS3",
     "action": "deploy",
@@ -695,112 +700,112 @@ export const AdcExampleDec: AdcDeclaration = {
     "label": "Sample 1",
     "remark": "Simple HTTP application with RR pool",
     "Sample_01": {
-      "class": "Tenant",
-      "A1": {
-        "class": "Application",
-        "template": "http",
-        "serviceMain": {
-          "class": "Service_HTTP",
-          "virtualAddresses": [
-            "10.40.1.10"
-          ],
-          "pool": "web_pool"
-        },
-        "web_pool": {
-          "class": "Pool",
-          "monitors": [
-            "http"
-          ],
-          "members": [
-            {
-              "servicePort": 80,
-              "serverAddresses": [
-                "192.40.1.10",
-                "192.40.1.11"
-              ]
+        "class": "Tenant",
+        "A1": {
+            "class": "Application",
+            "template": "http",
+            "serviceMain": {
+                "class": "Service_HTTP",
+                "virtualAddresses": [
+                    "10.40.1.10"
+                ],
+                "pool": "web_pool"
+            },
+            "web_pool": {
+                "class": "Pool",
+                "monitors": [
+                    "http"
+                ],
+                "members": [
+                    {
+                        "servicePort": 80,
+                        "serverAddresses": [
+                            "192.40.1.10",
+                            "192.40.1.11"
+                        ]
+                    }
+                ]
             }
-          ]
         }
-      }
     }
-  }
+}
 
 /**
  * example as3 declare response with multiple tenants
  * used for parse decs function
  */
-export const as3Tens = {
+export const as3Tens: AdcDeclaration = {
     tparty_sample_01: {
-      class: "Tenant",
-      A1: {
-        class: "Application",
-        template: "http",
-        serviceMain: {
-          class: "Service_HTTP",
-          virtualAddresses: [
-            "10.0.1.10",
-          ],
-          pool: "/tparty_sample_01/A1/web_pool",
-        },
-        web_pool: {
-          class: "Pool",
-          monitors: [
-            "http",
-          ],
-          members: [
-            {
-              servicePort: 80,
-              serverAddresses: [
-                "192.0.1.10",
-                "192.0.1.11",
-              ],
+        class: "Tenant",
+        A1: {
+            class: "Application",
+            template: "http",
+            serviceMain: {
+                class: "Service_HTTP",
+                virtualAddresses: [
+                    "10.0.1.10",
+                ],
+                pool: "/tparty_sample_01/A1/web_pool",
             },
-          ],
+            web_pool: {
+                class: "Pool",
+                monitors: [
+                    "http",
+                ],
+                members: [
+                    {
+                        servicePort: 80,
+                        serverAddresses: [
+                            "192.0.1.10",
+                            "192.0.1.11",
+                        ],
+                    },
+                ],
+            },
         },
-      },
     },
     tparty_sample_02: {
-      class: "Tenant",
-      A1: {
-        class: "Application",
-        template: "http",
-        serviceMain: {
-          class: "Service_HTTP",
-          virtualAddresses: [
-            "10.0.2.10",
-          ],
-          pool: "/tparty_sample_02/A1/web_pool",
-        },
-        web_pool: {
-          class: "Pool",
-          monitors: [
-            "http",
-          ],
-          members: [
-            {
-              servicePort: 80,
-              serverAddresses: [
-                "192.0.2.10",
-                "192.0.2.11",
-              ],
+        class: "Tenant",
+        A1: {
+            class: "Application",
+            template: "http",
+            serviceMain: {
+                class: "Service_HTTP",
+                virtualAddresses: [
+                    "10.0.2.10",
+                ],
+                pool: "/tparty_sample_02/A1/web_pool",
             },
-          ],
+            web_pool: {
+                class: "Pool",
+                monitors: [
+                    "http",
+                ],
+                members: [
+                    {
+                        servicePort: 80,
+                        serverAddresses: [
+                            "192.0.2.10",
+                            "192.0.2.11",
+                        ],
+                    },
+                ],
+            },
         },
-      },
     },
     class: "ADC",
     schemaVersion: "3.0.0",
     id: "1608385896410",
     updateMode: "selective",
     controls: {
-      archiveTimestamp: "2020-12-19T13:51:37.821Z",
+        archiveTimestamp: "2020-12-19T13:51:37.821Z",
     },
-  }
+}
 
 /**
- * example as3 declare response with targets
+ * example as3 declare response with multiple targets
  */
-export const as3TargetTens = [
+export const as3TargetTens: AdcDeclaration[] = [
     {
         "id": "urn:uuid:33045210-3ab8-4636-9b2a-c98d22ab915d",
         "class": "ADC",
@@ -1016,7 +1021,39 @@ export const as3TargetTens = [
     }
 ]
 
-export const as3Tasks = {
+/**
+ * as3 task response type
+ */
+export type As3TaskType = {
+    items: As3TaskItemType[]
+}
+
+export type As3TaskItemType = {
+        id: string;
+        results: As3TaskResultsType[];
+        declaration: AdcDeclaration | Record<string, never>;
+    }
+
+
+    /**
+ * as3 task response Results type
+ */
+export type As3TaskResultsType = {
+    code: number;
+    message: string;
+    errors?: string[]
+    host?: string;
+    tenant?: string;
+    lineCount?: number;
+    runTime?: number;
+    declarationFullId?: string;
+}
+
+
+/**
+ * example as3 task response
+ */
+export const as3Tasks: As3TaskType = {
     "items": [
         {
             "id": "d5f68fdd-3a9c-4a79-9395-67c155100599",

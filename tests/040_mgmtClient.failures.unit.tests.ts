@@ -13,22 +13,21 @@ import assert from 'assert';
 import nock from 'nock';
 
 import { defaultHost, getFakeToken, getMgmtClient } from '../src/utils/testingUtils';
-import { failedAuthResp } from './artifacts/authToken';
 import { MgmtClient } from '../src/bigip/mgmtClient';
-import { AuthTokenReqBody } from '../src/bigip/bigipModels';
+import { AuthTokenReqBody, exampleAuthRespFailed } from '../src/bigip/bigipModels';
 
 
 describe('mgmtClient tests - failures', async function () {
 
-    before( async function () {
+    before(async function () {
         // log test file name - makes it easer for troubleshooting
         console.log('       file:', __filename)
-        
+
         // set timeout for testing
         process.env.F5_CONX_CORE_TCP_TIMEOUT = "10000"
     })
 
-    after( async function () {
+    after(async function () {
         // un-set timeout after these tests
         delete process.env.F5_CONX_CORE_TCP_TIMEOUT
     })
@@ -49,15 +48,15 @@ describe('mgmtClient tests - failures', async function () {
         // pre-empt the timeout.  timeout set with env vars
         // https://github.com/nock/nock#delay-the-connection
         nock(`https://192.0.0.1:8443`)
-        .post('/mgmt/shared/authn/login')
-        .delayConnection(60000)
-        .reply(200, (uri, reqBody: AuthTokenReqBody) => {
-            return getFakeToken(reqBody.username, reqBody.loginProviderName);
-        })
+            .post('/mgmt/shared/authn/login')
+            .delayConnection(60000)
+            .reply(200, (uri, reqBody: AuthTokenReqBody) => {
+                return getFakeToken(reqBody.username, reqBody.loginProviderName);
+            })
         // .get('/foo')
         // .reply(200, { foo: 'bar' });
 
-        const eventsLocal = [];
+        const eventsLocal: string[] = [];
         const mgmtClientLocal = new MgmtClient(
             '192.0.0.1',
             'admin',
@@ -73,9 +72,9 @@ describe('mgmtClient tests - failures', async function () {
         mgmtClientLocal.events.on('log-error', msg => eventsLocal.push(msg));
 
         await mgmtClientLocal.makeRequest('/foo')
-            .then( resp => {
-             // look at response
-             debugger;
+            .then(resp => {
+                // look at response
+                debugger;
             })
             .catch(err => {
                 // if this test failed, check events to see why
@@ -85,11 +84,13 @@ describe('mgmtClient tests - failures', async function () {
                 assert.ok(eventsLocal[eventsLocal.length - 1].includes('token request failed'))
             })
 
+        mgmtClientLocal.clearToken();
+
     });
 
     it('fail host dns resolve', async function () {
 
-        const eventsLocal = [];
+        const eventsLocal: string[] = [];
         const mgmtClientLocal = new MgmtClient(
             'bigip1.asdfqwer.io',
             'admin',
@@ -114,15 +115,16 @@ describe('mgmtClient tests - failures', async function () {
             })
 
         assert.ok(eventsLocal.includes('token request failed: getaddrinfo ENOTFOUND bigip1.asdfqwer.io'))
+        mgmtClientLocal.clearToken();
     });
 
     it('fail auth', async function () {
         nock(`https://${defaultHost}`)
             .post('/mgmt/shared/authn/login')
-            .reply(401, failedAuthResp)
+            .reply(401, exampleAuthRespFailed)
 
 
-        const eventsLocal = [];
+        const eventsLocal: string[] = [];
         const mgmtClientLocal = getMgmtClient();
 
         // setup event listeners
@@ -132,14 +134,16 @@ describe('mgmtClient tests - failures', async function () {
         mgmtClientLocal.events.on('log-error', msg => eventsLocal.push(msg));
 
         await mgmtClientLocal.makeRequest('/foo')
-            .then( resp => {
-             // look at response
+            .then(resp => {
+                // look at response
             })
             .catch(err => {
                 // this should fail and provide an event why
                 // debugger;
                 assert.ok(JSON.stringify(eventsLocal).includes('Authentication failed.'))
             })
+
+        mgmtClientLocal.clearToken();
 
     });
 });

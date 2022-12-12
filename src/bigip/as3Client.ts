@@ -18,13 +18,15 @@ import { MgmtClient } from "./mgmtClient";
 import { atcMetaData } from '../constants';
 import { AdcDeclaration, As3Declaration } from "./as3Models";
 import { tenantFromDec } from "..";
+import { NextMgmtClient } from "./nextClientBase";
+import { NextCmMgmtClient } from "./nextCmClientBase";
 
 
 /**
  * AS3 client class that handles AS3 calls
  */
 export class As3Client {
-    public readonly mgmtClient: MgmtClient;
+    public readonly mgmtClient: MgmtClient | NextMgmtClient | NextCmMgmtClient;
     // the followin endpoints should be tied back into the metadata so it can be dynamic with versions
     // public readonly taskEndpoint = `/mgmt/shared/appsvcs/task`
     // public readonly declareEndpoint = `/mgmt/shared/appsvcs/declare`
@@ -58,7 +60,7 @@ export class As3Client {
     constructor(
         versions: AtcInfo,
         as3MetaData: typeof atcMetaData.as3,
-        mgmtClient: MgmtClient
+        mgmtClient: MgmtClient | NextMgmtClient | NextCmMgmtClient
     ) {
         this.version = versions;
         this.metaData = as3MetaData;
@@ -191,7 +193,7 @@ export class As3Client {
      * - todo: provide better typing for this entire function 'any'=bad
      * @param x delcare endpoint response
      */
-    async parseDecs(x: any): Promise<any[]> {
+    async parseDecs(x: AdcDeclaration[] | AdcDeclaration): Promise<any[]> {
 
         const tarTens = []
         if (Array.isArray(x)) {

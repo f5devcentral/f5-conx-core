@@ -9,13 +9,14 @@
 
 'use strict';
 
-import Logger from '../src/logger';
 import assert from 'assert';
+
+import Logger from '../src/logger';
 
 describe('Logger Class Unit Tests', function () {
     let logger: Logger;
-    const envs = [];
-    const consoleLogShadow = []
+    const envs: any = [];
+    const consoleLogShadow: any = []
     // eslint-disable-next-line @typescript-eslint/ban-types
     let originalConsoleLog: Function;
 
@@ -197,7 +198,7 @@ describe('Logger Class Unit Tests', function () {
         // reset log level
         delete process.env.F5_CONX_CORE_LOG_LEVEL;
 
-        const customOutput = [];
+        const customOutput: any = [];
         logger.output = function (x: string) {
             customOutput.push(x);
         }

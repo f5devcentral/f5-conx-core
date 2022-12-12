@@ -9,6 +9,62 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [0.17.2] - (12-12-2022)
+
+- extend and isolate OpenApi types
+
+---
+
+## [0.17.1] - (11-6-2022)
+
+- continue to clean up rest/debug logging
+
+---
+
+## [0.17.0] - (11-4-2022)
+
+- Latest NEXT/CM integration
+- big improvements to rest debug logging
+  - debugging only provided relevant details
+- better http timing integration
+- full deps updates
+  - node v16
+  - ts v4.8
+
+---
+
+## [0.16.0] - (10-5-2022)
+
+NEXT integration branch -> abandoned
+
+---
+
+## [0.15.1] - (07-25-2022)
+
+- branch off NEXT connectivity from mgmtClient/f5Client
+  - Solves this issue:<https://github.com/f5devcentral/vscode-f5/issues/179>
+
+---
+
+## [0.13.1] - (03-18-2022)
+
+- [bug] schema inject changes declaration to "dec" #20
+  - <https://github.com/f5devcentral/f5-conx-core/issues/20>
+- tweak logger for telemetry
+- updated extHttp https agent to always be configured
+  - without rejectUnAuthorized=false, it would not get configured and cause logging errors
+
+---
+
+## [0.13.0] - (02-10-2022)
+
+- updated deps
+- refactor and extend atc models for stronger typing
+  - Mainly DO
+- special auth token testing
+
+---
+
 ## [0.12.4] - (01-19-2022)
 
 - fix as3 delete

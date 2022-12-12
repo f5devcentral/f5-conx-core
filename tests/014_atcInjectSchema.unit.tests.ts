@@ -9,13 +9,14 @@
 
 'use strict';
 
+import assert from 'assert';
+
 import Logger from '../src/logger';
 import { injectSchema } from '../src/bigip/atcSchema'
-import assert from 'assert';
 import { as3ExampleDec } from '../src/bigip/as3Models';
-import { doExampleDec, doExampleDecDevice } from '../src/bigip/doModels';
+import { doExampleDec, deviceExampleDec } from '../src/bigip/doModels';
 import { tsExampleDec } from '../src/bigip/tsModels';
-import { atcMetaData } from '../src';
+import { atcMetaData } from '../src/constants';
 import { cfExampleDec } from '../src/bigip/cfModels';
 
 const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
@@ -74,7 +75,12 @@ describe('atc injectSchema Unit Tests', function () {
 
         const addedSchemaDec = await injectSchema(workingDec)
         
+        // assert schema is correct
         assert.ok(addedSchemaDec.$schema === atcMetaData.as3.schema);
+        
+        // make sure we still have "declaration" key
+        assert.ok(addedSchemaDec.declaration);
+
         assert.ok(logger.journal.length === 0)
     });
 
@@ -149,7 +155,7 @@ describe('atc injectSchema Unit Tests', function () {
 
     it('add/remove do/device schema, MO logger', async function () {
 
-        workingDec = Object.assign({}, doExampleDecDevice)
+        workingDec = Object.assign({}, deviceExampleDec)
         delete workingDec?.$schema
 
         workingDec =  await injectSchema(workingDec)
@@ -163,7 +169,7 @@ describe('atc injectSchema Unit Tests', function () {
 
     it('add/remove do/device schema with logger', async function () {
 
-        workingDec = Object.assign({}, doExampleDecDevice)
+        workingDec = Object.assign({}, deviceExampleDec)
         delete workingDec?.$schema
 
         workingDec =  await injectSchema(workingDec, logger)

@@ -28,8 +28,9 @@ import { defaultHost, defaultPassword, defaultUser, getMgmtClient, ipv6Host } fr
 import { getFakeToken } from '../src/utils/testingUtils';
 import { AuthTokenReqBody } from '../src/bigip/bigipModels';
 import { F5DownloadPaths, F5UploadPaths } from '../src/constants';
-import { MgmtClient, simplifyHttpResponse } from '../src/bigip/mgmtClient';
+import { MgmtClient } from '../src/bigip/mgmtClient';
 import Logger from '../src/logger';
+import { simplifyHttpResponse, wait } from '../src';
 
 
 // let mgmtClient: mgmtClient;
@@ -128,7 +129,7 @@ describe('mgmtClient unit tests - successes', function () {
 
     it('get/test event emitter instance', async function () {
 
-        const events = []
+        const events: string[] = []
         const emitr = mgmtClient.getEvenEmitter();
 
         emitr.on('test', msg => events.push(msg))
@@ -149,6 +150,17 @@ describe('mgmtClient unit tests - successes', function () {
         await mgmtClient.clearToken()
 
         assert.ok(JSON.stringify(logger.journal).includes('clearing token/timer'), 'did not get any test events');
+
+        // clean all the nocks since we didn't use any
+        nock.cleanAll();
+    });
+
+    it('clear auth token/timer twice - should not error', async function () {
+
+        await mgmtClient.clearToken()
+
+        wait(1000)
+        await mgmtClient.clearToken()
 
         // clean all the nocks since we didn't use any
         nock.cleanAll();
@@ -221,6 +233,87 @@ describe('mgmtClient unit tests - successes', function () {
     });
 
 
+    // it('make basic request - inspect special token', async function () {
+
+    //     // clean all the nocks since we didn't use any of the pre-built stuff
+    //     nock.cleanAll();
+
+    //     const provider = 'someSpecialProvider'
+
+    //     // custom mgmt client for this test
+    //     const mgmtClient = new MgmtClient(
+    //         defaultHost,
+    //         defaultUser,
+    //         defaultPassword, {
+    //         port: 444,
+    //         provider,
+    //     }
+
+    //     )
+
+    //     let tokenPostBody
+    //     let tokenRespBody
+
+    //     const request = '/mgmt/tm/sys/clock';
+    //     const response = {
+    //         "kind": "tm:sys:clock:clockstats",
+    //         "selfLink": "https://localhost/mgmt/tm/sys/clock?ver=14.1.2.6",
+    //         "entries": {
+    //             "https://localhost/mgmt/tm/sys/clock/0": {
+    //                 "nestedStats": {
+    //                     "entries": {
+    //                         "fullDate": {
+    //                             "description": "2021-02-13T11:44:02Z"
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     let token;
+    //     nock(`https://${defaultHost}:444`)
+    //         .get('/api/v1/login')
+    //         .reply(function () {
+    //             const head = this.req.headers?.authorization;
+    //             token = `mbip-${head.split(' ')[1]}`
+    //             return [200, {
+    //                 token,
+    //                 tokenType: 'Bearer',
+    //                 expiresIn: 3600,
+    //                 refreshToken: 'some other special token for refreshing tokens',
+    //                 refreshExpiresIn: 1209600,
+    //                 refreshEndDate: '2022-05-10T20:55:06Z'
+    //             }]
+    //         })
+    //         .get(request)
+    //         .reply(function () {
+    //             const token = this.req.headers?.authorization;
+    //             if (token.startsWith('Bearer mbip-')) {
+    //                 return [200, response]
+    //             } else {
+    //                 return [401, {
+    //                     message: 'authorization header token invalid',
+    //                     headers: this.req.headers
+    //                 }]
+    //             }
+    //         });
+
+    //     await mgmtClient.makeRequest(request)
+    //         .then(resp => {
+    //             assert.deepStrictEqual(resp.data, response)
+    //         })
+    //         .catch(err => {
+    //             debugger;
+    //             // assert.fail('was supposed to make a basic request')
+    //         })
+
+    //     assert.ok(mgmtClient.tokenTimeout > 1100)
+    //     mgmtClient.clearToken();
+
+    // });
+
+
     it('confirm http response object/structure/details through simplifyHttpReponse', async function () {
 
         const request = '/mgmt/tm/sys/sshd'
@@ -246,7 +339,6 @@ describe('mgmtClient unit tests - successes', function () {
 
 
         await mgmtClient.makeRequest(request)
-            .then(oResp => simplifyHttpResponse(oResp))
             .then(resp => {
                 // 
                 assert.ok(resp.data.allow, 'sshd response should have an "allow" object param')
@@ -254,7 +346,7 @@ describe('mgmtClient unit tests - successes', function () {
                 assert.ok(resp.headers)
                 assert.deepStrictEqual(resp.status, 200)
                 // assert.ok(resp.statusText)
-                assert.ok(resp.request.baseURL)
+                assert.ok(resp.request?.baseURL)
                 assert.ok(resp.request.method)
                 assert.ok(resp.request.headers)
                 assert.ok(resp.request.protocol)
@@ -263,7 +355,7 @@ describe('mgmtClient unit tests - successes', function () {
                 assert.ok(resp.request.url)
 
                 // make sure test cookie is inserted
-                assert.ok(resp.request.headers['cookie'] = process.env.F5_CONX_CORE_COOKIES)
+                assert.ok(resp.request.headers.cookie === process.env.F5_CONX_CORE_COOKIES)
             })
             .catch(err => {
                 debugger;
@@ -376,7 +468,7 @@ describe('mgmtClient unit tests - successes', function () {
         const nockDef = nock.loadDefs('tests/artifacts/nocks/downloadNock.json').map(item => {
             item.scope = `https://${defaultHost}:443`
 
-            if(item.path !== "/mgmt/shared/authn/login") {
+            if (item.path !== "/mgmt/shared/authn/login") {
                 item.path = `${F5DownloadPaths.iso.uri}/f5-declarative-onboarding-1.19.0-2.noarch.rpm`
             }
 

@@ -12,8 +12,8 @@
 import { AtcInfo } from "./bigipModels";
 import { atcMetaData } from '../constants'
 import { MgmtClient } from "./mgmtClient";
-import { AxiosResponseWithTimings } from "../utils/httpModels";
-import { DoDecDevice, DoDecParent } from "./doModels";
+import { HttpResponse } from "../utils/httpModels";
+import { DeviceDeclaration, DoDeclaration } from "./doModels";
 
 
 export class DoClient {
@@ -35,7 +35,7 @@ export class DoClient {
      * get current DO declaration from f5 device
      * @returns 
      */
-    async get(): Promise<AxiosResponseWithTimings> {
+    async get(): Promise<HttpResponse> {
 
         return this.mgmtClient.makeRequest(this.metaData.endPoints.declare, {
             validateStatus: () => true
@@ -47,7 +47,7 @@ export class DoClient {
      * post do declaration to f5 device
      * @returns 
      */
-    async post(data: unknown): Promise<AxiosResponseWithTimings> {
+    async post(data: unknown): Promise<HttpResponse> {
 
         return await this.mgmtClient.makeRequest(this.metaData.endPoints.declare, {
             method: 'POST',
@@ -68,7 +68,7 @@ export class DoClient {
      * inspect DO
      * @returns 
      */
-    async inpsect(): Promise<AxiosResponseWithTimings> {
+    async inpsect(): Promise<HttpResponse> {
         return this.mgmtClient.makeRequest(this.metaData.endPoints.inspect, {
             validateStatus: () => true
         });
@@ -78,7 +78,7 @@ export class DoClient {
      * get DO task
      * @returns 
      */
-    async task(id?: string): Promise<AxiosResponseWithTimings> {
+    async task(id?: string): Promise<HttpResponse> {
 
         /**
          * getting the direct task by ID from DO, only returns very high level information. not the expected details like other atc services, so we have to get all task details and filter what we need
@@ -103,7 +103,7 @@ export class DoClient {
      * @param data do declaration
      * @returns true/false
      */
-    isAsync(data: DoDecParent | DoDecDevice): boolean {
+    isAsync(data: DoDeclaration | DeviceDeclaration ): boolean {
 
         // inspect json dec for async param
         if (data.class === 'DO' && data.declaration.async === true) {

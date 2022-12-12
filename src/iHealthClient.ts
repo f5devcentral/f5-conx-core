@@ -88,7 +88,7 @@ export class IhealthClient extends ExtHttp {
             }
         })
             .then(resp => {
-                this._cookies = resp.headers['set-cookie']
+                this._cookies = resp.headers['set-cookie'] as string[];
                 this._cookiesExpiration = resp.data.expires;
                 // current time in seconds
                 const now = Date.now() / 1000;

@@ -11,7 +11,7 @@
 
 import * as fs from 'fs';
 import https from 'https';
-import axios from 'axios';
+import axios, { AxiosRequestHeaders } from 'axios';
 
 // import Logger from '../logger';
 // import * as miscUtils from './misc';
@@ -31,7 +31,7 @@ export async function makeRequest(host: string, uri: string, options?: {
     method?: any; /* eslint-disable-line @typescript-eslint/no-explicit-any */
     port?: number;
     body?: object;
-    headers?: object;
+    headers?: AxiosRequestHeaders;
     basicAuth?: object;
     advancedReturn?: boolean;
 }): Promise<object> {
@@ -46,7 +46,7 @@ export async function makeRequest(host: string, uri: string, options?: {
         method: options['method'] || 'GET',
         baseURL: `https://${host}:${options['port'] || 443}`,
         url: uri,
-        headers: options['headers'] !== undefined ? options['headers'] : {},
+        headers: options?.headers ? options.headers : {},
         data: options['body'] || null,
         auth: options['basicAuth'] !== undefined ? {
             username: options['basicAuth']['user'],

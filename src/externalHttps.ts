@@ -13,11 +13,11 @@ import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 
-import axios, { AxiosInstance, AxiosProxyConfig, AxiosRequestConfig } from 'axios';
-import timer from '@szmarczak/http-timer/dist/source';
+import axios, { AxiosInstance, AxiosProxyConfig } from 'axios';
+// import timer from '@szmarczak/http-timer/dist/source';
 
 import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "./utils/httpModels";
-import { getRandomUUID } from './utils/misc';
+import { getRandomUUID, simplifyHttpResponse } from './utils/misc';
 import { TMP_DIR } from './constants';
 
 // /**
@@ -103,11 +103,16 @@ export class ExtHttp {
         // reqBase.transport = transport;
         // #####################################
 
-        // add option to allow self-signed cert
-        if (reqBase?.rejectUnauthorized === false) {
-            // add agent option
-            reqBase.httpsAgent = new https.Agent({ rejectUnauthorized: false });
-        }
+        // // add option to allow self-signed cert
+        // if (reqBase?.rejectUnauthorized === false) {
+        //     // add agent option
+        //     reqBase.httpsAgent = new https.Agent({ rejectUnauthorized: false });
+        // }
+
+        reqBase.httpsAgent =
+            reqBase?.rejectUnauthorized === false ?
+                new https.Agent({ rejectUnauthorized: false }) :
+                new https.Agent({ rejectUnauthorized: true });
 
         // remove param
         delete reqBase?.rejectUnauthorized
@@ -179,27 +184,16 @@ export class ExtHttp {
      */
     async makeRequest(options: uuidAxiosRequestConfig): Promise<HttpResponse> {
 
-        const baseURL = new URL(options.url)
+        // another way to get the base protocol http vs https
+        // const baseURL = new URL(options.url)
 
         return await this.axios.request(options)
-            .then((resp: AxiosResponseWithTimings) => {
+            .then(async (resp: AxiosResponseWithTimings) => {
+
+                const respSimplified = await simplifyHttpResponse(resp);
 
                 // only return the things we need
-                return {
-                    data: resp.data,
-                    headers: resp.headers,
-                    status: resp.status,
-                    statusText: resp.statusText,
-                    request: {
-                        uuid: resp.config.uuid,
-                        baseURL: baseURL.origin,
-                        url: baseURL.pathname,
-                        method: resp.request.method,
-                        headers: resp.config.headers,
-                        protocol: baseURL.protocol,
-                        timings: resp.request.timings
-                    }
-                }
+                return respSimplified
             })
             .catch(err => {
 

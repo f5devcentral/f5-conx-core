@@ -180,7 +180,7 @@ export class UcsClient {
                         resp.data.ls = check.data.commandResult
 
                         this._mgmtClient.events.emit('log-debug', {
-                            message: 'mini_ucs creationg confirmed',
+                            message: 'mini_ucs creation confirmed',
                             data: resp.data
                         })
 

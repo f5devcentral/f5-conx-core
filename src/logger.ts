@@ -11,8 +11,10 @@
 import { inspect } from 'util';
 import {
     AxiosResponseWithTimings,
+    HttpResponse,
     uuidAxiosRequestConfig
 } from './utils/httpModels';
+import { simplifyHttpResponse } from './utils/misc';
 
 
 const LOG_LEVELS = {
@@ -62,7 +64,7 @@ export default class Logger {
     /**
      * journal array of log messages
      */
-    readonly journal = [];
+    readonly journal: string[] = [];
 
     /**
      * log level
@@ -136,12 +138,33 @@ export default class Logger {
     async httpRequest(config: uuidAxiosRequestConfig): Promise<void> {
         // use logging level env to log "info" or "debug" request information
 
+        const url = config.baseURL ? `${config.baseURL}${config.url}` : config.url;
+
         if (process.env[this.logEnv] === 'DEBUG') {
 
-            this.debug('debug-http-request', config);
+            // stringify and reparse base request to remove js object details
+            const req = JSON.parse(JSON.stringify({
+                url,
+                headers: config.headers,
+                method: config.method,
+                uuid: config.uuid,
+            }))
+
+            // if POST with data
+            if (config.data) {
+                // stringify data to make it easily searchable
+                const dataString = JSON.stringify(config.data)
+                // hide passwords
+                const dS = dataString.replace(/("password":")(?:\\"|[^"])*"/g, "\"password\":\"***\"");
+                // json parse data and add back to req for logging
+                req.data = JSON.parse(dS)
+            }
+
+            this.debug('debug-http-request', req);
+
         } else {
 
-            this.info(`HTTPS-REQU [${config.uuid}]: ${config.method} -> ${config.baseURL}${config.url}`);
+            this.info(`HTTPS-REQU [${config.uuid}]: ${config.method} -> ${url}`);
         }
     }
 
@@ -155,38 +178,18 @@ export default class Logger {
      */
     async httpResponse(resp: AxiosResponseWithTimings): Promise<void> {
 
+        const smallResp = await simplifyHttpResponse(resp)
+
+        const smallerResp = JSON.parse(JSON.stringify(smallResp));
+
         if (process.env[this.logEnv] === 'DEBUG') {
 
-            // *** delete method modified the original object causing other errors... ***
-            // delete resp.config.httpAgent;
-            // delete resp.config.httpsAgent;
-            // delete resp.config.transformRequest;
-            // delete resp.config.transformResponse;
-            // delete resp.config.adapter;
-            // delete resp.request.socket;
-            // delete resp.request.res;
-            // delete resp.request.connection;
-            // delete resp.request.agent;
+            this.debug('debug-http-response', smallerResp);
 
-            // re-assign the information we want/need for user debugging
-            const thinResp = {
-                status: resp.status,
-                statusText: resp.statusText,
-                headers: resp.headers,
-                request: {
-                    baseURL: resp.config.baseURL,
-                    url: resp.config.url,
-                    method: resp.request.method,
-                    headers: resp.config.headers,
-                    timings: resp.request.timings
-                },
-                data: resp.data
-            };
-
-            this.debug('debug-http-response', thinResp);
         } else {
 
-            this.info(`HTTPS-RESP [${resp.config.uuid}]: ${resp.status} - ${resp.statusText}`);
+            this.info(`HTTPS-RESP [${smallResp.request.uuid}]: ${smallResp.status} - ${smallResp.statusText}`);
+            
         }
     }
 
