@@ -8,7 +8,7 @@
 
 'use strict';
 
-import { HttpResponse } from "../utils/httpModels";
+import { AxiosResponseWithTimings } from "../utils/httpModels";
 import { MgmtClient } from "./mgmtClient";
 import { iControlEndpoints } from '../constants';
 
@@ -26,7 +26,7 @@ export class QkviewClient {
     //  *  - https://support.f5.com/csp/article/K04396542
     //  */
 
-    async get(dest: string, name?: string): Promise<HttpResponse> {
+    async get(dest: string, name?: string): Promise<AxiosResponseWithTimings> {
         // create, then download
 
         return await this.create(name)
@@ -40,7 +40,7 @@ export class QkviewClient {
      * 
      * @param name qkview name (must include .qkview)
      */
-    async create(name?: string): Promise<HttpResponse> {
+    async create(name?: string): Promise<AxiosResponseWithTimings> {
         // /mgmt/cm/autodeploy/qkview
 
         // possibly create a flow, like the mini_ucs, to allow for some customization via the bash endpoint.  See bottom of file for options.  Execute command over bash and watch the qkview list endpoint for completion?
@@ -62,11 +62,11 @@ export class QkviewClient {
         })
     }
 
-    async list(): Promise<HttpResponse> {
+    async list(): Promise<AxiosResponseWithTimings> {
         return await this.mgmtClient.makeRequest(iControlEndpoints.qkview)
     }
 
-    async download(fileName: string, localPath: string): Promise<HttpResponse> {
+    async download(fileName: string, localPath: string): Promise<AxiosResponseWithTimings> {
         return await this.mgmtClient.download(fileName, localPath, 'QKVIEW')
     }
 
@@ -76,7 +76,7 @@ export class QkviewClient {
      * delete qkview by id on f5
      * @param id system qkview id
      */
-    async delete(id: string): Promise<HttpResponse> {
+    async delete(id: string): Promise<AxiosResponseWithTimings> {
 
         return await this.mgmtClient.makeRequest(`${iControlEndpoints.qkview}/${id}`, {
             method: 'DELETE'

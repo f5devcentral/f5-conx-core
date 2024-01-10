@@ -15,14 +15,21 @@ import nock from 'nock';
 
 import { ExtHttp } from '../src/externalHttps';
 import { AtcVersionsClient } from '../src/bigip/atcVersionsClient'
+import path from 'path';
 
-const events = []
+// base project directory
+const baseDir = path.join(__dirname, '..');
+
+const events:string[] = []
 
 describe('atc versions unit tests', function () {
 
     before(function () {
         // log test file name - makes it easer for troubleshooting
         console.log('       file:', __filename)
+
+        // set timeout for testing
+        process.env.F5_CONX_CORE_TCP_TIMEOUT = "10000"
     })
 
     after(async function () {
@@ -30,14 +37,62 @@ describe('atc versions unit tests', function () {
         // if (!nock.isDone()) {
         //     throw new Error(`Not all nock interceptors were used: ${nock.pendingMocks()}`)
         // }
+
+        // un-set timeout after these tests
+        delete process.env.F5_CONX_CORE_TCP_TIMEOUT
+
         nock.cleanAll();
     });
 
-    // so this test suite accomplishes to things
+    // so this test suite accomplishes two things
     // 1. test the freshing of atc versions cache information
     // 2. save that information to the extension so end clients only need to refresh it, and will at least have some dated information if thier client is not able to reach the internet (which is rare, but a situation we have to think about).  So, this test refreshes that data that is included in the final releases
 
-    it('refresh atc versions', async function () {
+    // it('refresh atc versions', async function () {
+
+
+    //     // *** enable the following code block to nock all responses ***
+    //     //      This is only needed when repeatedly running tests and possibly hitting github api quota limit
+
+    //     // nock('https://api.github.com:443')
+    //     //     .get('/repos/F5Networks/f5-appsvcs-templates/releases')
+    //     //     .reply(200, fastResp)
+    //     //     .get('/repos/F5Networks/f5-appsvcs-extension/releases')
+    //     //     .reply(200, as3Resp)
+    //     //     .get('/repos/F5Networks/f5-declarative-onboarding/releases')
+    //     //     .reply(200, doResp)
+    //     //     .get('/repos/F5Networks/f5-telemetry-streaming/releases')
+    //     //     .reply(200, tsResp)
+    //     //     .get('/repos/F5Networks/f5-cloud-failover-extension/releases')
+    //     //     .reply(200, cfResp)
+
+    //     const extHttp = new ExtHttp();
+    //     const atcV = new AtcVersionsClient({
+    //         extHttp,
+    //     });
+
+    //     atcV.events
+    //         .on('log-http-request', msg => events.push(msg))
+    //         .on('log-http-response', msg => events.push(msg))
+    //         .on('log-debug', msg => events.push(msg))
+    //         .on('log-info', msg => events.push(msg))
+    //         .on('log-error', msg => events.push(msg));
+
+    //     await atcV.getAtcReleasesInfo()
+    //         .then(atcVersions => {
+    //             assert.ok(atcVersions.lastCheckDate)
+    //             assert.ok(atcVersions.fast)
+    //             assert.ok(atcVersions.as3)
+    //             assert.ok(atcVersions.do)
+    //             assert.ok(atcVersions.ts)
+    //             assert.ok(atcVersions.cf)
+    //         })
+    //         .catch(err => {
+    //             debugger;
+    //         });
+    // });
+
+    it('refresh atc versions - fail - connection timeout', async function () {
 
 
         // *** enable the following code block to nock all responses ***
@@ -45,19 +100,20 @@ describe('atc versions unit tests', function () {
 
         // nock('https://api.github.com:443')
         //     .get('/repos/F5Networks/f5-appsvcs-templates/releases')
-        //     .reply(200, fastResp)
+        //     .replyWithError('ECONNRESET')
         //     .get('/repos/F5Networks/f5-appsvcs-extension/releases')
-        //     .reply(200, as3Resp)
+        //     .replyWithError('ECONNRESET')
         //     .get('/repos/F5Networks/f5-declarative-onboarding/releases')
-        //     .reply(200, doResp)
+        //     .replyWithError('ECONNRESET')
         //     .get('/repos/F5Networks/f5-telemetry-streaming/releases')
-        //     .reply(200, tsResp)
+        //     .replyWithError('ECONNRESET')
         //     .get('/repos/F5Networks/f5-cloud-failover-extension/releases')
-        //     .reply(200, cfResp)
+        //     .replyWithError('ECONNRESET')
 
         const extHttp = new ExtHttp();
         const atcV = new AtcVersionsClient({
             extHttp,
+            cachePath: baseDir
         });
 
         atcV.events

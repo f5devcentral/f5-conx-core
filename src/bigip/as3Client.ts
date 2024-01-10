@@ -11,7 +11,7 @@
 
 'use strict';
 
-import { HttpResponse } from "../utils/httpModels";
+import { AxiosResponseWithTimings } from "../utils/httpModels";
 import { isObject } from "../utils/misc";
 import { AtcInfo } from "./bigipModels";
 import { MgmtClient } from "./mgmtClient";
@@ -72,7 +72,7 @@ export class As3Client {
      * @param task ID to get
      * if no task, returns all
      */
-    async getTasks(id?: string): Promise<HttpResponse> {
+    async getTasks(id?: string): Promise<AxiosResponseWithTimings> {
 
         const url =
             id ? `${atcMetaData.as3.endPoints.tasks}/${id}`
@@ -91,7 +91,7 @@ export class As3Client {
     async getDecs(options?: {
         expanded?: boolean,
         tenant?: string
-    }): Promise<HttpResponse> {
+    }): Promise<AxiosResponseWithTimings> {
 
         const params = []
 
@@ -122,7 +122,7 @@ export class As3Client {
      * ** async by default **
      * @param data delaration to post
      */
-    async postDec(data: As3Declaration | AdcDeclaration): Promise<HttpResponse> {
+    async postDec(data: As3Declaration | AdcDeclaration): Promise<AxiosResponseWithTimings> {
 
         // append async param to url
         const uri = [atcMetaData.as3.endPoints.declare, '?async=true']
@@ -162,7 +162,7 @@ export class As3Client {
      * @param tenant tenant to delete
      * @param dec empty declaration to remove from multi-target system
      */
-    async deleteTenant(dec: As3Declaration | AdcDeclaration): Promise<HttpResponse> {
+    async deleteTenant(dec: As3Declaration | AdcDeclaration): Promise<AxiosResponseWithTimings> {
 
         const { tenant, target, schemaVersion} = await tenantFromDec(dec);
 

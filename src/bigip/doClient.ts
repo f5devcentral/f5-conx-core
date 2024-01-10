@@ -12,7 +12,7 @@
 import { AtcInfo } from "./bigipModels";
 import { atcMetaData } from '../constants'
 import { MgmtClient } from "./mgmtClient";
-import { HttpResponse } from "../utils/httpModels";
+import { AxiosResponseWithTimings } from "../utils/httpModels";
 import { DeviceDeclaration, DoDeclaration } from "./doModels";
 
 
@@ -35,7 +35,7 @@ export class DoClient {
      * get current DO declaration from f5 device
      * @returns 
      */
-    async get(): Promise<HttpResponse> {
+    async get(): Promise<AxiosResponseWithTimings> {
 
         return this.mgmtClient.makeRequest(this.metaData.endPoints.declare, {
             validateStatus: () => true
@@ -47,7 +47,7 @@ export class DoClient {
      * post do declaration to f5 device
      * @returns 
      */
-    async post(data: unknown): Promise<HttpResponse> {
+    async post(data: unknown): Promise<AxiosResponseWithTimings> {
 
         return await this.mgmtClient.makeRequest(this.metaData.endPoints.declare, {
             method: 'POST',
@@ -68,7 +68,7 @@ export class DoClient {
      * inspect DO
      * @returns 
      */
-    async inpsect(): Promise<HttpResponse> {
+    async inpsect(): Promise<AxiosResponseWithTimings> {
         return this.mgmtClient.makeRequest(this.metaData.endPoints.inspect, {
             validateStatus: () => true
         });
@@ -78,7 +78,7 @@ export class DoClient {
      * get DO task
      * @returns 
      */
-    async task(id?: string): Promise<HttpResponse> {
+    async task(id?: string): Promise<AxiosResponseWithTimings> {
 
         /**
          * getting the direct task by ID from DO, only returns very high level information. not the expected details like other atc services, so we have to get all task details and filter what we need

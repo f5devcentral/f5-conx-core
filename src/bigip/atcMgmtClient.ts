@@ -11,7 +11,7 @@
 import path from "path";
 import fs from 'fs';
 
-import { HttpResponse } from "../utils/httpModels";
+import { AxiosResponseWithTimings } from "../utils/httpModels";
 import { MgmtClient } from "./mgmtClient";
 import { ExtHttp } from '../externalHttps';
 import { iControlEndpoints, F5UploadPaths } from '../constants'
@@ -80,7 +80,7 @@ export class AtcMgmtClient {
      * @param url ex.
      * `https://github.com/F5Networks/f5-appsvcs-templates/releases/download/v1.4.0/f5-appsvcs-templates-1.4.0-1.noarch.rpm`
      */
-    async download(url: string): Promise<HttpResponse | { data: { file: string, bytes: number } }> {
+    async download(url: string): Promise<AxiosResponseWithTimings | { data: { file: string, bytes: number } }> {
 
         // recreate cache dir
         if (!fs.existsSync(this.extHttp.cacheDir)) {
@@ -136,7 +136,7 @@ export class AtcMgmtClient {
      *  - path: '/var/config/rest/downloads'
      * @param rpm `full local path + file name`
      */
-    async uploadRpm(rpm: string): Promise<HttpResponse> {
+    async uploadRpm(rpm: string): Promise<AxiosResponseWithTimings> {
 
         this.mgmtClient.events.emit('log-info', `uploading atc rpm: ${rpm}`);
 
@@ -149,7 +149,7 @@ export class AtcMgmtClient {
      * install rpm on F5 (must be uploaded first)
      * @param rpmName 
      */
-    async install(rpmName: string): Promise<HttpResponse> {
+    async install(rpmName: string): Promise<AxiosResponseWithTimings> {
 
         this.mgmtClient.events.emit('log-info', `installing atc rpm: ${rpmName}`)
 
@@ -183,7 +183,7 @@ export class AtcMgmtClient {
     /**
      * shows installed atc ilx rpms on f5
      */
-    async showInstalled(): Promise<HttpResponse> {
+    async showInstalled(): Promise<AxiosResponseWithTimings> {
 
         this.mgmtClient.events.emit('log-info', `gathering installed atc rpms`);
 
@@ -204,7 +204,7 @@ export class AtcMgmtClient {
      * @param packageName 
      * ex. 'f5-appsvcs-templates-1.4.0-1.noarch'
      */
-    async unInstall(packageName: string): Promise<HttpResponse> {
+    async unInstall(packageName: string): Promise<AxiosResponseWithTimings> {
 
         // todo: build async follower to start after job completion and watch for services to be available again
 
@@ -223,7 +223,7 @@ export class AtcMgmtClient {
         })
             .then(async resp => {
                 // for uninstall operations, this is just gonna have to work
-                const awaitServiceRestart: HttpResponse = await this.mgmtClient.followAsync(`${iControlEndpoints.atcPackageMgmt}/${resp.data.id}`)
+                const awaitServiceRestart: AxiosResponseWithTimings = await this.mgmtClient.followAsync(`${iControlEndpoints.atcPackageMgmt}/${resp.data.id}`)
 
                 // await this.watchAtcRestart();
 

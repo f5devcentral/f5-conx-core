@@ -11,7 +11,6 @@
 import { inspect } from 'util';
 import {
     AxiosResponseWithTimings,
-    HttpResponse,
     uuidAxiosRequestConfig
 } from './utils/httpModels';
 import { simplifyHttpResponse } from './utils/misc';

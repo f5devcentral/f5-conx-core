@@ -25,8 +25,6 @@ import { injectAtcAgent } from '../src/bigip/atcAgent'
 import { AdcExampleDec, as3ExampleDec } from '../src/bigip/as3Models';
 import { atcMetaData } from '../src/constants';
 import { uuidAxiosRequestConfig } from '../src/utils/httpModels';
-// import { As3Declaration } from '../src/bigip/as3Models';
-// const logger = new Logger('F5_CONX_CORE_LOG_LEVEL');
 
 const userAgent = 'test-agent/1.1.1';
 const teemEnv = 'F5_CONX_TEEM'

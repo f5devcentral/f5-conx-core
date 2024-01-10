@@ -16,7 +16,7 @@ import { Asset,  AtcVersions, GitRelease } from "./bigipModels";
 import { ExtHttp } from '../externalHttps';
 import { atcMetaData as _atcMetaData } from '../constants'
 import { EventEmitter } from "events";
-import * as _atcVersionsBaseCache from './atcVersions.json';
+import * as _atcVersionsBaseCache from '../../atcVersions.json';
 
 
 /**
@@ -56,6 +56,11 @@ export class AtcVersionsClient {
      * date of the last ATC version check
      */
     lastCheckDate: Date | string | undefined;
+
+    /**
+     * date of the last ATC version update
+     */
+    lastUpdatedDate: Date | string | undefined;
 
     /**
      * atc version cache name/location
@@ -98,9 +103,9 @@ export class AtcVersionsClient {
         await this.loadReleaseInfoFromCache();
 
         // if we have cache data, get date
-        const checkDate = new Date(this.atcVersions?.lastCheckDate).getDate();
+        const checkDate = new Date(this.atcVersions?.lastCheckDate).toDateString();
         // get todays date
-        const todayDate = new Date().getDate();
+        const todayDate = new Date().toDateString();
 
         // is it today?
         if (checkDate === todayDate) {
@@ -110,7 +115,9 @@ export class AtcVersionsClient {
         } else {
             // has not been checked today, refresh
             this.events.emit('log-info', 'atc release version has NOT been checked today, refreshing cache now');
-            await this.refreshAtcReleasesInfo();
+            await this.refreshAtcReleasesInfo().catch(err => {
+                this.events.emit('log-info', `refreshAtcReleasesInfo, was not able to refresh atc release info, using cache from ${this.cachePath} --> error: ${err}`);
+            });
             return this.atcVersions;
         }
 
@@ -124,7 +131,7 @@ export class AtcVersionsClient {
             const versionFile = fs.readFileSync(this.cachePath).toString();
             this.atcVersions = JSON.parse(versionFile);
         } catch (e) {
-            this.events.emit('log-error', `no atc release version metadata found at ${this.atcVersionsFileName}`);
+            this.events.emit('log-error', `no atc release version metadata found at ${this.cachePath}`);
         }
         return;
     }
@@ -211,7 +218,7 @@ export class AtcVersionsClient {
         // now that all the calls have been made and processin in parallel, wait for all the promises to resolve and update the necessary information
         await Promise.all(promiseArray)
 
-        // if we made i this far and still no atc version information from github
+        // if we made it this far and still no atc version information from github
         if(Object.keys(this.atcVersions).length === 0) {
             // apply base cache that comes with the project
             // this should get updated at every package release
@@ -219,7 +226,8 @@ export class AtcVersionsClient {
         }
 
         // inject todays date
-        this.atcVersions.lastCheckDate = new Date();
+        this.atcVersions.lastUpdatedDate = new Date();
+        this.atcVersions.lastCheckDate = this.atcVersions.lastUpdatedDate;
         
         this.saveReleaseInfoToCache();
         return;
