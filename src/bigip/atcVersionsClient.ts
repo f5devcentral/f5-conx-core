@@ -17,6 +17,7 @@ import { ExtHttp } from '../externalHttps';
 import { atcMetaData as _atcMetaData } from '../constants'
 import { EventEmitter } from "events";
 import * as _atcVersionsBaseCache from '../../atcVersions.json';
+import { AxiosError } from "axios";
 
 
 /**
@@ -204,10 +205,11 @@ export class AtcVersionsClient {
 
 
                 }).catch(err => {
+                    const error = err as AxiosError;
                     this.events.emit('log-error', {
                         msg: `refreshAtcReleasesInfo, was not able to fetch release info for ${atc}`,
                         url: this.atcMetaData[atc].gitReleases,
-                        resp: err 
+                        resp: error?.stack
                     })
                 }));
 
@@ -217,6 +219,11 @@ export class AtcVersionsClient {
 
         // now that all the calls have been made and processin in parallel, wait for all the promises to resolve and update the necessary information
         await Promise.all(promiseArray)
+        .then( _ => {
+            
+            // inject todays date since we updated
+            this.atcVersions.lastUpdatedDate = new Date();
+        })
 
         // if we made it this far and still no atc version information from github
         if(Object.keys(this.atcVersions).length === 0) {
@@ -225,10 +232,10 @@ export class AtcVersionsClient {
             this.atcVersions = this.atcVersionsBaseCache;
         }
 
-        // inject todays date
-        this.atcVersions.lastUpdatedDate = new Date();
-        this.atcVersions.lastCheckDate = this.atcVersions.lastUpdatedDate;
+        // insert todays date since we checked
+        this.atcVersions.lastCheckDate = new Date();
         
+        // save everything to presist
         this.saveReleaseInfoToCache();
         return;
     }
