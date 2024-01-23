@@ -9,6 +9,21 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [1.0.0] - (01-10-2024)
+
+### Changed
+
+- updated atcVersionsClient to handle errors when internet connectivity is not availible
+  - Cleaned up cache location
+  - added lastUpdatedDate in addition to lastCheckDate
+- Moved project to full 1.0.0 release.  It's been used as is long enough.  :)
+- All dependencies fully updated
+- Removed NYC from tests
+  - it was causing memory overrun errors
+- Updates to http request/response TS models to accomodate newer versions
+
+---
+
 ## [0.17.2] - (12-12-2022)
 
 - extend and isolate OpenApi types

@@ -13,10 +13,16 @@ import fs from 'fs';
 import path from 'path';
 import { EventEmitter } from 'events';
 
-import axios, { AxiosInstance, AxiosProxyConfig } from 'axios';
+import axios, { 
+    AxiosInstance,
+    AxiosProxyConfig,
+    AxiosRequestConfig,
+    AxiosRequestHeaders,
+    AxiosResponse
+} from 'axios';
 // import timer from '@szmarczak/http-timer/dist/source';
 
-import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "./utils/httpModels";
+import { AxiosResponseWithTimings, CustomAxiosRequestConfig, uuidAxiosRequestConfig } from "./utils/httpModels";
 import { getRandomUUID, simplifyHttpResponse } from './utils/misc';
 import { TMP_DIR } from './constants';
 
@@ -84,7 +90,7 @@ export class ExtHttp {
         // set the user-agent, required for github connections
         this.userAgent = process.env.F5_CONX_CORE_EXT_HTTP_AGENT || 'F5 Conx Core';
 
-        this.axios = this.createAxiosInstance(options);
+        this.axios = this.createAxiosInstance(options as uuidAxiosRequestConfig);
 
         // todo: setup proxy details, probably capture from env's
     }
@@ -125,7 +131,7 @@ export class ExtHttp {
         // set user agent
         reqBase.headers = {
             'User-Agent': this.userAgent
-        }
+        } as AxiosRequestHeaders;
 
 
         // create axsios instance with collected params
@@ -134,14 +140,14 @@ export class ExtHttp {
         // re-assign parent this objects needed within the parent instance objects...
         const events = this.events;
 
-        // ---- https://github.com/axios/axios#interceptors
-        // Add a request interceptor
-        axInstance.interceptors.request.use(function (config: uuidAxiosRequestConfig) {
+        // // ---- https://github.com/axios/axios#interceptors
+        // // Add a request interceptor
+        axInstance.interceptors.request.use(function (config: CustomAxiosRequestConfig) {
 
-            // adjust tcp timeout, default=0, which relys on host system
+            // adjust tcp timeout, default=0, which relies on host system
             config.timeout = Number(process.env.F5_CONX_CORE_TCP_TIMEOUT);
 
-            config.uuid = config?.uuid ? config.uuid : getRandomUUID(4, { simple: true })
+            config.uuid = config?.uuid ? config.uuid : getRandomUUID(4, { simple: true });
 
             // events.emit('log-info', `EXTERNAL-HTTPS-REQU [${config.uuid}]: ${config.method} -> ${config.url}`)
             events.emit('log-http-request', config);
@@ -155,7 +161,7 @@ export class ExtHttp {
 
 
         //  response interceptor
-        axInstance.interceptors.response.use(function (resp: AxiosResponseWithTimings) {
+        axInstance.interceptors.response.use(function (resp: AxiosResponse) {
             // Any status code that lie within the range of 2xx cause this function to trigger
             // Do something with response data
 
@@ -182,15 +188,15 @@ export class ExtHttp {
      * 
      * @returns request response
      */
-    async makeRequest(options: uuidAxiosRequestConfig): Promise<HttpResponse> {
+    async makeRequest(options: AxiosRequestConfig): Promise<AxiosResponseWithTimings> {
 
         // another way to get the base protocol http vs https
         // const baseURL = new URL(options.url)
 
         return await this.axios.request(options)
-            .then(async (resp: AxiosResponseWithTimings) => {
+            .then(async (resp: AxiosResponse) => {
 
-                const respSimplified = await simplifyHttpResponse(resp);
+                const respSimplified = await simplifyHttpResponse(resp as AxiosResponseWithTimings);
 
                 // only return the things we need
                 return respSimplified
@@ -268,7 +274,7 @@ export class ExtHttp {
      * @param destPath (optional) where to put the file (default is local project cache folder)
      * @param options axios requestion options
      */
-    async download(url: string, fileName?: string, destPath?: string, options: uuidAxiosRequestConfig = {}): Promise<HttpResponse> {
+    async download(url: string, fileName?: string, destPath?: string, options: AxiosRequestConfig = {}): Promise<AxiosResponseWithTimings> {
 
         // recreate cache dir
         if (!fs.existsSync(this.cacheDir)) {
@@ -334,7 +340,7 @@ export class ExtHttp {
      * @param url 
      * @param localSourcePathFilename 
      */
-    async upload(url: string, localSourcePathFilename: string): Promise<HttpResponse> {
+    async upload(url: string, localSourcePathFilename: string): Promise<AxiosResponseWithTimings> {
 
 
         // array to hold responses

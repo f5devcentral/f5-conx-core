@@ -21,11 +21,11 @@ import https from 'https';
 import * as fs from 'fs';
 import { EventEmitter } from 'events';
 
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 //  import timer from '@szmarczak/http-timer';
 
 import { F5DownLoad, F5Upload, F5InfoApi } from './bigipModels';
-import { HttpResponse, uuidAxiosRequestConfig, AxiosResponseWithTimings } from "../utils/httpModels";
+import { uuidAxiosRequestConfig, AxiosResponseWithTimings, CustomAxiosRequestConfig } from "../utils/httpModels";
 import { F5DownloadPaths, F5UploadPaths } from '../constants';
 import { getRandomUUID, simplifyHttpResponse } from '../utils/misc';
 import { injectAtcAgent } from './atcAgent';
@@ -260,7 +260,7 @@ export class NextMgmtClient {
 
         // ---- https://github.com/axios/axios#interceptors
         // Add a request interceptor
-        axInstance.interceptors.request.use(function (config: uuidAxiosRequestConfig) {
+        axInstance.interceptors.request.use(function (config: CustomAxiosRequestConfig) {
 
             // adjust tcp timeout, default=0, which relys on host system
             config.timeout = Number(process.env.F5_CONX_CORE_TCP_TIMEOUT);
@@ -283,7 +283,7 @@ export class NextMgmtClient {
         });
 
         //  response interceptor
-        axInstance.interceptors.response.use(function (resp: AxiosResponseWithTimings) {
+        axInstance.interceptors.response.use(function (resp: AxiosResponse) {
             // Any status code that lie within the range of 2xx cause this function to trigger
             // Do something with response data
 
@@ -369,7 +369,7 @@ export class NextMgmtClient {
      * 
      * @returns request response
      */
-    async makeRequest(uri: string, options?: uuidAxiosRequestConfig): Promise<HttpResponse> {
+    async makeRequest(uri: string, options?: uuidAxiosRequestConfig): Promise<AxiosResponseWithTimings> {
 
         // if auth token has expired, it should have been cleared, get new one
         if (!this.token) {
@@ -441,7 +441,7 @@ export class NextMgmtClient {
 
 
 
-    async followAsync(url: string): Promise<HttpResponse> {
+    async followAsync(url: string): Promise<AxiosResponseWithTimings> {
 
         // todo: add the ability to add even more time for extra long calls for ucs-create/qkview-create/do
         // todo: potentially make this more generic.  kinda like a generator/iterator contruct
@@ -457,7 +457,7 @@ export class NextMgmtClient {
         // next 30 rounds, wait 30 seconds each (15 minutes total)
         retryTimerArray.push(...Array.from({ length: 30 }, () => 30))
 
-        const responses: HttpResponse[] = [];
+        const responses: AxiosResponseWithTimings[] = [];
         while (retryTimerArray.length > 0) {
 
             // set makeRequest to never throw an error, but keep going till a valid response
@@ -548,7 +548,7 @@ export class NextMgmtClient {
      * @param downloadType: type F5DownLoad = "UCS" | "QKVIEW" | "ISO"
      * **expand/update return value**
      */
-    async download(fileName: string, localDestPath: string, downloadType: F5DownLoad): Promise<HttpResponse> {
+    async download(fileName: string, localDestPath: string, downloadType: F5DownLoad): Promise<AxiosResponseWithTimings> {
 
         // also look at possibly moving to this at somepoint?
         // https://www.npmjs.com/package/multipart-download
@@ -576,7 +576,7 @@ export class NextMgmtClient {
         return new Promise(async (resolve, reject) => {
 
             const startTime = process.hrtime.bigint();  // start pack timer
-            const downloadResponses: HttpResponse[] = []
+            const downloadResponses: AxiosResponseWithTimings[] = []
             const file = fs.createWriteStream(fileP)
 
             // https://github.com/andrewstart/axios-streaming/blob/master/axios.js
@@ -639,7 +639,7 @@ export class NextMgmtClient {
                 .on('finish', async () => {
 
                     // get the last response, append the file data we want and return
-                    const lastResp: HttpResponse = downloadResponses[downloadResponses.length - 1]
+                    const lastResp: AxiosResponseWithTimings = downloadResponses[downloadResponses.length - 1]
                     lastResp.data = {
                         file: file.path,
                         bytes: file.bytesWritten
@@ -688,7 +688,7 @@ export class NextMgmtClient {
      * @param localSourcePathFilename 
      * @param uploadType
      */
-    async upload(localSourcePathFilename: string, uploadType: F5Upload): Promise<HttpResponse> {
+    async upload(localSourcePathFilename: string, uploadType: F5Upload): Promise<AxiosResponseWithTimings> {
 
         // array to hold responses
         const responses = [];
@@ -716,7 +716,7 @@ export class NextMgmtClient {
                 headers: {
                     'content-type': 'application/octet-stream',
                     'content-range': `${start}-${end}/${fileStats.size}`,
-                    'content-length': end - start + 1
+                    'content-length': (end - start + 1).toString() // Convert number to string
                 },
                 data: fs.createReadStream(localSourcePathFilename, { start, end }),
             })

@@ -9,7 +9,7 @@
 
 'use strict';
 
-import { AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse, Method, ResponseType } from "axios";
+import {  AxiosRequestConfig, AxiosRequestHeaders, InternalAxiosRequestConfig, Method, ResponseType } from "axios";
 import { HttpTimings } from "../httpTimer";
 
 // the following models are for making and using http requests within this project (what the end user will use/see).  It seems easier to re-define the model here instead of inheriting from the official axios models.  With multiple layers of model inheritance (inheriting base models from axios), the user looses visibility into what the model actually looks like when using vscode hover/intellisense.  
@@ -55,19 +55,39 @@ export type HttpResponse<T = any> = {
 
 
 
-
+export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+    uuid?: string;
+}
 
 
 // the following are only used for setting up the axios instance and injecting the uuid/timing.  
-export interface AxiosResponseWithTimings extends AxiosResponse {
-    config: uuidAxiosRequestConfig
-    async?: HttpResponse[],
+export interface AxiosResponseWithTimings {
+    data?: any;
+    headers?: AxiosRequestHeaders | Partial<Record<string, string> & { "set-cookie"?: string[]; }>;
+    request: any;
+    statusText: string;
+    status?: number;
+    config?: uuidAxiosRequestConfig,
+    async?: AxiosResponseWithTimings[],
 }
 
+// // the following are only used for setting up the axios instance and injecting the uuid/timing.  
+// export interface AxiosResponseWithTimings extends InternalAxiosRequestConfig {
+//     config: uuidAxiosRequestConfig
+//     async?: HttpResponse[],
+// }
+
+
+// export interface uuidAxiosRequestConfig extends AxiosRequestConfig {
+//     uuid?: string,
+//     transport?: unknown,
+//     rejectUnauthorized?: boolean,
+// }
 
 export interface uuidAxiosRequestConfig extends AxiosRequestConfig {
     uuid?: string,
     transport?: unknown,
     rejectUnauthorized?: boolean,
+    headers?: AxiosRequestHeaders | Partial<Record<string, string>>;
 }
 

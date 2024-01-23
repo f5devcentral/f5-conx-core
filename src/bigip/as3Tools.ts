@@ -47,7 +47,7 @@ export async function tenantFromDec(dec: As3Declaration | AdcDeclaration): Promi
 	// if array from bigiq/targets, assign, else put in array
 	const declareArray: AdcDeclaration[] = Array.isArray(declare) ? declare : [declare];
 
-	if (declareArray[0]?.target as boolean) {
+	if (declareArray[0]?.target as unknown as boolean) {
 		return true;
 	} else {
 		return false;

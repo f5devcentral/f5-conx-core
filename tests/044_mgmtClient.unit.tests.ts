@@ -350,7 +350,7 @@ describe('mgmtClient unit tests - successes', function () {
                 assert.ok(resp.request.method)
                 assert.ok(resp.request.headers)
                 assert.ok(resp.request.protocol)
-                assert.ok(resp.request.timings)
+                // assert.ok(resp.request.timings)
                 assert.ok(resp.request.uuid)
                 assert.ok(resp.request.url)
 

@@ -16,10 +16,12 @@ import path from 'path';
 
 import { TMP_DIR } from '../src/constants'
 import { ExtHttp } from '../src/externalHttps';
+import { AxiosHeaders, AxiosRequestConfig } from 'axios';
+import { uuidAxiosRequestConfig } from '../src/utils/httpModels';
 
 const testHost = 'nockTestApi'
 let extHttp: ExtHttp;
-const events = [];
+const events: string[] = [];
 
 let nockScope: nock.Scope;
 
@@ -148,8 +150,8 @@ describe('ExtHttps class tests', function () {
         })
             .then(resp => {
 
-                assert.deepStrictEqual(resp.headers['user-agent'], 'F5 Conx Core')
-                assert.deepStrictEqual(resp.headers['headerone'], 'toK3n')
+                assert.deepStrictEqual(resp.headers?.['user-agent'], 'F5 Conx Core')
+                assert.deepStrictEqual(resp.headers?.['headerone'], 'toK3n')
             })
             .catch(err => {
                 debugger;

@@ -13,7 +13,7 @@
 import { EventEmitter } from 'events';
 
 import { AtcInfo, F5InfoApi, F5DownLoad, F5Upload, DiscoverInfo, F5TmosProduct } from "./bigipModels";
-import { HttpResponse, F5HttpRequest } from "../utils/httpModels";
+import { uuidAxiosRequestConfig, AxiosResponseWithTimings } from "../utils/httpModels";
 // import { MetadataClient } from "./metadata";
 
 import { MgmtClient } from "./mgmtClient";
@@ -186,8 +186,9 @@ export class F5Client {
      * 
      * @returns request response
      */
-    async https(uri: string, options?: F5HttpRequest): Promise<HttpResponse> {
-        return await this.mgmtClient.makeRequest(uri, options)
+    async https(uri: string, options?: uuidAxiosRequestConfig): Promise<AxiosResponseWithTimings> {
+        const x = await this.mgmtClient.makeRequest(uri, options);
+        return x;
     }
 
 
@@ -476,7 +477,7 @@ export class F5Client {
      * @param localSourcePathFilename 
      * @param uploadType
      */
-    async upload(localSourcePathFilename: string, uploadType: F5Upload): Promise<HttpResponse> {
+    async upload(localSourcePathFilename: string, uploadType: F5Upload): Promise<AxiosResponseWithTimings> {
         return this.mgmtClient.upload(localSourcePathFilename, uploadType)
     }
 
@@ -497,7 +498,7 @@ export class F5Client {
      * @param localDestPathFile where to put the file (including file name)
      * @param downloadType: type F5DownLoad = "UCS" | "QKVIEW" | "ISO"
      */
-    async download(fileName: string, localDestPath: string, downloadType: F5DownLoad): Promise<HttpResponse> {
+    async download(fileName: string, localDestPath: string, downloadType: F5DownLoad): Promise<AxiosResponseWithTimings> {
         // todo: update response typeing to include http details
         return this.mgmtClient.download(fileName, localDestPath, downloadType)
     }

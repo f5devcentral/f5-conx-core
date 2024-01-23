@@ -11,7 +11,8 @@
 
 import fs from 'fs';
 import crypto from 'crypto';
-import { AxiosResponseWithTimings, HttpResponse } from './httpModels';
+import { AxiosResponseWithTimings } from './httpModels';
+import { AxiosRequestHeaders } from 'axios';
 
 
 /**
@@ -145,7 +146,7 @@ export function verifyHash(file: string, extensionHash: string): boolean {
  * @param resp orgininal axios response with timing
  * @returns simplified http response
  */
- export async function simplifyHttpResponse(resp: AxiosResponseWithTimings): Promise<HttpResponse> {
+ export async function simplifyHttpResponse(resp: AxiosResponseWithTimings): Promise<AxiosResponseWithTimings> {
     
     // const h = JSON.parse(JSON.stringify(resp.headers));
     
@@ -154,7 +155,7 @@ export function verifyHash(file: string, extensionHash: string): boolean {
         status: resp.status,
         statusText: resp.statusText,
         data: resp.data,
-        headers: resp.headers,
+        headers: resp.headers as AxiosRequestHeaders | Partial<Record<string, string> & { "set-cookie"?: string[]; }>,
         request: {
             uuid: resp.config.uuid,
             baseURL: resp.config.baseURL,

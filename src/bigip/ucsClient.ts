@@ -11,9 +11,9 @@
 
 import path from "path";
 
-import { HttpResponse } from "../utils/httpModels";
 import { MgmtClient } from "./mgmtClient";
 import { F5DownloadPaths, iControlEndpoints } from '../constants';
+import { AxiosResponseWithTimings } from "../utils/httpModels";
 
 /**
  * handles F5 UCS tasks for generating and downloading UCS files
@@ -73,7 +73,7 @@ export class UcsClient {
             passPhrase?: string,
             noPrivateKeys?: boolean,
             mini?: boolean;
-        }): Promise<HttpResponse> {
+        }): Promise<AxiosResponseWithTimings> {
 
         
         const createResp = await this.create(options)
@@ -100,7 +100,7 @@ export class UcsClient {
         passPhrase?: string,
         noPrivateKeys?: boolean,
         mini?: boolean
-    }): Promise<HttpResponse> {
+    }): Promise<AxiosResponseWithTimings> {
 
         let file = 
             options?.fileName ? 
@@ -263,7 +263,7 @@ export class UcsClient {
      * @param fileName file name of ucs on bigip
      * @param localDestPathFile where to put the file (including file name)
      */
-    async download(fileName: string, localDestPathFile: string): Promise<HttpResponse> {
+    async download(fileName: string, localDestPathFile: string): Promise<AxiosResponseWithTimings> {
 
         // if we only got a local path (no filename with file type suffix ".ext")
         //  then append created file name
@@ -280,7 +280,7 @@ export class UcsClient {
     /**
      * list ucs files on f5
      */
-    async list(): Promise<HttpResponse> {
+    async list(): Promise<AxiosResponseWithTimings> {
         // this will check the folder every time
         return await this._mgmtClient.makeRequest(iControlEndpoints.ucs)
     }
@@ -291,7 +291,7 @@ export class UcsClient {
      * delete ucs file on f5
      * @param archive_name.ucs
      */
-    async delete(name: string): Promise<HttpResponse> {
+    async delete(name: string): Promise<AxiosResponseWithTimings> {
         return await this._mgmtClient.makeRequest(`${iControlEndpoints.ucs}/${name}`, {
             method: 'DELETE'
         })

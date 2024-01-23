@@ -12,8 +12,8 @@
 import { AtcInfo } from "./bigipModels";
 import { atcMetaData } from '../constants';
 import { MgmtClient } from "./mgmtClient";
-import { HttpResponse } from "../utils/httpModels";
 import { cfDeclaration } from "./cfModels";
+import { AxiosResponseWithTimings } from "../utils/httpModels";
 
 
 /**
@@ -38,7 +38,7 @@ export class CfClient {
      * list associated cloud objects
      * @returns axios/http response
      */
-    async inspect(): Promise<HttpResponse> {
+    async inspect(): Promise<AxiosResponseWithTimings> {
         return await this.mgmtClient.makeRequest(CfClient.metaData.endPoints.inspect);
     }
 
@@ -46,7 +46,7 @@ export class CfClient {
      * get cfe configuration
      * @returns axios/http response
      */
-    async getDeclare(): Promise<HttpResponse> {
+    async getDeclare(): Promise<AxiosResponseWithTimings> {
         return await this.mgmtClient.makeRequest(CfClient.metaData.endPoints.declare);
     }
 
@@ -55,7 +55,7 @@ export class CfClient {
      * @param cf declaration
      * @returns axios/http response
      */
-    async postDeclare(data: cfDeclaration): Promise<HttpResponse> {
+    async postDeclare(data: cfDeclaration): Promise<AxiosResponseWithTimings> {
         return await this.mgmtClient.makeRequest(CfClient.metaData.endPoints.declare, {
             method: 'POST',
             data
@@ -66,7 +66,7 @@ export class CfClient {
      * post last trigger event
      * @returns axios/http response
      */
-    async getTrigger(): Promise<HttpResponse> {
+    async getTrigger(): Promise<AxiosResponseWithTimings> {
         return await this.mgmtClient.makeRequest(CfClient.metaData.endPoints.trigger);
     }
 
@@ -76,7 +76,7 @@ export class CfClient {
      * @param action trigger action -> 'execute' by default
      * @returns axios/http response
      */
-    async trigger(action: 'dry-run' | 'execute' = 'execute'): Promise<HttpResponse> {
+    async trigger(action: 'dry-run' | 'execute' = 'execute'): Promise<AxiosResponseWithTimings> {
         return await this.mgmtClient.makeRequest(CfClient.metaData.endPoints.trigger, {
             method: 'POST',
             data: { action }
@@ -94,7 +94,7 @@ export class CfClient {
      * ```
      * @returns axios/http response
      */
-    async reset(): Promise<HttpResponse> {
+    async reset(): Promise<AxiosResponseWithTimings> {
         return await this.mgmtClient.makeRequest(CfClient.metaData.endPoints.reset, {
             method: 'POST',
             data: {

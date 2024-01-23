@@ -32,7 +32,6 @@ import {
 
 
 import { deviceInfoIPv6 } from '../src/bigip/f5_device_atc_infos';
-import { HttpResponse } from '../src/utils/httpModels';
 import Logger from '../src/logger';
 import { isArray, isObject } from '../src/utils/misc';
 import { as3ExampleDec } from '../src';
