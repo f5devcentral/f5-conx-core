@@ -9,6 +9,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [1.1.0] - (03-10-2024)
+
+### Changed
+
+- [BUG] logger circular json bug #23
+- re-enabled atcVersions test that actually gets all the latest atc version info for caching into the extension
+
+---
+
 ## [1.0.0] - (01-10-2024)
 
 ### Changed
