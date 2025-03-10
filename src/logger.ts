@@ -179,6 +179,15 @@ export default class Logger {
 
         const smallResp = await simplifyHttpResponse(resp)
 
+        // stringify and reparse base response to remove js object details
+        // wrap in try/catch to hide errors
+        try {
+            JSON.stringify(smallResp);
+            JSON.parse(JSON.stringify(smallResp));
+        } catch (e) {
+            // hide errors
+        }
+        
         const smallerResp = JSON.parse(JSON.stringify(smallResp));
 
         if (process.env[this.logEnv] === 'DEBUG') {

@@ -48,49 +48,49 @@ describe('atc versions unit tests', function () {
     // 1. test the freshing of atc versions cache information
     // 2. save that information to the extension so end clients only need to refresh it, and will at least have some dated information if thier client is not able to reach the internet (which is rare, but a situation we have to think about).  So, this test refreshes that data that is included in the final releases
 
-    // it('refresh atc versions', async function () {
+    it('refresh atc versions', async function () {
 
 
-    //     // *** enable the following code block to nock all responses ***
-    //     //      This is only needed when repeatedly running tests and possibly hitting github api quota limit
+        // *** enable the following code block to nock all responses ***
+        //      This is only needed when repeatedly running tests and possibly hitting github api quota limit
 
-    //     // nock('https://api.github.com:443')
-    //     //     .get('/repos/F5Networks/f5-appsvcs-templates/releases')
-    //     //     .reply(200, fastResp)
-    //     //     .get('/repos/F5Networks/f5-appsvcs-extension/releases')
-    //     //     .reply(200, as3Resp)
-    //     //     .get('/repos/F5Networks/f5-declarative-onboarding/releases')
-    //     //     .reply(200, doResp)
-    //     //     .get('/repos/F5Networks/f5-telemetry-streaming/releases')
-    //     //     .reply(200, tsResp)
-    //     //     .get('/repos/F5Networks/f5-cloud-failover-extension/releases')
-    //     //     .reply(200, cfResp)
+        // nock('https://api.github.com:443')
+        //     .get('/repos/F5Networks/f5-appsvcs-templates/releases')
+        //     .reply(200, fastResp)
+        //     .get('/repos/F5Networks/f5-appsvcs-extension/releases')
+        //     .reply(200, as3Resp)
+        //     .get('/repos/F5Networks/f5-declarative-onboarding/releases')
+        //     .reply(200, doResp)
+        //     .get('/repos/F5Networks/f5-telemetry-streaming/releases')
+        //     .reply(200, tsResp)
+        //     .get('/repos/F5Networks/f5-cloud-failover-extension/releases')
+        //     .reply(200, cfResp)
 
-    //     const extHttp = new ExtHttp();
-    //     const atcV = new AtcVersionsClient({
-    //         extHttp,
-    //     });
+        const extHttp = new ExtHttp();
+        const atcV = new AtcVersionsClient({
+            extHttp,
+        });
 
-    //     atcV.events
-    //         .on('log-http-request', msg => events.push(msg))
-    //         .on('log-http-response', msg => events.push(msg))
-    //         .on('log-debug', msg => events.push(msg))
-    //         .on('log-info', msg => events.push(msg))
-    //         .on('log-error', msg => events.push(msg));
+        atcV.events
+            .on('log-http-request', msg => events.push(msg))
+            .on('log-http-response', msg => events.push(msg))
+            .on('log-debug', msg => events.push(msg))
+            .on('log-info', msg => events.push(msg))
+            .on('log-error', msg => events.push(msg));
 
-    //     await atcV.getAtcReleasesInfo()
-    //         .then(atcVersions => {
-    //             assert.ok(atcVersions.lastCheckDate)
-    //             assert.ok(atcVersions.fast)
-    //             assert.ok(atcVersions.as3)
-    //             assert.ok(atcVersions.do)
-    //             assert.ok(atcVersions.ts)
-    //             assert.ok(atcVersions.cf)
-    //         })
-    //         .catch(err => {
-    //             debugger;
-    //         });
-    // });
+        await atcV.getAtcReleasesInfo()
+            .then(atcVersions => {
+                assert.ok(atcVersions.lastCheckDate)
+                assert.ok(atcVersions.fast)
+                assert.ok(atcVersions.as3)
+                assert.ok(atcVersions.do)
+                assert.ok(atcVersions.ts)
+                assert.ok(atcVersions.cf)
+            })
+            .catch(err => {
+                debugger;
+            });
+    });
 
     it('refresh atc versions - fail - connection timeout', async function () {
 
