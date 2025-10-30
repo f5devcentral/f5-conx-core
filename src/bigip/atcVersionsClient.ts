@@ -77,8 +77,9 @@ export class AtcVersionsClient {
 
     /**
      * object containing all the LATEST versions/releases/assets information for each ATC service.
+     * Initialized with base cache and updated from file system cache or GitHub
      */
-    atcVersions: AtcVersions = {};
+    atcVersions: AtcVersions;
 
     constructor(options: {
         extHttp?: ExtHttp,
@@ -91,6 +92,10 @@ export class AtcVersionsClient {
         this.cachePath = options.cachePath ? path.join(options.cachePath, this.atcVersionsFileName) : this.atcVersionsFileName;
 
         this.events = options.eventEmitter ? options.eventEmitter : new EventEmitter;
+
+        // Initialize with base cache, then try to load from file system cache
+        this.atcVersions = this.atcVersionsBaseCache;
+        this.loadReleaseInfoFromCache();
     }
 
 
@@ -101,7 +106,7 @@ export class AtcVersionsClient {
      */
     async getAtcReleasesInfo(): Promise<AtcVersions> {
         // load info from cache
-        await this.loadReleaseInfoFromCache();
+        this.loadReleaseInfoFromCache();
 
         // if we have cache data, get date
         const checkDate = new Date(this.atcVersions.lastCheckDate).toDateString();
@@ -112,20 +117,20 @@ export class AtcVersionsClient {
         if (checkDate === todayDate) {
             // was already checked/refreshed today, so pass cached info
             this.events.emit('log-info', `atc release version already checked today, returning cache from ${this.cachePath}`);
-            return this.atcVersions;
+            return this.atcVersions || this.atcVersionsBaseCache;
         } else {
             // has not been checked today, refresh
             this.events.emit('log-info', 'atc release version has NOT been checked today, refreshing cache now');
             await this.refreshAtcReleasesInfo().catch(err => {
                 this.events.emit('log-info', `refreshAtcReleasesInfo, was not able to refresh atc release info, using cache from ${this.cachePath} --> error: ${err}`);
             });
-            return this.atcVersions;
+            return this.atcVersions || this.atcVersionsBaseCache;
         }
 
     }
 
 
-    private async loadReleaseInfoFromCache(): Promise<void> {
+    private loadReleaseInfoFromCache(): void {
 
         try {
             // load atc versions cache
@@ -134,7 +139,6 @@ export class AtcVersionsClient {
         } catch (e) {
             this.events.emit('log-error', `no atc release version metadata found at ${this.cachePath}`);
         }
-        return;
     }
 
     /**
@@ -169,7 +173,6 @@ export class AtcVersionsClient {
 
             // at launch of extension, load all the latest atc metadata
             const atcKey = atc as keyof typeof this.atcMetaData;
-            const y = this.atcMetaData[atcKey].gitReleases;
             promiseArray.push(this.extHttp.makeRequest({ url: this.atcMetaData[atcKey].gitReleases })
                 .then( resp => {
                     // loop through reach release and build 
