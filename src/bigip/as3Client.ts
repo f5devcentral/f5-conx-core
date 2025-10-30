@@ -18,15 +18,13 @@ import { MgmtClient } from "./mgmtClient";
 import { atcMetaData } from '../constants';
 import { AdcDeclaration, As3Declaration } from "./as3Models";
 import { tenantFromDec } from "..";
-import { NextMgmtClient } from "./nextClientBase";
-import { NextCmMgmtClient } from "./nextCmClientBase";
 
 
 /**
  * AS3 client class that handles AS3 calls
  */
 export class As3Client {
-    public readonly mgmtClient: MgmtClient | NextMgmtClient | NextCmMgmtClient;
+    public readonly mgmtClient: MgmtClient;
     // the followin endpoints should be tied back into the metadata so it can be dynamic with versions
     // public readonly taskEndpoint = `/mgmt/shared/appsvcs/task`
     // public readonly declareEndpoint = `/mgmt/shared/appsvcs/declare`
@@ -60,7 +58,7 @@ export class As3Client {
     constructor(
         versions: AtcInfo,
         as3MetaData: typeof atcMetaData.as3,
-        mgmtClient: MgmtClient | NextMgmtClient | NextCmMgmtClient
+        mgmtClient: MgmtClient
     ) {
         this.version = versions;
         this.metaData = as3MetaData;

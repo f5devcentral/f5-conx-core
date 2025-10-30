@@ -252,7 +252,7 @@ export type CfMetaData = {
 };
 
 
-export type F5TmosProduct = 'BIG-IP' | 'BIG-IQ' | 'NEXT' | 'NEXT-CM';
+export type F5TmosProduct = 'BIG-IP' | 'BIG-IQ';
 
 export type F5InfoApi = {
     product: F5TmosProduct;
