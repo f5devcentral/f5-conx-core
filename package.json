@@ -33,6 +33,7 @@
         "compile": "tsc -p ./",
         "test": "mocha -r ts-node/register \"tests/*.tests.ts\"",
         "build-package": "npm run compile && npm pack",
+        "prepublishOnly": "npm run lint && npm run compile && npm test",
         "publish-package": "npm run compile && npm publish"
     },
     "dependencies": {

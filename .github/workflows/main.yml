@@ -1,0 +1,97 @@
+name: Main
+
+on:
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    name: Test on ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Compile TypeScript
+        run: npm run compile
+
+      - name: Run tests
+        run: npm test
+
+  release-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    needs: test
+    name: Package-Release-Publish
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get package version
+        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+
+      - name: Get Changelog Entry
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          validation_level: warn
+          version: ${{ env.PACKAGE_VERSION }}
+          path: ./CHANGELOG.md
+
+      - name: Compile TypeScript
+        run: npm run compile
+
+      - name: Create local npm package
+        id: package
+        run: npm run build-package
+
+      - name: Get local package name
+        run: echo "PACKAGE_NAME=$(basename $(find . -maxdepth 1 -type f -iname "*.tgz" | head -1))" >> $GITHUB_ENV
+
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        id: create_release
+        with:
+          tag: v${{ env.PACKAGE_VERSION }}
+          name: ${{ env.PACKAGE_NAME }}
+          body: "${{ steps.changelog_reader.outputs.changes }}"
+          artifacts: ${{ env.PACKAGE_NAME }}
+          draft: false
+          prerelease: false
+
+      - name: Publish to NPM
+        id: publish
+        uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          provenance: true
