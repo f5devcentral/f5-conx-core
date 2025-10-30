@@ -88,7 +88,9 @@ export class IhealthClient extends ExtHttp {
             }
         })
             .then(resp => {
-                this._cookies = resp.headers['set-cookie'] as string[];
+                if (resp.headers) {
+                    this._cookies = resp.headers['set-cookie'] as string[];
+                }
                 this._cookiesExpiration = resp.data.expires;
                 // current time in seconds
                 const now = Date.now() / 1000;
@@ -136,7 +138,9 @@ export class IhealthClient extends ExtHttp {
         clearInterval(this._tokenIntervalId);
 
         this._tokenIntervalId = setInterval(() => {
-            this.tokenTimeout--;
+            if (this.tokenTimeout !== undefined) {
+                this.tokenTimeout--;
+            }
 
             // capture the self timer instance
             const timerId = this._tokenIntervalId;
@@ -144,12 +148,12 @@ export class IhealthClient extends ExtHttp {
             this.events.emit('iHealthClient-token-timer-count', this.tokenTimeout);
 
             // kill the token 10 seconds early to give us time to get a new one with all the other calls going on
-            if (this.tokenTimeout <= 10) {
+            if (this.tokenTimeout !== undefined && this.tokenTimeout <= 10) {
                 this._cookies = undefined; // clearing token details should get a new token
             }
 
             // keep running the timer so everything looks good, but clear the rest when it reaches 0
-            if (this.tokenTimeout <= 0) {
+            if (this.tokenTimeout !== undefined && this.tokenTimeout <= 0) {
                 clearInterval(this._tokenIntervalId);
 
                 // just in case this timer got orphaned from the main class, also clear using self reference
@@ -186,10 +190,10 @@ export class IhealthClient extends ExtHttp {
             const qkviewIds = resp.data.id
 
             // array for async promises
-            const promiseArray = [];
+            const promiseArray: Promise<void>[] = [];
 
             // loop through each qkview ID and gather meta data
-            await Promise.all(qkviewIds.map(async id => {
+            await Promise.all(qkviewIds.map(async (id: string) => {
                 // GET and push the qkveiw details to local array
                 await this.qkviewMetaData(id)
                 .then( resp => {

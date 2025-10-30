@@ -16,9 +16,9 @@ import { As3Declaration } from "..";
  * @param dec AS3/ADC declaration
  * @returns { tenant, schemaVersion, target}
  */
-export async function tenantFromDec(dec: As3Declaration | AdcDeclaration): Promise<{tenant: string, schemaVersion: string, target: Target }> {
-	let tenant
-	
+export async function tenantFromDec(dec: As3Declaration | AdcDeclaration): Promise<{tenant: string, schemaVersion: string, target: Target | undefined }> {
+	let tenant: string | undefined
+
 	if (dec.class === "AS3") {
 		dec = dec.declaration
 	}
@@ -27,13 +27,17 @@ export async function tenantFromDec(dec: As3Declaration | AdcDeclaration): Promi
 	const target = dec.target;
 
 	// loop through declaration (adc) level
-	Object.entries(dec).forEach(([key, val]) => { 
-	
+	Object.entries(dec).forEach(([key, val]) => {
+
 		if (isObject(val) && key !== 'target' && key !== 'controls') {
 			tenant = key;
 		}
 	})
-	
+
+	if (!tenant) {
+		throw new Error('No tenant found in declaration');
+	}
+
 	return { tenant, schemaVersion, target }
 }
 

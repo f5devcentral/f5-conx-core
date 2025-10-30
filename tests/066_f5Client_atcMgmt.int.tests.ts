@@ -34,7 +34,7 @@ const rpm = 'f5-appsvcs-templates-1.4.0-1.noarch.rpm';
 const filePath = path.join(__dirname, 'artifacts', rpm)
 
 const events: string[] = []
-let installedRpm;
+let installedRpm: { packageName: string } | undefined;
 
 describe('f5Client rpm mgmt integration tests', function () {
 
@@ -108,7 +108,7 @@ describe('f5Client rpm mgmt integration tests', function () {
             .get(urlPath)
             .replyWithFile(200, filePath)
             
-        await f5Client.atc.download(url)
+        await f5Client.atc!.download(url)
             .then(resp => {
 
                 // get filename from downloaded location
@@ -135,7 +135,7 @@ describe('f5Client rpm mgmt integration tests', function () {
 
         const urlPath = new URL(url).pathname       // extract path from URL
         const fileName = path.basename(urlPath);    // get file name from url
-        await f5Client.atc.download(url)
+        await f5Client.atc!.download(url)
             .then(resp => {
 
                 // get filename from downloaded location
@@ -181,7 +181,7 @@ describe('f5Client rpm mgmt integration tests', function () {
             .get('/otherFiles/newFile.pkg')
             .replyWithFile(200, filePath)
             
-        await f5Client.atc.download(url)
+        await f5Client.atc!.download(url)
             .then(resp => {
 
                 // get filename from downloaded location
@@ -209,7 +209,7 @@ describe('f5Client rpm mgmt integration tests', function () {
             .post(`${F5UploadPaths.file.uri}/${rpm}`)
             .reply(200, { foo: 'bar' })
             
-            await f5Client.atc.uploadRpm(filePath)
+            await f5Client.atc!.uploadRpm(filePath)
             .then(resp => {
                 assert.deepStrictEqual(resp.data.fileName, rpm);
                 assert.ok(resp.data.bytes);
@@ -242,7 +242,7 @@ describe('f5Client rpm mgmt integration tests', function () {
             .get(`${iControlEndpoints.atcPackageMgmt}/63b48c20`)
             .reply(200, { status: 'FINISHED' });
 
-        await f5Client.atc.install(rpm)
+        await f5Client.atc!.install(rpm)
             .then(resp => {
                 assert.deepStrictEqual(resp.data.status, 'FINISHED');
             })
@@ -277,7 +277,7 @@ describe('f5Client rpm mgmt integration tests', function () {
             });
 
 
-        await f5Client.atc.showInstalled()
+        await f5Client.atc!.showInstalled()
             .then(resp => {
                 assert.deepStrictEqual(resp.data.status, 'FINISHED');
                 // loop through installed packages and return the object matching the rpm installed in previous step
@@ -299,7 +299,7 @@ describe('f5Client rpm mgmt integration tests', function () {
         nockScope
             .post(iControlEndpoints.atcPackageMgmt, {
                 operation: 'UNINSTALL',
-                packageName: installedRpm.packageName
+                packageName: installedRpm!.packageName
             })
             .reply(202, {
                 "id": "c4b16c2a",
@@ -313,7 +313,7 @@ describe('f5Client rpm mgmt integration tests', function () {
             .reply(200, { status: 'FINISHED' });
 
 
-        await f5Client.atc.unInstall(installedRpm.packageName)
+        await f5Client.atc!.unInstall(installedRpm!.packageName)
             .then(resp => {
                 assert.deepStrictEqual(resp.data.status, 'FINISHED');
             })
@@ -345,7 +345,7 @@ describe('f5Client rpm mgmt integration tests', function () {
                 }]
             });
 
-        await f5Client.atc.showInstalled()
+        await f5Client.atc!.showInstalled()
             .then(resp => {
                 // loop through and try to find rpm installed earlier
                 installedRpm = resp.data.queryResponse.filter((el: { packageName: string }) => {

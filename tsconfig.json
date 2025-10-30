@@ -9,7 +9,7 @@
         "esModuleInterop": true,
         "sourceMap": true,
         "declaration": true,
-        // "strict": true,
+        "strict": true,
         "rootDir": "src",
         "outDir": "dist",
     },

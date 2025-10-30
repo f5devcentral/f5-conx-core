@@ -26,7 +26,7 @@ import path from 'path';
 // import { mgmtClient } from '../src/bigip/mgmtClient';
 import { defaultHost, defaultPassword, defaultUser, getMgmtClient, ipv6Host } from '../src/utils/testingUtils';
 import { getFakeToken } from '../src/utils/testingUtils';
-import { AuthTokenReqBody } from '../src/bigip/bigipModels';
+import { AuthTokenReqBody, Token } from '../src/bigip/bigipModels';
 import { F5DownloadPaths, F5UploadPaths } from '../src/constants';
 import { MgmtClient } from '../src/bigip/mgmtClient';
 import Logger from '../src/logger';
@@ -184,8 +184,8 @@ describe('mgmtClient unit tests - successes', function () {
 
         )
 
-        let tokenPostBody
-        let tokenRespBody
+        let tokenPostBody: AuthTokenReqBody | undefined
+        let tokenRespBody: { token: Token } | undefined
 
         const request = '/mgmt/tm/sys/clock';
         const response = {
@@ -225,9 +225,11 @@ describe('mgmtClient unit tests - successes', function () {
 
         mgmtClient.clearToken();
 
+        assert.ok(tokenPostBody, 'tokenPostBody should be defined');
         assert.deepStrictEqual(tokenPostBody.loginProviderName, provider, 'mgmtClient did not send the right authProvider')
 
         // this kinda tests that our fake token function works by passing back the right authProvider
+        assert.ok(tokenRespBody, 'tokenRespBody should be defined');
         assert.deepStrictEqual(tokenRespBody.token.authProviderName, provider, 'authToken did not have the right authProvider')
 
     });

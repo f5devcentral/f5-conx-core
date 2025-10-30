@@ -38,7 +38,7 @@ const tmpDir = path.join(__dirname, 'tmp')
 // const tmp = path.join(tmpDir, tmpUcs)
 
 const events: string[] = []
-let fileName;
+let fileName: string | undefined;
 
 describe('f5Client qkview integration tests - ipv6', function () {
 
@@ -140,7 +140,7 @@ describe('f5Client qkview integration tests - ipv6', function () {
                 ]
             })
 
-        const resp = await f5Client.qkview.create()
+        const resp = await f5Client.qkview!.create()
             .then(resp => resp)
             .catch(err => {
                 debugger;
@@ -168,7 +168,7 @@ describe('f5Client qkview integration tests - ipv6', function () {
                 ]
             })
 
-        // const resp = await f5Client.qkview.list()
+        // const resp = await f5Client.qkview!.list()
         //     .then(resp => resp)
         //     .catch(err => {
         //         debugger;
@@ -177,7 +177,7 @@ describe('f5Client qkview integration tests - ipv6', function () {
 
         // trying a different flow by putting the assert in the .then
         // this flow should only try to validate the data if the function completes successfully
-        await f5Client.qkview.list()
+        await f5Client.qkview!.list()
             .then(resp => {
                 // resp
                 fileName = resp.data.items[0].name;
@@ -197,7 +197,7 @@ describe('f5Client qkview integration tests - ipv6', function () {
     //         .get(`${F5DownloadPaths.qkview.uri}/${fileName}`)
     //         .replyWithFile(200, filePath);
 
-    //     const resp = await f5Client.qkview.download(
+    //     const resp = await f5Client.qkview!.download(
     //         fileName,
     //         tmpDir
     //     )
@@ -262,7 +262,7 @@ describe('f5Client qkview integration tests - ipv6', function () {
     //         .get(uri => uri.startsWith(F5DownloadPaths.qkview.uri))
     //         .replyWithFile(200, filePath);
 
-    //     const resp = await f5Client.qkview.get(tmpDir)
+    //     const resp = await f5Client.qkview!.get(tmpDir)
     //         .then(resp => resp)
     //         .catch(err => {
     //             debugger;
@@ -298,9 +298,9 @@ describe('f5Client qkview integration tests - ipv6', function () {
     //         .delete(uri => uri.startsWith(iControlEndpoints.qkview))
     //         .reply(200)
 
-    //     const resp = await f5Client.qkview.list()
+    //     const resp = await f5Client.qkview!.list()
     //         .then(async resp => {
-    //             return await f5Client.qkview.delete(resp.data.items[0].id)
+    //             return await f5Client.qkview!.delete(resp.data.items[0].id)
     //         })
     //         .catch(err => {
     //             debugger;

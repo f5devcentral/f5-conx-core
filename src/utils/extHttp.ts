@@ -49,9 +49,9 @@ export async function makeRequest(host: string, uri: string, options?: {
         headers: options?.headers ? options.headers : {},
         data: options['body'] || null,
         auth: options['basicAuth'] !== undefined ? {
-            username: options['basicAuth']['user'],
-            password: options['basicAuth']['password']
-        } : null,
+            username: (options['basicAuth'] as Record<string, string>)['user'],
+            password: (options['basicAuth'] as Record<string, string>)['password']
+        } : undefined,
         validateStatus: null
     });
 

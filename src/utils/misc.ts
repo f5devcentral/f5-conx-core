@@ -112,7 +112,7 @@ export function isArray(a: unknown): boolean {
 export function verifyHash(file: string, extensionHash: string): boolean {
     const createHash = crypto.createHash('sha256');
     const input = fs.readFileSync(file);
-    createHash.update(input);
+    createHash.update(input as crypto.BinaryLike);
     const computedHash = createHash.digest('hex');
 
     if (extensionHash !== computedHash) {
@@ -157,12 +157,12 @@ export function verifyHash(file: string, extensionHash: string): boolean {
         data: resp.data,
         headers: resp.headers as AxiosRequestHeaders | Partial<Record<string, string> & { "set-cookie"?: string[]; }>,
         request: {
-            uuid: resp.config.uuid,
-            baseURL: resp.config.baseURL,
-            url: resp.config.url,
+            uuid: resp.config?.uuid,
+            baseURL: resp.config?.baseURL,
+            url: resp.config?.url,
             method: resp.request.method,
             headers: resp.request.headers,
-            protocol: resp.config.httpsAgent.protocol,
+            protocol: resp.config?.httpsAgent?.protocol,
             // timings: resp.request.timings
         }
     }

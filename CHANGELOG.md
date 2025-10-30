@@ -9,6 +9,34 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [1.2.0] - (UNRELEASED)
+
+### Changed
+
+- Updated dependencies to remediate security vulnerabilities
+- Enabled TypeScript strict mode for improved type safety
+  - Fixed ~50 type errors across source and test files
+  - Added proper undefined/null checks throughout codebase
+  - Enhanced type annotations for better compile-time error detection
+  - Improved logger type safety with `LogLevelKey` type for index signatures
+
+### Removed
+
+- Removed all F5 NEXT and NEXT-CM experimental support (product discontinued)
+  - Deleted `nextClientBase.ts`, `nextCmClientBase.ts`, `nextModels.ts`
+  - Deleted `detectNextBigip.ts` and `OpenApiModels.ts`
+  - Removed NEXT-specific integration tests
+  - Updated `F5TmosProduct` type to only support `'BIG-IP' | 'BIG-IQ'`
+  - Simplified `F5Client.discover()` method
+  - Cleaned up ATC client type definitions
+  - **Code reduction:** ~2,672 lines removed
+
+### Note
+
+This release removes experimental NEXT support that was in development but never reached production. The SDK now focuses exclusively on BIG-IP and BIG-IQ support.
+
+---
+
 ## [1.1.0] - (03-10-2024)
 
 ### Changed

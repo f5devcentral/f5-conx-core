@@ -12,19 +12,17 @@
 import { AtcInfo } from "./bigipModels";
 import { atcMetaData } from '../constants';
 import { MgmtClient } from "./mgmtClient";
-import { NextMgmtClient } from "./nextClientBase";
-import { NextCmMgmtClient } from "./nextCmClientBase";
 
 
 export class FastClient {
-    mgmtClient: MgmtClient | NextMgmtClient | NextCmMgmtClient;
+    mgmtClient: MgmtClient;
     metaData: typeof atcMetaData.fast;
     version: AtcInfo;
 
     constructor(
         versions: AtcInfo,
         fastMetaData: typeof atcMetaData.fast,
-        mgmtClient: MgmtClient | NextMgmtClient | NextCmMgmtClient
+        mgmtClient: MgmtClient
     ) {
         this.version = versions;
         this.metaData = fastMetaData;

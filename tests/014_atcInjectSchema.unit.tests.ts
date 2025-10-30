@@ -184,7 +184,7 @@ describe('atc injectSchema Unit Tests', function () {
     it('add/remove ts schema, NO logger', async function () {
 
         workingDec = Object.assign({}, tsExampleDec)
-        delete workingDec?.$schema
+        delete (workingDec as Record<string, unknown>).$schema
 
         workingDec =  await injectSchema(workingDec)
         assert.ok(workingDec.$schema === atcMetaData.ts.schema);
@@ -198,7 +198,7 @@ describe('atc injectSchema Unit Tests', function () {
     it('add/remove ts schema with logger', async function () {
 
         workingDec = Object.assign({}, tsExampleDec)
-        delete workingDec?.$schema
+        delete (workingDec as Record<string, unknown>).$schema
 
         workingDec =  await injectSchema(workingDec, logger)
         assert.ok(workingDec.$schema === atcMetaData.ts.schema);
