@@ -39,7 +39,7 @@ import { httpTimer } from '../httpTimer';
  */
 const transport = {
     request: function httpsWithTimer(...args: unknown[]): AxiosRequestConfig {
-        const request = https.request.apply(null, args)
+        const request = https.request.apply(null, args as Parameters<typeof https.request>)
         httpTimer(request);
         return request;
     }
@@ -268,7 +268,7 @@ export class MgmtClient {
             config.uuid = config?.uuid ? config.uuid : getRandomUUID(4, { simple: true })
 
             // if teem enabled, inject agent
-            if (process.env[teemEnv] == 'true') {
+            if (teemEnv && teemAgent && process.env[teemEnv] == 'true') {
                 injectAtcAgent(config, teemAgent)
             }
 
@@ -381,7 +381,7 @@ export class MgmtClient {
             url: uri,
             method: options?.method || undefined,
             headers: Object.assign(options?.headers || {}, {
-                'x-f5-auth-token': this.token.token
+                'x-f5-auth-token': this.token?.token
             }),
             data: options?.data || undefined
         }, options)
@@ -411,7 +411,9 @@ export class MgmtClient {
         clearInterval(this.tokenIntervalId);
 
         this.tokenIntervalId = setInterval(() => {
-            this.tokenTimeout--;
+            if (this.tokenTimeout !== undefined) {
+                this.tokenTimeout--;
+            }
 
             // capture the self timer instance
             const timerId = this.tokenIntervalId;
@@ -419,12 +421,12 @@ export class MgmtClient {
             this.events.emit('token-timer-count', this.tokenTimeout);
 
             // kill the token 10 seconds early to give us time to get a new one with all the other calls going on
-            if (this.tokenTimeout <= 10) {
+            if (this.tokenTimeout !== undefined && this.tokenTimeout <= 10) {
                 this.token = undefined; // clearing token details should get a new token
             }
 
             // keep running the timer so everything looks good, but clear the rest when it reaches 0
-            if (this.tokenTimeout <= 0) {
+            if (this.tokenTimeout !== undefined && this.tokenTimeout <= 0) {
                 clearInterval(this.tokenIntervalId);
 
                 // just in case this timer got orphaned from the main class, also clear using self reference
@@ -514,12 +516,16 @@ export class MgmtClient {
 
             await new Promise(resolve => {
                 // take the first array item off and use it as a delay timer
-                setTimeout(resolve, retryTimerArray.shift() * 1000);
+                const delay = retryTimerArray.shift();
+                setTimeout(resolve, (delay ?? 0) * 1000);
             });
         }
 
         // get last response to return
         const response = responses.pop();
+        if (!response) {
+            throw new Error('No response received from async request');
+        }
         // inject array of remaining async req/resp
         response.async = responses;
 
@@ -583,7 +589,7 @@ export class MgmtClient {
             // https://github.com/andrewstart/axios-streaming/blob/master/axios.js
 
             const chunkSize = 512 * 1024;
-            let totalSize: number = undefined;
+            let totalSize: number | undefined = undefined;
             let totalDown = 0;
 
             do {
@@ -597,7 +603,7 @@ export class MgmtClient {
                 }
 
                 // update content-ranage as needed
-                if (totalSize) {
+                if (totalSize && reqObject.headers) {
                     if ((totalDown + chunkSize) >= totalSize) {
                         // last chunk, so just get whats needed
                         reqObject.headers["content-range"] = `${totalDown + 1}-${totalSize - 1}/${totalSize}`
@@ -617,8 +623,10 @@ export class MgmtClient {
                         file.write(respIn.data, 'binary')   // write the chunk to file
 
                         // set total download size if not set yet
-                        const contentRange = respIn.headers['content-range'] as string;
-                        totalSize = parseInt(contentRange.split('/')[1]);
+                        if (respIn.headers) {
+                            const contentRange = respIn.headers['content-range'] as string;
+                            totalSize = parseInt(contentRange.split('/')[1]);
+                        }
 
                         // catch all the responses (simplified)
                         downloadResponses.push(respIn)
@@ -629,7 +637,7 @@ export class MgmtClient {
                     })
 
             }
-            while ((totalDown + 1) <= totalSize);
+            while (totalSize !== undefined && (totalDown + 1) <= totalSize);
 
             file.end();
 
@@ -735,6 +743,9 @@ export class MgmtClient {
 
         // get the last response
         const lastResponse = responses.pop();
+        if (!lastResponse) {
+            throw new Error('No response received from upload');
+        }
 
         // inject file stream information
         lastResponse.data.fileName = fileName;
@@ -758,7 +769,7 @@ export class MgmtClient {
      */
     async getFileName(): Promise<string> {
 
-        if (this.hostInfo) {
+        if (this.hostInfo?.hostname && this.hostInfo?.managementAddress) {
             // start with ISO Date and remove ":", ".", and "-"
             const cleanISOdateTime = new Date().toISOString().replace(/(:|\.|-)/g, '')
 

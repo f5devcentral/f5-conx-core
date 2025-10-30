@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Copyright 2020. F5 Networks, Inc. See End User License Agreement ("EULA") for
  * license terms. Notwithstanding anything to the contrary in the EULA, Licensee
@@ -15,10 +14,9 @@ import Logger from '../src/logger';
 
 describe('Logger Class Unit Tests', function () {
     let logger: Logger;
-    const envs: any = [];
-    const consoleLogShadow: any = []
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    let originalConsoleLog: Function;
+    const envs: [string, string | undefined][] = [];
+    const consoleLogShadow: unknown[] = []
+    let originalConsoleLog: typeof console.log;
 
     before(function () {
         // log test file name - makes it easer for troubleshooting
@@ -36,13 +34,13 @@ describe('Logger Class Unit Tests', function () {
             .filter(el => el[0].startsWith('F5_CONX_CORE_LOG_')));
 
         // delete current log envs
-        envs.forEach(el => delete process.env[el[0]])
+        envs.forEach((el) => delete process.env[el[0]])
 
         // capture original console.log function
         originalConsoleLog = console.log;
 
         // redirect console output
-        console.log = function (...data: any[]) {
+        console.log = function (...data: unknown[]) {
             consoleLogShadow.push(...data)
         }
 
@@ -50,11 +48,15 @@ describe('Logger Class Unit Tests', function () {
 
     after(() => {
 
-        // put all the loggin envs back 
-        envs.forEach(el => process.env[el[0]] = el[1])
+        // put all the loggin envs back
+        envs.forEach((el) => {
+            if (el[1] !== undefined) {
+                process.env[el[0]] = el[1];
+            }
+        })
 
         // put back the console.log redirect
-        console.log = function (...data: any[]) {
+        console.log = function (...data: unknown[]) {
             originalConsoleLog(...data);
         }
     })
@@ -198,7 +200,7 @@ describe('Logger Class Unit Tests', function () {
         // reset log level
         delete process.env.F5_CONX_CORE_LOG_LEVEL;
 
-        const customOutput: any = [];
+        const customOutput: string[] = [];
         logger.output = function (x: string) {
             customOutput.push(x);
         }

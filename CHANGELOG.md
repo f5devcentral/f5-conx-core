@@ -14,6 +14,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Changed
 
 - Updated dependencies to remediate security vulnerabilities
+- Enabled TypeScript strict mode for improved type safety
+  - Fixed ~50 type errors across source and test files
+  - Added proper undefined/null checks throughout codebase
+  - Enhanced type annotations for better compile-time error detection
+  - Improved logger type safety with `LogLevelKey` type for index signatures
 
 ### Removed
 

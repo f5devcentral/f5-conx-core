@@ -104,7 +104,7 @@ export class AtcVersionsClient {
         await this.loadReleaseInfoFromCache();
 
         // if we have cache data, get date
-        const checkDate = new Date(this.atcVersions?.lastCheckDate).toDateString();
+        const checkDate = new Date(this.atcVersions.lastCheckDate).toDateString();
         // get todays date
         const todayDate = new Date().toDateString();
 
@@ -163,13 +163,14 @@ export class AtcVersionsClient {
 
         // holds the promises from the axios request calls since the forEach loop is not async aware
         // a request will be sent for each loop iteration, but all responses will be recieved in parallel
-        const promiseArray = []
+        const promiseArray: Promise<void>[] = []
 
-        Object.keys(this.atcMetaData).forEach(async atc => {
+        Object.keys(this.atcMetaData).forEach(async (atc) => {
 
             // at launch of extension, load all the latest atc metadata
-            const y = this.atcMetaData[atc].gitReleases;
-            promiseArray.push(this.extHttp.makeRequest({ url: this.atcMetaData[atc].gitReleases })
+            const atcKey = atc as keyof typeof this.atcMetaData;
+            const y = this.atcMetaData[atcKey].gitReleases;
+            promiseArray.push(this.extHttp.makeRequest({ url: this.atcMetaData[atcKey].gitReleases })
                 .then( resp => {
                     // loop through reach release and build 
                     const latest: string[] = [];
@@ -198,7 +199,7 @@ export class AtcVersionsClient {
                     });
 
 
-                    this.atcVersions[atc] = {
+                    this.atcVersions[atcKey] = {
                         releases,
                         latest: latest.sort(cmp)[latest.length - 1]
                     };
@@ -207,8 +208,8 @@ export class AtcVersionsClient {
                 }).catch(err => {
                     const error = err as AxiosError;
                     this.events.emit('log-error', {
-                        msg: `refreshAtcReleasesInfo, was not able to fetch release info for ${atc}`,
-                        url: this.atcMetaData[atc].gitReleases,
+                        msg: `refreshAtcReleasesInfo, was not able to fetch release info for ${atcKey}`,
+                        url: this.atcMetaData[atcKey].gitReleases,
                         resp: error?.stack
                     })
                 }));

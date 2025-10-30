@@ -36,7 +36,7 @@ export async function injectAtcAgent(req: uuidAxiosRequestConfig, userAgent: str
     ];
 
     // if posting atc declaration
-    if ((req.method === 'POST' || req.method === 'post') && atcDeclareEndPoints.includes(req.url)) {
+    if ((req.method === 'POST' || req.method === 'post') && req.url && atcDeclareEndPoints.includes(req.url)) {
 
         const controls = {
             class: "Controls",

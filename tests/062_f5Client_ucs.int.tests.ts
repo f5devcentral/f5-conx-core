@@ -108,7 +108,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
 
     it('create mini ucs on f5', async function () {
         // nock.recorder.rec();
-        let ucsFileName;
+        let ucsFileName: string | undefined;
 
         nockScope
             .post(iControlEndpoints.bash)
@@ -141,7 +141,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
                 ]
             })
 
-        await f5Client.ucs.create({ mini: true })
+        await f5Client.ucs!.create({ mini: true })
             .then(resp => {
 
                 // assert that the response included an expected file name format
@@ -161,7 +161,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
 
     it('generate default UCS on f5', async function () {
         this.slow(12000);
-        let ucsFileName;
+        let ucsFileName: string | undefined;
 
         nockScope
             .post(iControlEndpoints.backup)
@@ -204,7 +204,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
                 ]
             })
 
-        await f5Client.ucs.create()
+        await f5Client.ucs!.create()
             .then(resp => {
 
                 assert.deepStrictEqual(resp.data.status, 'FINISHED');
@@ -233,7 +233,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
             })
 
 
-        await f5Client.ucs.create({ passPhrase: 'catNip', noPrivateKeys: true })
+        await f5Client.ucs!.create({ passPhrase: 'catNip', noPrivateKeys: true })
             .then(resp => {
                 // no nothing, this should fail
                 return resp;
@@ -274,7 +274,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
             })
 
 
-        await f5Client.ucs.create({ passPhrase: 'catNip' })
+        await f5Client.ucs!.create({ passPhrase: 'catNip' })
             .then(resp => {
                 // nothing, this should fail
                 return resp;
@@ -305,7 +305,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
             })
 
 
-        await f5Client.ucs.create({ fileName: rpm, noPrivateKeys: true })
+        await f5Client.ucs!.create({ fileName: rpm, noPrivateKeys: true })
             .then(resp => {
                 // do nothing, this should fail
                 return resp;
@@ -324,7 +324,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
             .get(iControlEndpoints.ucs)
             .reply(200, ucsListApiReponse)
 
-        const resp = await f5Client.ucs.list();
+        const resp = await f5Client.ucs!.list();
 
         assert.deepStrictEqual(
             resp.data.items[0].apiRawValues.filename,
@@ -352,7 +352,7 @@ describe('f5Client UCS integration tests - ipv6', function () {
         //////  used to replay the nock
         nock.define(nockDef);
 
-        await f5Client.ucs.download(rpm, tmp)
+        await f5Client.ucs!.download(rpm, tmp)
             .then(resp => {
                 // assert that the file exists
                 assert.ok(fs.existsSync(resp.data.file));

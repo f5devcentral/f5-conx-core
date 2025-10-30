@@ -385,6 +385,9 @@ export class ExtHttp {
 
         // get the last response
         const lastResponse = responses.pop();
+        if (!lastResponse) {
+            throw new Error('No response received from upload');
+        }
 
         // inject file stream information
         lastResponse.data.fileName = fileName;

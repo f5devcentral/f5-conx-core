@@ -69,8 +69,8 @@ export type AtcVersion = {
 };
 
 export type AtcVersions = {
-    lastCheckDate?: Date | string;
-    lastUpdatedDate?: Date | string;
+    lastCheckDate: Date | string;
+    lastUpdatedDate: Date | string;
     fast?: AtcVersion;
     as3?: AtcVersion;
     do?: AtcVersion;

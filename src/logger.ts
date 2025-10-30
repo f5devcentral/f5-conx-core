@@ -21,7 +21,9 @@ const LOG_LEVELS = {
     warn: 4,
     info: 6,
     debug: 7
-};
+} as const;
+
+type LogLevelKey = keyof typeof LOG_LEVELS;
 
 /**
  * logLevel definitions
@@ -29,7 +31,7 @@ const LOG_LEVELS = {
 export type logLevels = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR'
 
 
-// levels have been updated to allign better with typical syslog
+// levels have been updated to align better with typical syslog
 // https://support.solarwinds.com/SuccessCenter/s/article/Syslog-Severity-levels?language=en_US
 
 /**
@@ -117,6 +119,12 @@ export default class Logger {
         return this.journal.length = 0;
     }
 
+    /**
+     * Validate that the logger environment variable is set and update log level
+     *
+     * @throws Error if logEnv is not configured
+     * @private
+     */
     private haveLogEnv() {
         if (!this.logEnv) {
             throw Error('NO LOGGER ENV SET')
@@ -297,11 +305,20 @@ export default class Logger {
 
 
 
-    private _checkLogLevel(): string {
+    /**
+     * Check and update log level from environment variables
+     *
+     * Reads the current log level, buffer, and console settings from environment
+     * variables and updates the logger configuration. Called on every log operation.
+     *
+     * @returns The normalized log level key (lowercase)
+     * @private
+     */
+    private _checkLogLevel(): LogLevelKey {
 
         this.haveLogEnv()
 
-        const logLevels = Object.keys(LOG_LEVELS);
+        const logLevels = Object.keys(LOG_LEVELS) as LogLevelKey[];
         // const logLevelFromEnvVar = process.env.F5_CONX_CORE_LOG_LEVEL || 'info';
 
         // check/update log level with every log
@@ -315,14 +332,25 @@ export default class Logger {
             this.console = (process.env.F5_CONX_CORE_LOG_CONSOLE == 'true');
         }
 
-        if (this.logLevel && logLevels.includes(this.logLevel.toLowerCase())) {
-            return this.logLevel.toLowerCase();
+        const levelLower = this.logLevel?.toLowerCase();
+        if (levelLower && logLevels.includes(levelLower as LogLevelKey)) {
+            return levelLower as LogLevelKey;
         }
 
         return 'info';
 
     }
 
+    /**
+     * Convert any value to a string representation for logging
+     *
+     * Strings are returned as-is. All other values are formatted using Node's
+     * util.inspect with colorization disabled and a depth limit of 6 levels.
+     *
+     * @param val - The value to stringify
+     * @returns String representation of the value
+     * @private
+     */
     private stringify(val: unknown): string {
         if (typeof val === 'string') { return val; }
         return inspect(val, {

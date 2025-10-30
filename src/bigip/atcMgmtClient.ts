@@ -45,7 +45,7 @@ export class AtcMgmtClient {
     private morphBigiq() {
         // if bigiq, update functions to support the different work flow
 
-        if (this.mgmtClient.hostInfo.product === 'BIG-IQ') {
+        if (this.mgmtClient.hostInfo?.product === 'BIG-IQ') {
             // not bigiq, so don't apply any updates
             // return;
             this.isBigiq = true;
