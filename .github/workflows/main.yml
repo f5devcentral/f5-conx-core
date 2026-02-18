@@ -1,8 +1,12 @@
-name: Main
+name: "Main"
 
 on:
   push:
     branches: [main]
+
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
 
 env:
   NODE_VERSION: 20
@@ -34,9 +38,10 @@ jobs:
 
   release-publish:
     runs-on: ubuntu-latest
+    environment: publishing
     permissions:
       contents: write
-      id-token: write
+      id-token: write  # Required for npm provenance/OIDC
     needs: test
     name: Package-Release-Publish
     steps:
@@ -50,6 +55,9 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
+
+      - name: Update npm for OIDC support
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: npm ci
@@ -86,9 +94,5 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Publish to NPM
-        id: publish
-        uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          provenance: true
+      - name: Publish release to npm
+        run: npm publish --provenance --access public
