@@ -86,15 +86,12 @@ jobs:
           draft: false
           prerelease: false
 
-      # npm OIDC trusted publishing - no token needed
-      # Configure at: https://www.npmjs.com/package/f5-conx-core/settings
+      # npm OIDC trusted publishing requires npm >= 11.5.1
+      # Node 22 ships with npm 10.x, so we upgrade
+      # Configure trusted publisher at: https://www.npmjs.com/package/f5-conx-core/settings
       # Trusted Publisher -> GitHub Actions -> org: f5devcentral, repo: f5-conx-core, workflow: main.yml, environment: publishing
-      # npm OIDC trusted publishing requires NO auth token in .npmrc
-      # setup-node with registry-url creates one, so we remove it
-      - name: Configure npm for OIDC publishing
-        run: |
-          npm config set registry https://registry.npmjs.org/
-          npm config delete //registry.npmjs.org/:_authToken 2>/dev/null || true
+      - name: Upgrade npm for OIDC support
+        run: npm install -g npm@latest
 
       - name: Publish release to npm
         run: npm publish --access public
