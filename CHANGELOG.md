@@ -9,7 +9,16 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
-## [1.2.0] - (UNRELEASED)
+## [1.2.1] - (02-27-2026)
+
+### Fixed
+
+- Fixed ATC schema URLs to use correct default branch per repo (AS3 and DO now use `main`, FAST/TS/CF remain on `master`)
+- Fixed Telemetry Streaming schema path from `src/schema/` to `application/schema/` (was returning 404)
+
+---
+
+## [1.2.0] - (10-30-2025)
 
 ### Changed
 
@@ -19,9 +28,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Added proper undefined/null checks throughout codebase
   - Enhanced type annotations for better compile-time error detection
   - Improved logger type safety with `LogLevelKey` type for index signatures
-
-### Removed
-
 - Removed all F5 NEXT and NEXT-CM experimental support (product discontinued)
   - Deleted `nextClientBase.ts`, `nextCmClientBase.ts`, `nextModels.ts`
   - Deleted `detectNextBigip.ts` and `OpenApiModels.ts`
