@@ -1,7 +1,7 @@
 {
     "name": "f5-conx-core",
     "author": "F5 Networks",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "description": "F5 SDK for JavaScript with Typescript type definitions",
     "license": "SEE LICENSE IN LICENSE file",
     "main": "dist/index.js",
@@ -43,11 +43,11 @@
         "@types/assert": "^1.5.10",
         "@types/mocha": "^10.0.6",
         "@types/node": "^20.10.8",
-        "@typescript-eslint/eslint-plugin": "^6.18.1",
-        "@typescript-eslint/parser": "^6.18.1",
+        "@typescript-eslint/eslint-plugin": "^8.56.1",
+        "@typescript-eslint/parser": "^8.56.1",
         "assert": "^2.1.0",
-        "eslint": "^8.56.0",
-        "mocha": "^10.2.0",
+        "eslint": "^8.57.1",
+        "mocha": "^11.7.5",
         "nock": "^13.4.0",
         "nyc": "^15.1.0",
         "ts-node": "^10.9.2",
@@ -73,5 +73,11 @@
     },
     "mocha": {
         "timeout": 40000
+    },
+    "overrides": {
+        "mocha": {
+            "serialize-javascript": "^7.0.3"
+        },
+        "diff": "^8.0.3"
     }
 }

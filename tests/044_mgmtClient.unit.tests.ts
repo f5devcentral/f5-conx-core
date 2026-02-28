@@ -104,7 +104,7 @@ describe('mgmtClient unit tests - successes', function () {
         // mgmtClient = getMgmtClient();
 
         // clear logs
-        logger.clearLogs
+        logger.clearLogs()
 
         // setup auth nock
         nockInst

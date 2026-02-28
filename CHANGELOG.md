@@ -9,6 +9,23 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ---
 
+## [1.2.2] - (02-28-2026)
+
+### Security
+
+- Updated axios to fix DoS vulnerability via `__proto__` key in mergeConfig (GHSA-43fc-jf86-j433)
+- Updated @typescript-eslint packages from v6 to v8 to fix minimatch ReDoS vulnerabilities
+- Updated eslint from 8.56 to 8.57 for typescript-eslint v8 compatibility
+- Updated mocha from v10 to v11 and added overrides for serialize-javascript and diff vulnerabilities
+
+### Fixed
+
+- Fixed bug in `as3Tools.ts` where AS3 app component counts were never incremented (`+ 1` → `+= 1`)
+- Fixed `logger.clearLogs` calls in tests that were missing parentheses (no-op → actual calls)
+- Removed obsolete `@typescript-eslint/ban-types` disable comments for v8 compatibility
+
+---
+
 ## [1.2.1] - (02-27-2026)
 
 ### Fixed

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-types */
 
 import { AdcDeclaration, As3AppMap, As3AppMapTenants, Target } from "./as3Models";
 
@@ -104,7 +103,7 @@ export async function tenantFromDec(dec: As3Declaration | AdcDeclaration): Promi
 			if (isObject(val) && key !== 'target' && key !== 'controls') {
 
 				let apps2: any = {};
-				let appsNew: { app: string; components: {}; }[] = [];
+				let appsNew: { app: string; components: Record<string, unknown>; }[] = [];
 
 				// loop through items of the tenant
 				Object.entries(val as object).forEach(([tKey, tVal]) => {
@@ -191,7 +190,7 @@ export async function as3AppStats(as3App: object): Promise<object | undefined> {
 			// capture the class of each application piece
 			if (appVal?.class in appProps) {
 				// already have this key, so add one
-				appProps[appVal.class] + 1;
+				appProps[appVal.class] += 1;
 			} else {
 				// key not detected, so create it
 				appProps[appVal.class] = 1;

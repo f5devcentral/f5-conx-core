@@ -192,7 +192,7 @@ export default class Logger {
         try {
             JSON.stringify(smallResp);
             JSON.parse(JSON.stringify(smallResp));
-        } catch (e) {
+        } catch {
             // hide errors
         }
         
