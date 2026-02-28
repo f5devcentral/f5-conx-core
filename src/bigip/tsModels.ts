@@ -19,7 +19,7 @@
 'use strict';
 
 export const tsExampleDec = {
-    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-telemetry-streaming/master/src/schema/latest/base_schema.json",
+    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-telemetry-streaming/main/src/schema/latest/base_schema.json",
     "class": "Telemetry",
     "My_System": {
         "class": "Telemetry_System",

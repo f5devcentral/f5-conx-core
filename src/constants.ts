@@ -52,7 +52,7 @@ export const atcMetaData = {
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-appsvcs-templates/releases',
         repo: 'https://github.com/F5Networks/f5-appsvcs-templates',
-        schema: 'https://raw.githubusercontent.com/f5devcentral/f5-fast-core/master/schema/template.json'
+        schema: 'https://raw.githubusercontent.com/f5devcentral/f5-fast-core/main/schema/template.json'
     },
     as3: {
         endPoints: {
@@ -62,7 +62,7 @@ export const atcMetaData = {
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-appsvcs-extension/releases',
         repo: 'https://github.com/F5Networks/f5-appsvcs-extension',
-        schema: 'https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/latest/as3-schema.json',
+        schema: 'https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/main/schema/latest/as3-schema.json',
         examples: 'https://github.com/F5Networks/f5-appsvcs-extension/issues/280'
     },
     do: {
@@ -74,9 +74,9 @@ export const atcMetaData = {
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-declarative-onboarding/releases',
         repo: 'https://github.com/F5Networks/f5-declarative-onboarding',
-        schema: 'https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/base.schema.json',
-        parentSchema: 'https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/remote.schema.json',
-        examples: 'https://github.com/F5Networks/f5-declarative-onboarding/tree/master/examples'
+        schema: 'https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/main/src/schema/latest/base.schema.json',
+        parentSchema: 'https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/main/src/schema/latest/remote.schema.json',
+        examples: 'https://github.com/F5Networks/f5-declarative-onboarding/tree/main/examples'
     },
     ts: {
         endPoints: {
@@ -85,8 +85,8 @@ export const atcMetaData = {
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-telemetry-streaming/releases',
         repo: 'https://github.com/F5Networks/f5-telemetry-streaming/',
-        schema: 'https://raw.githubusercontent.com/F5Networks/f5-telemetry-streaming/master/src/schema/latest/base_schema.json',
-        examples: 'https://github.com/F5Networks/f5-telemetry-streaming/tree/master/examples/declarations'
+        schema: 'https://raw.githubusercontent.com/F5Networks/f5-telemetry-streaming/main/src/schema/latest/base_schema.json',
+        examples: 'https://github.com/F5Networks/f5-telemetry-streaming/tree/main/examples/declarations'
     },
     cf: {
         endPoints: {
@@ -98,8 +98,8 @@ export const atcMetaData = {
         },
         gitReleases: 'https://api.github.com/repos/F5Networks/f5-cloud-failover-extension/releases',
         repo: 'https://github.com/F5Networks/f5-cloud-failover-extension/',
-        schema: 'https://raw.githubusercontent.com/F5Networks/f5-cloud-failover-extension/master/src/nodejs/schema/base_schema.json',
-        examples: 'https://github.com/F5Networks/f5-cloud-failover-extension/tree/master/examples/declarations'
+        schema: 'https://raw.githubusercontent.com/F5Networks/f5-cloud-failover-extension/main/src/nodejs/schema/base_schema.json',
+        examples: 'https://github.com/F5Networks/f5-cloud-failover-extension/tree/main/examples/declarations'
     }
 }
 

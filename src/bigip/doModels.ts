@@ -27,8 +27,8 @@
 //  * 
 //  * https://clouddocs.f5.com/products/big-iq/mgmt-api/v7.1.0/ApiReferences/bigiq_public_api_ref/r_do_onboarding.html#post-mgmt-shared-declarative-onboarding
 //  * 
-//  * base "device" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/base.schema.json
-//  * parent "DO" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest.remote.schema.json
+//  * base "device" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/main/src/schema/latest/base.schema.json
+//  * parent "DO" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/main/src/schema/latest.remote.schema.json
 //  */
 // export type DoDeclaration = {
 //     class: 'DO',
@@ -53,8 +53,8 @@
  * 
  * https://clouddocs.f5.com/products/big-iq/mgmt-api/v7.1.0/ApiReferences/bigiq_public_api_ref/r_do_onboarding.html#post-mgmt-shared-declarative-onboarding
  * 
- * base "device" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/base.schema.json
- * parent "DO" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest.remote.schema.json
+ * base "device" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/main/src/schema/latest/base.schema.json
+ * parent "DO" https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/main/src/schema/latest.remote.schema.json
  */
 export type DoDeclaration = {
     /**
@@ -453,7 +453,7 @@ export const doExampleDec: DoDeclaration = {
  * example DO declaration (non-BIG-IQ!)
  */
 export const deviceExampleDec: DeviceDeclaration = {
-    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/master/src/schema/latest/base.schema.json",
+    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-declarative-onboarding/main/src/schema/latest/base.schema.json",
     "schemaVersion": "1.0.0",
     "class": "Device",
     "async": true,

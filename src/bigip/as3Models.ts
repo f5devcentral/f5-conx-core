@@ -162,7 +162,7 @@ export interface Target {
  * primary as3 example with TS type declaration
  */
 export const exampleAs3Declaration: As3Declaration = {
-    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/latest/as3-schema.json",
+    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/main/schema/latest/as3-schema.json",
     class: "AS3",
     "action": "deploy",
     "persist": true,
@@ -208,7 +208,7 @@ export const exampleAs3Declaration: As3Declaration = {
  * primary as3 example with target parameter and TS type declaration
  */
 const exampleAs3DeclarationWithTarget: As3Declaration = {
-    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/latest/as3-schema.json",
+    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/main/schema/latest/as3-schema.json",
     class: "AS3",
     "action": "deploy",
     "persist": true,
@@ -646,7 +646,7 @@ const as3DeclarationEndpointLTM: AdcDeclaration = {
  * full AS3 parent class as3 declaration
  */
 export const as3ExampleDec: As3Declaration = {
-    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/master/schema/latest/as3-schema.json",
+    "$schema": "https://raw.githubusercontent.com/F5Networks/f5-appsvcs-extension/main/schema/latest/as3-schema.json",
     "class": "AS3",
     "action": "deploy",
     "persist": true,
